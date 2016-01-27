@@ -1,0 +1,7 @@
+resources/1945_sprite_sheet.bmp 2
+player.sprite 3
+4 401 64 64
+70 401 64 64
+136 401 64 64
+player.bullet 1
+37 169 32 32
