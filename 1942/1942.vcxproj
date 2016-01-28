@@ -79,7 +79,7 @@
     <ClInclude Include="BitmapLoader.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="CollisionChecker.h" />
-    <ClInclude Include="Entity.h" />
+    <ClInclude Include="Enemy.h" />
     <ClInclude Include="FlashAnimation.h" />
     <ClInclude Include="FrameListAnimation.h" />
     <ClInclude Include="FrameRangeAnimation.h" />

@@ -1,6 +1,3 @@
-#ifndef _MOVINGPATHANIMATION_H_
-#define _MOVINGPATHANIMATION_H_
-
 #pragma once
 
 #include "Animation.h"
@@ -33,5 +30,3 @@ public:
 	MovingPathAnimation(const std::list<PathEntry>& _path, animid_t id) :
 		path(_path), Animation(id) {}
 };
-
-#endif

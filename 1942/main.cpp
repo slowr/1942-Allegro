@@ -16,6 +16,7 @@
 #include "Player.h"
 #include "SpriteHolder.h"
 #include "CollisionChecker.h"
+#include "Enemy.h"
 
 #define TIMESTAMP(x) x*(1000/FPS)
 
@@ -42,8 +43,6 @@ int main(int argc, char **argv)
 	int gameFps = 0;
 	unsigned long oldTick = 0;
 	float gameTime = 0;
-
-
 	float y = 0;
 
 	if (!al_init()) {
@@ -86,14 +85,13 @@ int main(int argc, char **argv)
 	float bgScaledHeight = bgScaleFactor * bgHeight;
 
 	/* Load all animation films */
-
 	AnimationFilmHolder::Get().Load("resources/filmholder.data");
-
-	
 	/* Initialize the bullet sprite */
 	Bullet bullets[Bullet::MAX_BULLETS];
 	/* Initialize the player sprite */
 	Player player;
+	/* Initialize an enemy */
+	Enemy enemy;
 	/**********************/
 
 	fprintf(stderr, "Loaded scrolling background [%f, %f]\n",
@@ -134,26 +132,16 @@ int main(int argc, char **argv)
 			if (pause) continue;
 			tickCount++;
 
-			if (key[KEY_UP]) {
-				player.Move(0,-Player::speed, TIMESTAMP(tickCount));
-			}
-
-			if (key[KEY_DOWN]) {
-				player.Move(0, Player::speed, TIMESTAMP(tickCount));
-			}
-
-			if (key[KEY_LEFT]) {
-				player.Move(-Player::speed, 0, TIMESTAMP(tickCount));
-			}
-
-			if (key[KEY_RIGHT]) {
-				player.Move(Player::speed, 0, TIMESTAMP(tickCount));
-			}
+			if (key[KEY_UP]){}
+			if (key[KEY_DOWN]){}
+			if (key[KEY_LEFT]){}
+			if (key[KEY_RIGHT]){}
 
 			y += (BG_SCROLL_SPEED / FPS);
 			redraw = true;
 
 			CollisionChecker::Get().Check();
+			player.Move(key[KEY_UP], key[KEY_DOWN], key[KEY_LEFT], key[KEY_RIGHT], TIMESTAMP(tickCount));
 
 			if (bgHeight - (SCREEN_H / bgScaleFactor) - y <= 0) {
 				// TODO: done scrolling!
@@ -183,7 +171,7 @@ int main(int argc, char **argv)
 				break;
 
 			case ALLEGRO_KEY_SPACE:
-				Bullet::FireBullet(bullets, player.getPos(), TIMESTAMP(tickCount));
+				Bullet::FireBullets(bullets, player.getPos(), TIMESTAMP(tickCount));
 			}
 		}
 		else if (ev.type == ALLEGRO_EVENT_KEY_UP) {
@@ -222,8 +210,9 @@ int main(int argc, char **argv)
 				0);
 
 			AnimatorHolder::Progress(TIMESTAMP(tickCount));
-			player.DrawPlayer(scrollingBackgroundBitmap);
+			player.Draw(scrollingBackgroundBitmap);
 			Bullet::DrawBullets(bullets, scrollingBackgroundBitmap);
+			enemy.Draw(scrollingBackgroundBitmap);
 
 			al_flip_display();
 		}

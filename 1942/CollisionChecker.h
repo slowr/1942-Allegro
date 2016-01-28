@@ -23,7 +23,6 @@ public:
 		pairs.remove(Pair(s1, s2));
 	}
 	void Check(void) const {
-		std::cout << "CHECK!" << std::endl;
 		std::for_each(
 			pairs.begin(), pairs.end(), CheckFunctor()
 			);

@@ -5,53 +5,57 @@
 #include "FrameRangeAnimator.h"
 #include "AnimatorHolder.h"
 #include "FrameRangeAnimation.h"
-#include "Entity.h"
 
-class Player : Entity {
-	Sprite * sprite;
+class Player : public Sprite {
 	FrameRangeAnimator * animator;
 	FrameRangeAnimation * animation;
 	timestamp_t last_timestamp;
+	const static int delay = 200;
 public:
 	const static int speed = 5;
-
-	class PlayerCollisionHandler : public Sprite::CollisionHandler {
+	class PlayerCollisionHandler : public CollisionHandler {
 	public:
 		virtual void operator()(Sprite *caller, Sprite *arg) {
-			std::cout << "LOL" << std::endl;
+
 		}
 	};
 
-	Player(void){
-		AnimationFilm * film = AnimationFilmHolder::Get().GetFilm("player.sprite");
+	Player(void) : Sprite(SCREEN_W / 2 - AnimationFilmHolder::Get().GetFilm("player.sprite")->GetFrameBox(0).w / 2, SCREEN_H - AnimationFilmHolder::Get().GetFilm("player.sprite")->GetFrameBox(0).h, AnimationFilmHolder::Get().GetFilm("player.sprite"), spritetype_t::PLAYER){
 		PlayerCollisionHandler *p = new PlayerCollisionHandler();
-		sprite = new Sprite(SCREEN_W / 2 - film->GetFrameBox(0).w / 2, SCREEN_H - film->GetFrameBox(0).h, film, spritetype_t::PLAYER);
-		sprite->AddCollisionHandler(p);
-		animation = new FrameRangeAnimation(0, 2, 0, 0, 200, true, 1);
+		AddCollisionHandler(p);
+		animation = new FrameRangeAnimation(0, 2, 0, 0, delay, true, 1);
 		animator = new FrameRangeAnimator();
-		animator->Start(sprite, animation, 0);
+		animator->Start(this, animation, 0);
 		AnimatorHolder::Register(animator);
-		sprite->SetVisibility(true);
 		last_timestamp = 0;
-		setSprite(sprite);
 	}
 
-	void Move(float x, float y, timestamp_t curr_timestamp){
-		if (sprite->getX() + x < 0 || sprite->getX() + x + sprite->GetFrameBox().w > SCREEN_W) return;
-		if (sprite->getY() + y < 0 || sprite->getY() + y + sprite->GetFrameBox().h > SCREEN_H) return;
+	void Move(bool up, bool down, bool left, bool right, timestamp_t curr_timestamp){
+		int _x = 0, _y = 0;
+
+		if (!(up || down || left || right)) return;
+
+		if (up) _y = -speed;
+		if (down) _y += speed;
+		if (left) _x = -speed;
+		if (right) _x += speed;
+		
+		if (x + _x < 0 || x + _x + frameBox.w > SCREEN_W) return;
+		if (y + _y < 0 || y + _y + frameBox.h > SCREEN_H) return;
 
 		if (curr_timestamp - last_timestamp > 25){
-			sprite->Move(x, y);
+			x += _x;
+			y += _y;
 			last_timestamp = curr_timestamp;
 		}
 	}
 
 	const Point getPos() const {
-		return Point(sprite->getX(), sprite->getY());
+		return Point(x, y);
 	}
 
-	void DrawPlayer(ALLEGRO_BITMAP * dest){
-		AnimationFilmHolder::Get().GetFilm("player.sprite")->DisplayFrame(dest, Point(sprite->getX(), sprite->getY()), sprite->GetFrame());
+	void Draw(ALLEGRO_BITMAP * dest){
+		AnimationFilmHolder::Get().GetFilm("player.sprite")->DisplayFrame(dest, Point(x, y), frameNo);
 	}
 
 };

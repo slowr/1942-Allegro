@@ -107,7 +107,7 @@
     <ClInclude Include="CollisionChecker.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Entity.h">
+    <ClInclude Include="Enemy.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
