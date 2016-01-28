@@ -101,3 +101,4 @@ AnimationFilm* AnimationFilmHolder::GetFilm(const std::string id) const {
 		return i != films.end() ? i->second : (AnimationFilm*)0;
 	}
 
+AnimationFilmHolder& AnimationFilmHolder::Get(void) { return holder; }

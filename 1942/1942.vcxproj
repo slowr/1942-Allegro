@@ -77,7 +77,7 @@
     <ClInclude Include="Animator.h" />
     <ClInclude Include="AnimatorHolder.h" />
     <ClInclude Include="BitmapLoader.h" />
-    <ClInclude Include="Bullet.h" />
+    <ClInclude Include="PlayerBullet.h" />
     <ClInclude Include="CollisionChecker.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="FlashAnimation.h" />
@@ -101,11 +101,26 @@
     <Image Include="resources\sample_terrain.bmp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AnimationFilm.cpp" />
     <ClCompile Include="AnimationFilmHolder.cpp" />
+    <ClCompile Include="Animator.cpp" />
     <ClCompile Include="AnimatorHolder.cpp" />
-    <ClCompile Include="Bullet.cpp" />
+    <ClCompile Include="BitmapLoader.cpp" />
+    <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="FlashAnimation.cpp" />
+    <ClCompile Include="FrameListAnimation.cpp" />
+    <ClCompile Include="FrameRangeAnimation.cpp" />
+    <ClCompile Include="FrameRangeAnimator.cpp" />
+    <ClCompile Include="LatelyDestroyable.cpp" />
+    <ClCompile Include="MovingAnimation.cpp" />
+    <ClCompile Include="MovingAnimator.cpp" />
+    <ClCompile Include="MovingPathAnimation.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PlayerBullet.cpp" />
     <ClCompile Include="CollisionChecker.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="ScrollAnimation.cpp" />
+    <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="SpriteHolder.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -12,7 +12,7 @@
 #include "MovingAnimator.h"
 #include "AnimationFilmHolder.h"
 #include "AnimatorHolder.h"
-#include "Bullet.h"
+#include "PlayerBullet.h"
 #include "Player.h"
 #include "SpriteHolder.h"
 #include "CollisionChecker.h"
@@ -87,7 +87,7 @@ int main(int argc, char **argv)
 	/* Load all animation films */
 	AnimationFilmHolder::Get().Load("resources/filmholder.data");
 	/* Initialize the bullet sprite */
-	Bullet bullets[Bullet::MAX_BULLETS];
+	PlayerBullet bullets[PlayerBullet::MAX_BULLETS];
 	/* Initialize the player sprite */
 	Player player;
 	/* Initialize an enemy */
@@ -171,7 +171,7 @@ int main(int argc, char **argv)
 				break;
 
 			case ALLEGRO_KEY_SPACE:
-				Bullet::FireBullets(bullets, player.getPos(), TIMESTAMP(tickCount));
+				PlayerBullet::FireBullets(bullets, player.getPos(), TIMESTAMP(tickCount));
 			}
 		}
 		else if (ev.type == ALLEGRO_EVENT_KEY_UP) {
@@ -211,7 +211,7 @@ int main(int argc, char **argv)
 
 			AnimatorHolder::Progress(TIMESTAMP(tickCount));
 			player.Draw(scrollingBackgroundBitmap);
-			Bullet::DrawBullets(bullets, scrollingBackgroundBitmap);
+			PlayerBullet::DrawBullets(bullets, scrollingBackgroundBitmap);
 			enemy.Draw(scrollingBackgroundBitmap);
 
 			al_flip_display();

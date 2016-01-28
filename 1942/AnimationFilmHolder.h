@@ -1,6 +1,3 @@
-#ifndef _ANIMATIONFILMHOLDER_H_
-#define _ANIMATIONFILMHOLDER_H_
-
 #pragma once
 
 #include <map>
@@ -24,10 +21,8 @@ private:
 	static const int MAX_CHARS_PER_LINE = 128;
 	const char* const DELIMITER = " ";
 public:
-	static AnimationFilmHolder& AnimationFilmHolder::Get(void) { return holder; }
+	static AnimationFilmHolder& AnimationFilmHolder::Get(void);
 	void Load(const std::string& catalogue);
 	void CleanUp(void);
 	AnimationFilm* GetFilm(const std::string id) const;
 };
-
-#endif

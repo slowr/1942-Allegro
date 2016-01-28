@@ -1,6 +1,3 @@
-#ifndef _ANIMATORHOLDER_H_
-#define _ANIMATORHOLDER_H_
-
 #pragma once
 
 #include <list>
@@ -15,36 +12,20 @@ class AnimatorHolder {
 	class ProgressFunctor : public std::unary_function<Animator*, void> {
 			timestamp_t t;
 		public:
-			void operator()(Animator* a) const { a->Progress(t); }
-			ProgressFunctor(timestamp_t _t) : t(_t) {}
+			void operator()(Animator* a) const;
+			ProgressFunctor(timestamp_t _t);
 	};
 	class PauseFunctor : public std::unary_function<Animator*, void> {
 		timestamp_t t;
 	public:
-		void operator()(Animator* a) const { a->TimeSet(t); }
-		PauseFunctor(timestamp_t _t) : t(_t) {}
+		void operator()(Animator* a) const;
+		PauseFunctor(timestamp_t _t);
 	};
 public:
-	static void Register(Animator* a) { suspended.push_back(a); }
-	static void Cancel(Animator* a) { suspended.remove(a); }
-	static void MarkAsRunning(Animator* a)
-	{
-		suspended.remove(a); running.push_back(a);
-	}
-	static void MarkAsSuspended(Animator* a)
-	{
-		running.remove(a); suspended.push_back(a);
-	}
-	static void Progress(timestamp_t currTime) {
-		std::for_each(
-			running.begin(), running.end(), ProgressFunctor(currTime)
-			);
-	}
-	static void Pause(timestamp_t currTime) {
-		std::for_each(
-			running.begin(), running.end(), ProgressFunctor(currTime)
-			);
-	}
+	static void Register(Animator* a);
+	static void Cancel(Animator* a);
+	static void MarkAsRunning(Animator* a);
+	static void MarkAsSuspended(Animator* a);
+	static void Progress(timestamp_t currTime);
+	static void Pause(timestamp_t currTime);
 };
-
-#endif

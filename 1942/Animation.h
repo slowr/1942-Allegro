@@ -1,6 +1,3 @@
-#ifndef _ANIMATION_H_
-#define _ANIMATION_H_
-
 #pragma once
 
 #include "types.h"
@@ -13,5 +10,3 @@ public:
 	Animation(animid_t _id) : id(_id) {}
 	virtual ~Animation() {}
 };
-
-#endif
