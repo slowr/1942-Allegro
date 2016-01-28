@@ -13,7 +13,7 @@ typedef unsigned long timestamp_t;
 
 static unsigned long currTime = 0;
 
-const float FPS = 25;
+const float FPS = 900;
 const float SCREEN_W = 800;
 const float SCREEN_H = 600;
 const int BG_SCROLL_SPEED = 25;		// pixels per second
@@ -53,6 +53,10 @@ public:
 	float top;
 	float right;
 	float bottom;
+};
+
+enum spritetype_t {
+	PLAYER, PLAYER_BULLET, ENEMY_BULLET, ENEMY, POWER_UP, UI
 };
 
 #endif

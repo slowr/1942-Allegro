@@ -4,27 +4,38 @@
 #include "Sprite.h"
 #include "MovingAnimator.h"
 #include "AnimatorHolder.h"
+#include "Entity.h"
 
-class Bullet {
+class Bullet : Entity {
 	Sprite * sprite;
 	MovingAnimator * animator;
 	MovingAnimation * animation;
 public:
 	const static int MAX_BULLETS = 10;
-	const static int speed = 10;
+	const static int speed = 5;
 	static timestamp_t last_timestamp;
 
-	Bullet(void){
-		sprite = new Sprite(0, 0, AnimationFilmHolder::Get().GetFilm("player.bullet"));
+	class BulletCollisionHandler : public Sprite::CollisionHandler {
+	public:
+		virtual void operator()(Sprite *caller, Sprite *arg) {
+			std::cout << "LOL" << std::endl;
+		}
+	};
+
+	Bullet(void) {
+		BulletCollisionHandler *b = new BulletCollisionHandler();
+		sprite = new Sprite(0, 0, AnimationFilmHolder::Get().GetFilm("player.bullet"), spritetype_t::PLAYER_BULLET);
+		sprite->AddCollisionHandler(b);
 		animation = new MovingAnimation(0, -speed, 50, true, 1);
 		animator = new MovingAnimator();
 		animator->Start(sprite, animation, 0);
 		AnimatorHolder::Register(animator);
 		sprite->SetVisibility(false);
+		setSprite(sprite);
 	}
 
 	static void FireBullet(Bullet b[], Point p, timestamp_t curr_timestamp){
-		if (curr_timestamp - last_timestamp > 500){
+		if (curr_timestamp - last_timestamp > 50){
 			for (int i = 0; i < MAX_BULLETS; i++){
 				if (!b[i].sprite->IsVisible()){
 					//std::cout << "bullet #" << i << b[i].bullet_sprite->getY() << std::endl;

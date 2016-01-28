@@ -1,9 +1,12 @@
+#pragma once
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
 #include <list>
 #include <map>
 #include "Sprite.h"
+#include "CollisionChecker.h"
 
 class SpriteHolder {
 private:
@@ -15,6 +18,22 @@ protected:
 public:
 	void Add(Sprite* s){
 		sprites[s->GetType()].push_back(s);
+
+		SpriteList * list = new SpriteList();
+		switch (s->GetType()){
+		case spritetype_t::PLAYER:
+			GetSprites(spritetype_t::PLAYER_BULLET, list);
+			for (SpriteList::iterator it = list->begin(); it != list->end(); ++it){
+				CollisionChecker::Get().Register(s, *it);
+			}
+			break;
+		case spritetype_t::PLAYER_BULLET:
+			GetSprites(spritetype_t::PLAYER, list);
+			for (SpriteList::iterator it = list->begin(); it != list->end(); ++it){
+				CollisionChecker::Get().Register(s, *it);
+			}
+			break;
+		}
 	}
 	void Remove(Sprite* s){
 		sprites[s->GetType()].remove(s);

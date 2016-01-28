@@ -14,6 +14,8 @@
 #include "AnimatorHolder.h"
 #include "Bullet.h"
 #include "Player.h"
+#include "SpriteHolder.h"
+#include "CollisionChecker.h"
 
 #define TIMESTAMP(x) x*(1000/FPS)
 
@@ -36,6 +38,11 @@ int main(int argc, char **argv)
 	bool redraw = true;
 	bool pause = false;
 	bool doexit = false;
+
+	int gameFps = 0;
+	unsigned long oldTick = 0;
+	float gameTime = 0;
+
 
 	float y = 0;
 
@@ -82,10 +89,11 @@ int main(int argc, char **argv)
 
 	AnimationFilmHolder::Get().Load("resources/filmholder.data");
 
-	/* Initialize the player sprite */
-	Player player;
+	
 	/* Initialize the bullet sprite */
 	Bullet bullets[Bullet::MAX_BULLETS];
+	/* Initialize the player sprite */
+	Player player;
 	/**********************/
 
 	fprintf(stderr, "Loaded scrolling background [%f, %f]\n",
@@ -119,11 +127,13 @@ int main(int argc, char **argv)
 	while (!doexit)
 	{
 		ALLEGRO_EVENT ev;
+		
 		al_wait_for_event(event_queue, &ev);
 
 		if (ev.type == ALLEGRO_EVENT_TIMER) {
 			if (pause) continue;
 			tickCount++;
+
 			if (key[KEY_UP]) {
 				player.Move(0,-Player::speed, TIMESTAMP(tickCount));
 			}
@@ -142,6 +152,8 @@ int main(int argc, char **argv)
 
 			y += (BG_SCROLL_SPEED / FPS);
 			redraw = true;
+
+			CollisionChecker::Get().Check();
 
 			if (bgHeight - (SCREEN_H / bgScaleFactor) - y <= 0) {
 				// TODO: done scrolling!
@@ -200,7 +212,6 @@ int main(int argc, char **argv)
 		else if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
 			break;
 		}
-
 
 		if (redraw && al_is_event_queue_empty(event_queue)) {
 			redraw = false;

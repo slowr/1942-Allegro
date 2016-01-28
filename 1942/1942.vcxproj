@@ -79,6 +79,7 @@
     <ClInclude Include="BitmapLoader.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="CollisionChecker.h" />
+    <ClInclude Include="Entity.h" />
     <ClInclude Include="FlashAnimation.h" />
     <ClInclude Include="FrameListAnimation.h" />
     <ClInclude Include="FrameRangeAnimation.h" />
@@ -103,7 +104,9 @@
     <ClCompile Include="AnimationFilmHolder.cpp" />
     <ClCompile Include="AnimatorHolder.cpp" />
     <ClCompile Include="Bullet.cpp" />
+    <ClCompile Include="CollisionChecker.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="SpriteHolder.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
