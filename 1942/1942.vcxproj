@@ -84,7 +84,6 @@
     <ClInclude Include="FrameListAnimation.h" />
     <ClInclude Include="FrameRangeAnimation.h" />
     <ClInclude Include="FrameRangeAnimator.h" />
-    <ClInclude Include="LatelyDestroyable.h" />
     <ClInclude Include="MovingAnimation.h" />
     <ClInclude Include="MovingAnimator.h" />
     <ClInclude Include="MovingPathAnimation.h" />
@@ -111,7 +110,6 @@
     <ClCompile Include="FrameListAnimation.cpp" />
     <ClCompile Include="FrameRangeAnimation.cpp" />
     <ClCompile Include="FrameRangeAnimator.cpp" />
-    <ClCompile Include="LatelyDestroyable.cpp" />
     <ClCompile Include="MovingAnimation.cpp" />
     <ClCompile Include="MovingAnimator.cpp" />
     <ClCompile Include="MovingPathAnimation.cpp" />

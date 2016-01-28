@@ -14,7 +14,7 @@ anim((FrameRangeAnimation*)0), currFrame(0xFF) {}
 
 FrameRangeAnimator::~FrameRangeAnimator() {}
 
-void FrameRangeAnimator::FrameRangeAnimator::Progress(timestamp_t currTime) {
+void FrameRangeAnimator::Progress(timestamp_t currTime) {
 	while (currTime > lastTime && currTime - lastTime >= anim->GetDelay()) {
 		if (currFrame == anim->GetEndFrame())
 			currFrame = anim->GetStartFrame();

@@ -75,9 +75,6 @@
     <ClCompile Include="MovingAnimator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LatelyDestroyable.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="FrameRangeAnimator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -114,9 +111,6 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="FrameRangeAnimator.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LatelyDestroyable.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="MovingAnimation.h">
