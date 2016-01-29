@@ -1,6 +1,6 @@
 #include "AnimatorHolder.h"
 
-AnimatorList AnimatorHolder::running, AnimatorHolder::suspended, AnimatorHolder::dead;
+AnimatorList AnimatorHolder::running, AnimatorHolder::suspended;
 
  void AnimatorHolder::Register(Animator* a) { 
 	 suspended.push_back(a); 
@@ -18,16 +18,7 @@ AnimatorList AnimatorHolder::running, AnimatorHolder::suspended, AnimatorHolder:
 	running.remove(a); suspended.push_back(a);
 }
 
- void AnimatorHolder::MarkAsDead(Animator* a){
-	dead.push_back(a);
- }
-
 void AnimatorHolder::Progress(timestamp_t currTime) {
-	for (AnimatorList::iterator it = dead.begin(); it != dead.end(); ++it){
-		MarkAsSuspended(*it);
-		Cancel(*it);
-	}
-	dead.clear();
 	std::for_each(
 		running.begin(), running.end(), ProgressFunctor(currTime)
 		);

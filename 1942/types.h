@@ -12,7 +12,7 @@ typedef unsigned long timestamp_t;
 
 extern unsigned long tickCount;
 
-const float FPS = 25;
+const float FPS = 1000;
 const float SCREEN_W = 800;
 const float SCREEN_H = 600;
 const int BG_SCROLL_SPEED = 25;		// pixels per second

@@ -17,6 +17,7 @@
 #include "SpriteHolder.h"
 #include "CollisionChecker.h"
 #include "Enemy.h"
+#include "LatelyDestroyable.h"
 
 unsigned long tickCount = 0;
 
@@ -207,6 +208,7 @@ int main(int argc, char **argv)
 				0, 0, bgScaledWidth, bgScaledHeight,
 				0);
 
+			LatelyDestroyable::Destroy();
 			AnimatorHolder::Progress(TIMESTAMP(tickCount));
 			SpriteHolder::Get().DrawSprites(scrollingBackgroundBitmap);
 

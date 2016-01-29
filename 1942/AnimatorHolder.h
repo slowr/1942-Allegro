@@ -8,7 +8,7 @@
 typedef std::list<Animator*> AnimatorList;
 
 class AnimatorHolder {
-	static AnimatorList running, suspended, dead;
+	static AnimatorList running, suspended;
 	class ProgressFunctor : public std::unary_function<Animator*, void> {
 			timestamp_t t;
 		public:
@@ -20,6 +20,5 @@ public:
 	static void Cancel(Animator* a);
 	static void MarkAsRunning(Animator* a);
 	static void MarkAsSuspended(Animator* a);
-	static void MarkAsDead(Animator *a);
 	static void Progress(timestamp_t currTime);
 };
