@@ -18,4 +18,5 @@ class Enemy : public Sprite {
 public:
 	Enemy(void);
 	virtual void CollisionResult(spritetype_t type);
+	~Enemy(void);
 };

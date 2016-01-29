@@ -51,3 +51,9 @@ void PlayerBullet::CollisionResult(spritetype_t type){
 	}
 }
 
+PlayerBullet::~PlayerBullet(){
+	AnimatorHolder::MarkAsSuspended(animator);
+	AnimatorHolder::Cancel(animator);
+	delete animator;
+	delete animation;
+}

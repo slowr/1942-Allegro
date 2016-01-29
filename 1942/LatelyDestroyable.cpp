@@ -8,8 +8,11 @@ void LatelyDestroyable::Add(DestroyableObject *o){
 
 void LatelyDestroyable::Destroy(void){
 	for (DeadList::iterator it = dead.begin(); it != dead.end(); ++it){
-		AnimatorHolder::MarkAsSuspended((*it)->animator);
-		AnimatorHolder::Cancel((*it)->animator);
-		SpriteHolder::Get().Remove((Sprite *) (*it)->sprite);
+		delete (*it)->sprite;
 	}
+	if(!dead.empty()) dead.clear();
+}
+
+void OnAnimationFinish(Animator *a, void *d){
+	LatelyDestroyable::Add(new DestroyableObject(a, (Sprite *)d));
 }

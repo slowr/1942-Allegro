@@ -88,9 +88,9 @@ int main(int argc, char **argv)
 	/* Initialize the bullet sprite */
 	PlayerBullet bullets[PlayerBullet::MAX_BULLETS];
 	/* Initialize the player sprite */
-	Player player;
+	Player * player = new Player();
 	/* Initialize an enemy */
-	Enemy enemy;
+	Enemy * enemy = new Enemy();
 	/**********************/
 
 	fprintf(stderr, "Loaded scrolling background [%f, %f]\n",
@@ -140,7 +140,7 @@ int main(int argc, char **argv)
 			redraw = true;
 
 			CollisionChecker::Get().Check();
-			player.Move(key[KEY_UP], key[KEY_DOWN], key[KEY_LEFT], key[KEY_RIGHT], TIMESTAMP(tickCount));
+			player->Move(key[KEY_UP], key[KEY_DOWN], key[KEY_LEFT], key[KEY_RIGHT], TIMESTAMP(tickCount));
 
 			if (bgHeight - (SCREEN_H / bgScaleFactor) - y <= 0) {
 				// TODO: done scrolling!
@@ -170,7 +170,7 @@ int main(int argc, char **argv)
 				break;
 
 			case ALLEGRO_KEY_SPACE:
-				PlayerBullet::FireBullets(bullets, player.getPos(), TIMESTAMP(tickCount));
+				PlayerBullet::FireBullets(bullets, player->getPos(), TIMESTAMP(tickCount));
 			}
 		}
 		else if (ev.type == ALLEGRO_EVENT_KEY_UP) {

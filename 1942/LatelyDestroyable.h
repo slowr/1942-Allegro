@@ -24,3 +24,5 @@ public:
 	static void Add(DestroyableObject *o);
 	static void Destroy(void);
 };
+
+void OnAnimationFinish(Animator *a, void *d);

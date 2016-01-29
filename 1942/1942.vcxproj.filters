@@ -87,6 +87,9 @@
     <ClCompile Include="LatelyDestroyable.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PlayerExplosion.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animation.h">
@@ -128,9 +131,6 @@
     <ClInclude Include="MovingPathAnimation.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="ScrollAnimation.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -159,6 +159,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="LatelyDestroyable.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerExplosion.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

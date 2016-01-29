@@ -1,9 +1,9 @@
-#include "SmallEnemyExplosion.h"
+#include "PlayerExplosion.h"
 #include "LatelyDestroyable.h"
 
-SmallEnemyExplosion::SmallEnemyExplosion(int x, int y) : 
-Sprite(x, y, AnimationFilmHolder::Get().GetFilm("enemy.explosion_small"), spritetype_t::EXPLOSION){
-	animation = new FrameRangeAnimation(0, 5, 0, 0, delay, false, 2);
+PlayerExplosion::PlayerExplosion(int x, int y) :
+Sprite(x, y, AnimationFilmHolder::Get().GetFilm("player.explosion"), spritetype_t::EXPLOSION){
+	animation = new FrameRangeAnimation(0, 6, 0, 0, delay, false, 3);
 	animator = new FrameRangeAnimator();
 	animator->Start(this, animation, TIMESTAMP(tickCount));
 	animator->SetOnFinish(OnAnimationFinish, this);
@@ -11,11 +11,11 @@ Sprite(x, y, AnimationFilmHolder::Get().GetFilm("enemy.explosion_small"), sprite
 	AnimatorHolder::MarkAsRunning(animator);
 }
 
-void SmallEnemyExplosion::CollisionResult(spritetype_t type){
+void PlayerExplosion::CollisionResult(spritetype_t type){
 	return;
 }
 
-SmallEnemyExplosion::~SmallEnemyExplosion(){
+PlayerExplosion::~PlayerExplosion(){
 	AnimatorHolder::MarkAsSuspended(animator);
 	AnimatorHolder::Cancel(animator);
 	delete animator;

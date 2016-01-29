@@ -15,6 +15,15 @@ void Enemy::CollisionResult(spritetype_t type){
 		isVisible = false;
 		break;
 	case spritetype_t::PLAYER:
+		state = spritestate_t::DEAD;
+		isVisible = false;
 		break;
 	}
+}
+
+Enemy::~Enemy(){
+	AnimatorHolder::MarkAsSuspended(animator);
+	AnimatorHolder::Cancel(animator);
+	delete animator;
+	delete animation;
 }

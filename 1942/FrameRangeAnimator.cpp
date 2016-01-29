@@ -26,7 +26,6 @@ void FrameRangeAnimator::Progress(timestamp_t currTime) {
 		lastTime += anim->GetDelay();
 
 		if (currFrame == anim->GetEndFrame() && !anim->GetContinuous()) {
-			std::cout << "ASDASDSA" << std::endl;
 			state = ANIMATOR_FINISHED;
 			NotifyStopped();
 			return;

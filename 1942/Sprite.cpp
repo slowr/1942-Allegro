@@ -66,3 +66,7 @@ x(_x), y(_y), currFilm(film), isVisible(true), type(_type), state(spritestate_t:
 void Sprite::Draw(ALLEGRO_BITMAP *dest){
 	currFilm->DisplayFrame(dest, Point(x, y), frameNo);
 }
+
+Sprite::~Sprite(void){
+	SpriteHolder::Get().Remove(this);
+}

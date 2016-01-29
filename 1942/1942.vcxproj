@@ -89,7 +89,7 @@
     <ClInclude Include="MovingAnimator.h" />
     <ClInclude Include="MovingPathAnimation.h" />
     <ClInclude Include="Player.h" />
-    <ClInclude Include="resource.h" />
+    <ClInclude Include="PlayerExplosion.h" />
     <ClInclude Include="ScrollAnimation.h" />
     <ClInclude Include="SmallEnemyExplosion.h" />
     <ClInclude Include="Sprite.h" />
@@ -120,6 +120,7 @@
     <ClCompile Include="PlayerBullet.cpp" />
     <ClCompile Include="CollisionChecker.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="PlayerExplosion.cpp" />
     <ClCompile Include="ScrollAnimation.cpp" />
     <ClCompile Include="SmallEnemyExplosion.cpp" />
     <ClCompile Include="Sprite.cpp" />

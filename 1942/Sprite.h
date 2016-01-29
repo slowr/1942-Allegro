@@ -31,4 +31,5 @@ public:
 	Sprite(float _x, float _y, AnimationFilm* film, spritetype_t _type);
 	virtual void CollisionResult(spritetype_t type) = 0;
 	virtual void Draw(ALLEGRO_BITMAP * dest);
+	virtual ~Sprite();
 };
