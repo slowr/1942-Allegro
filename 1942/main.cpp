@@ -98,7 +98,7 @@ int main(int argc, char **argv)
 	fprintf(stderr, "Should be scaled to [%f, %f]\n",
 		bgScaledWidth, bgScaledHeight);
 
-	al_set_target_bitmap(scrollingBackgroundBitmap);
+	//al_set_target_bitmap(scrollingBackgroundBitmap);
 	al_set_target_bitmap(al_get_backbuffer(display));
 
 	event_queue = al_create_event_queue();
@@ -210,7 +210,7 @@ int main(int argc, char **argv)
 
 			LatelyDestroyable::Destroy();
 			AnimatorHolder::Progress(TIMESTAMP(tickCount));
-			SpriteHolder::Get().DrawSprites(scrollingBackgroundBitmap);
+			SpriteHolder::Get().DrawSprites(al_get_backbuffer(display));
 
 			al_flip_display();
 		}
