@@ -1,17 +1,12 @@
 #include "Player.h"
 
-void Player::PlayerCollisionHandler::operator()(Sprite *caller, Sprite *arg) {
-
-}
-
 Player::Player(void) : Sprite(SCREEN_W / 2 - AnimationFilmHolder::Get().GetFilm("player.sprite")->GetFrameBox(0).w / 2, SCREEN_H - AnimationFilmHolder::Get().GetFilm("player.sprite")->GetFrameBox(0).h, AnimationFilmHolder::Get().GetFilm("player.sprite"), spritetype_t::PLAYER){
-	AddCollisionHandler(new PlayerCollisionHandler());
 	animation = new FrameRangeAnimation(0, 2, 0, 0, delay, true, 1);
 	animator = new FrameRangeAnimator();
 	animator->Start(this, animation, 0);
 	AnimatorHolder::Register(animator);
+	AnimatorHolder::MarkAsRunning(animator);
 	last_timestamp = 0;
-	SpriteHolder::Get().Add(this);
 }
 
 void Player::Move(bool up, bool down, bool left, bool right, timestamp_t curr_timestamp){
@@ -38,6 +33,11 @@ const Point Player::getPos() const {
 	return Point(x, y);
 }
 
-void Player::Draw(ALLEGRO_BITMAP * dest){
-	AnimationFilmHolder::Get().GetFilm("player.sprite")->DisplayFrame(dest, Point(x, y), frameNo);
+void Player::CollisionResult(spritetype_t type){
+	switch (type){
+	case spritetype_t::ENEMY:
+		break;
+	case spritetype_t::ENEMY_BULLET:
+		break;
+	}
 }

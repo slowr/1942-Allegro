@@ -18,7 +18,7 @@
 #include "CollisionChecker.h"
 #include "Enemy.h"
 
-#define TIMESTAMP(x) x*(1000/FPS)
+unsigned long tickCount = 0;
 
 enum MYKEYS {
 	KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT
@@ -26,8 +26,6 @@ enum MYKEYS {
 
 int main(int argc, char **argv)
 {
-	unsigned long tickCount = 0;
-
 	ALLEGRO_DISPLAY *display = NULL;
 	ALLEGRO_EVENT_QUEUE *event_queue = NULL;
 	ALLEGRO_TIMER *timer = NULL;
@@ -69,7 +67,7 @@ int main(int argc, char **argv)
 	}
 
 	al_init_image_addon();
-	
+
 	scrollingBackgroundBitmap = bitmapLoader.Load("resources/sample_terrain.bmp");
 	if (!scrollingBackgroundBitmap) {
 		fprintf(stderr, "failed to create background bitmap!\n");
@@ -125,7 +123,7 @@ int main(int argc, char **argv)
 	while (!doexit)
 	{
 		ALLEGRO_EVENT ev;
-		
+
 		al_wait_for_event(event_queue, &ev);
 
 		if (ev.type == ALLEGRO_EVENT_TIMER) {
@@ -204,15 +202,13 @@ int main(int argc, char **argv)
 		if (redraw && al_is_event_queue_empty(event_queue)) {
 			redraw = false;
 			al_clear_to_color(al_map_rgb(0, 0, 0));
-			al_draw_scaled_bitmap(scrollingBackgroundBitmap, 
+			al_draw_scaled_bitmap(scrollingBackgroundBitmap,
 				0, bgHeight - (SCREEN_H / bgScaleFactor) - y, bgWidth, bgHeight,
-				0, 0, bgScaledWidth, bgScaledHeight, 
+				0, 0, bgScaledWidth, bgScaledHeight,
 				0);
 
 			AnimatorHolder::Progress(TIMESTAMP(tickCount));
-			player.Draw(scrollingBackgroundBitmap);
-			PlayerBullet::DrawBullets(bullets, scrollingBackgroundBitmap);
-			enemy.Draw(scrollingBackgroundBitmap);
+			SpriteHolder::Get().DrawSprites(scrollingBackgroundBitmap);
 
 			al_flip_display();
 		}

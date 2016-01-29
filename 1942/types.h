@@ -1,9 +1,8 @@
-#ifndef _TYPES_H_
-#define _TYPES_H_
-
 #pragma once
 
 #include <Windows.h>
+
+#define TIMESTAMP(x) x*(1000/FPS)
 
 typedef unsigned char frame_t;
 typedef signed char offset_t;
@@ -11,9 +10,9 @@ typedef unsigned short delay_t;
 typedef unsigned short animid_t;
 typedef unsigned long timestamp_t;
 
-static unsigned long currTime = 0;
+extern unsigned long tickCount;
 
-const float FPS = 900;
+const float FPS = 25;
 const float SCREEN_W = 800;
 const float SCREEN_H = 600;
 const int BG_SCROLL_SPEED = 25;		// pixels per second
@@ -56,7 +55,9 @@ public:
 };
 
 enum spritetype_t {
-	PLAYER, PLAYER_BULLET, ENEMY_BULLET, ENEMY, POWER_UP, UI
+	PLAYER, PLAYER_BULLET, ENEMY_BULLET, ENEMY, POWER_UP, UI, EXPLOSION
 };
 
-#endif
+enum spritestate_t {
+	ALIVE, DEAD, WAIT
+};

@@ -14,16 +14,10 @@ class PlayerBullet : public Sprite {
 public:
 	const static int MAX_BULLETS = 10;
 	static timestamp_t last_timestamp;
-
-	class BulletCollisionHandler : public Sprite::CollisionHandler {
-	public:
-		virtual void operator()(Sprite *caller, Sprite *arg);
-	};
-
 	PlayerBullet(void);
 	void FireBullet(Point p, timestamp_t curr_timestamp);
-	void Draw(ALLEGRO_BITMAP *dest);
 	void StopBullet();
 	static void FireBullets(PlayerBullet b[], Point p, timestamp_t curr_timestamp);
-	static void DrawBullets(PlayerBullet b[], ALLEGRO_BITMAP *dest);
+	virtual void PlayerBullet::Draw(ALLEGRO_BITMAP *dest);
+	virtual void CollisionResult(spritetype_t type);
 };

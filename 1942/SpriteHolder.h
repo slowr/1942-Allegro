@@ -16,52 +16,9 @@ protected:
 	typedef std::map<unsigned, SpriteList> SpritesByType;
 	SpritesByType sprites;
 public:
-	void Add(Sprite* s){
-		sprites[s->GetType()].push_back(s);
-
-		SpriteList * list = new SpriteList();
-		switch (s->GetType()){
-		case spritetype_t::PLAYER:
-			GetSprites(spritetype_t::ENEMY_BULLET, list);
-			for (SpriteList::iterator it = list->begin(); it != list->end(); ++it){
-				CollisionChecker::Get().Register(s, *it);
-			}
-			GetSprites(spritetype_t::ENEMY, list);
-			for (SpriteList::iterator it = list->begin(); it != list->end(); ++it){
-				CollisionChecker::Get().Register(s, *it);
-			}
-			break;
-		case spritetype_t::PLAYER_BULLET:
-			GetSprites(spritetype_t::ENEMY, list);
-			for (SpriteList::iterator it = list->begin(); it != list->end(); ++it){
-				CollisionChecker::Get().Register(s, *it);
-			}
-			break;
-		case spritetype_t::ENEMY:
-			GetSprites(spritetype_t::PLAYER, list);
-			for (SpriteList::iterator it = list->begin(); it != list->end(); ++it){
-				CollisionChecker::Get().Register(s, *it);
-			}
-			GetSprites(spritetype_t::PLAYER_BULLET, list);
-			for (SpriteList::iterator it = list->begin(); it != list->end(); ++it){
-				CollisionChecker::Get().Register(s, *it);
-			}
-			break;
-		case spritetype_t::ENEMY_BULLET:
-			GetSprites(spritetype_t::PLAYER, list);
-			for (SpriteList::iterator it = list->begin(); it != list->end(); ++it){
-				CollisionChecker::Get().Register(s, *it);
-			}
-			break;
-		}
-	}
-	void Remove(Sprite* s){
-		sprites[s->GetType()].remove(s);
-	}
-	void GetSprites(unsigned type, SpriteList* result) {
-		SpritesByType::iterator i = sprites.find(type);
-		if (i != sprites.end())
-			*result = i->second;
-	}
-	static SpriteHolder& Get(void) { return holder; }
+	void Add(Sprite* s);
+	void Remove(Sprite* s);
+	void GetSprites(spritetype_t type, SpriteList* result);
+	void DrawSprites(ALLEGRO_BITMAP *dest);
+	static SpriteHolder& Get(void);
 };

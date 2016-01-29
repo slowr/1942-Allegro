@@ -18,14 +18,15 @@ void FrameRangeAnimator::Progress(timestamp_t currTime) {
 	while (currTime > lastTime && currTime - lastTime >= anim->GetDelay()) {
 		if (currFrame == anim->GetEndFrame())
 			currFrame = anim->GetStartFrame();
-		else
+		else{
 			++currFrame;
-
+		}
 		sprite->Move(anim->GetDx(), anim->GetDy());
 		sprite->SetFrame(currFrame);
 		lastTime += anim->GetDelay();
 
 		if (currFrame == anim->GetEndFrame() && !anim->GetContinuous()) {
+			std::cout << "ASDASDSA" << std::endl;
 			state = ANIMATOR_FINISHED;
 			NotifyStopped();
 			return;

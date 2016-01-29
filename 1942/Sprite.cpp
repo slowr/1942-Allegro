@@ -1,36 +1,25 @@
 #include "Sprite.h"
-
-Sprite::CollisionHandler::~CollisionHandler(){}
+#include "SpriteHolder.h"
 
 void Sprite::NotifyCollision(Sprite* arg){
-	for (Handlers::iterator i = handlers.begin(); i != handlers.end(); ++i)
-		(**i)(this, arg);
+	this->CollisionResult(arg->GetType());
+	arg->CollisionResult(this->GetType());
 }
 
-unsigned Sprite::GetType(void) { 
-	return type; 
+spritetype_t Sprite::GetType(void) {
+	return type;
 }
 
-unsigned Sprite::GetState(void) { 
-	return state; 
+spritestate_t Sprite::GetState(void) {
+	return state;
 }
 
-void Sprite::SetState(unsigned _s) { 
-	state = _s; 
-}
-
-void Sprite::AddCollisionHandler(CollisionHandler * h){
-	handlers.push_back(h);
-}
-
-void Sprite::ClearHandlers(void){
-	for (Handlers::iterator i = handlers.begin(); i != handlers.end(); ++i)
-		delete *i;
-	handlers.clear();
+void Sprite::SetState(spritestate_t _s) {
+	state = _s;
 }
 
 void Sprite::CollisionCheck(Sprite* s){
-	if (!isVisible || !s->isVisible) return;
+	if ( !((this->state == spritestate_t::ALIVE) && (s->state == spritestate_t::ALIVE))) return;
 	float x1, y1, x2, y2, x3, y3, x4, y4;
 	x1 = x;
 	y1 = y;
@@ -52,6 +41,14 @@ void Sprite::SetFrame(byte i) {
 	}
 }
 
+float Sprite::GetX(void){
+	return x;
+}
+
+float Sprite::GetY(void){
+	return y;
+}
+
 byte Sprite::GetFrame(void) const { return frameNo; }
 bool Sprite::IsVisible(void) const { return isVisible; }
 
@@ -61,9 +58,11 @@ void Sprite::Move(offset_t dx, offset_t dy) {
 }
 
 Sprite::Sprite(float _x, float _y, AnimationFilm* film, spritetype_t _type) :
-	x(_x), y(_y), currFilm(film), isVisible(true), type(_type)
-{
+x(_x), y(_y), currFilm(film), isVisible(true), type(_type), state(spritestate_t::ALIVE){
 	frameNo = currFilm->GetTotalFrames(); SetFrame(0);
+	SpriteHolder::Get().Add(this);
 }
 
-	Sprite::~Sprite(){ ClearHandlers(); }
+void Sprite::Draw(ALLEGRO_BITMAP *dest){
+	currFilm->DisplayFrame(dest, Point(x, y), frameNo);
+}

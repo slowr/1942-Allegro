@@ -7,34 +7,28 @@
 #include <list>
 
 class Sprite {
-public:
-	class CollisionHandler {
-	public:
-		virtual void operator()(Sprite *caller, Sprite *arg) = 0;
-		virtual ~CollisionHandler();
-	};
 protected:
 	float x, y;
 	bool isVisible;
 	byte frameNo;
 	Rect frameBox;
 	AnimationFilm* currFilm;
-	typedef std::list<CollisionHandler*> Handlers;
 	spritetype_t type;
-	unsigned state;
-	Handlers handlers;
+	spritestate_t state;
 	void NotifyCollision(Sprite* arg);
 public:
-	unsigned GetType(void);
-	unsigned GetState(void);
-	void SetState(unsigned _s);
-	void AddCollisionHandler(CollisionHandler * h);
+	spritetype_t GetType(void);
+	spritestate_t GetState(void);
+	void SetState(spritestate_t _s);
 	void ClearHandlers(void);
 	void CollisionCheck(Sprite* s);
 	void SetFrame(byte i);
 	byte GetFrame(void) const;
+	float GetX(void);
+	float GetY(void);
 	bool IsVisible(void) const;
 	void Move(offset_t dx, offset_t dy);
 	Sprite(float _x, float _y, AnimationFilm* film, spritetype_t _type);
-	virtual ~Sprite();
+	virtual void CollisionResult(spritetype_t type) = 0;
+	virtual void Draw(ALLEGRO_BITMAP * dest);
 };

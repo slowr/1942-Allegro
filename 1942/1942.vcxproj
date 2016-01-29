@@ -77,6 +77,7 @@
     <ClInclude Include="Animator.h" />
     <ClInclude Include="AnimatorHolder.h" />
     <ClInclude Include="BitmapLoader.h" />
+    <ClInclude Include="LatelyDestroyable.h" />
     <ClInclude Include="PlayerBullet.h" />
     <ClInclude Include="CollisionChecker.h" />
     <ClInclude Include="Enemy.h" />
@@ -90,6 +91,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="ScrollAnimation.h" />
+    <ClInclude Include="SmallEnemyExplosion.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="SpriteHolder.h" />
     <ClInclude Include="types.h" />
@@ -110,6 +112,7 @@
     <ClCompile Include="FrameListAnimation.cpp" />
     <ClCompile Include="FrameRangeAnimation.cpp" />
     <ClCompile Include="FrameRangeAnimator.cpp" />
+    <ClCompile Include="LatelyDestroyable.cpp" />
     <ClCompile Include="MovingAnimation.cpp" />
     <ClCompile Include="MovingAnimator.cpp" />
     <ClCompile Include="MovingPathAnimation.cpp" />
@@ -118,6 +121,7 @@
     <ClCompile Include="CollisionChecker.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ScrollAnimation.cpp" />
+    <ClCompile Include="SmallEnemyExplosion.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="SpriteHolder.cpp" />
   </ItemGroup>

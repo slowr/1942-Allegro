@@ -81,6 +81,12 @@
     <ClCompile Include="FrameRangeAnimation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SmallEnemyExplosion.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LatelyDestroyable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animation.h">
@@ -147,6 +153,12 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="PlayerBullet.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SmallEnemyExplosion.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LatelyDestroyable.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

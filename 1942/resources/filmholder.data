@@ -60,7 +60,7 @@ enemy.grey_plane 8
 235 136 32 32
 enemy.bullet 1
 268 169 32 32
-enemy.explosion 6
+enemy.explosion_small 6
 70 169 32 32
 103 169 32 32
 136 169 32 32
