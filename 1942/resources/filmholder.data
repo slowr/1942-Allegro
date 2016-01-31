@@ -1,4 +1,4 @@
-resources/1945_sprite_sheet.bmp 10
+resources/1945_sprite_sheet.bmp 10 0 67 171
 player.sprite 3
 4 400 65 65
 70 400 65 65
@@ -67,3 +67,14 @@ enemy.explosion_small 6
 169 169 32 32
 202 169 32 32
 235 169 32 32
+resources/1945_sprite_sheet.bmp 3 0 0 0
+menu.back 1
+103 577 276 139
+game.menu 5
+581 390 98 15
+581 407 75 15
+581 427 75 15
+581 443 75 15
+581 462 42 15
+menu.pointer 1
+570 390 7 12

@@ -1,11 +1,40 @@
 #include "Enemy.h"
+#include <math.h>
 
-Enemy::Enemy(void) : Sprite(SCREEN_W / 2 - AnimationFilmHolder::Get().GetFilm("enemy.blue_plane")->GetFrameBox(0).w / 2, SCREEN_H / 2, AnimationFilmHolder::Get().GetFilm("enemy.blue_plane"), spritetype_t::ENEMY){
-	animation = new MovingAnimation(0, speed, delay, true, 1);
-	animator = new MovingAnimator();
+Enemy::Enemy(void) : Sprite(0, 0, AnimationFilmHolder::Get().GetFilm("enemy.blue_plane"), spritetype_t::ENEMY){
+	std::list<PathEntry *> p;
+	struct PathEntry *entry1 = new PathEntry();
+	entry1->dx = 0;
+	entry1->dy = 0;
+	entry1->frame = 1;
+	entry1->delay = 10;
+	entry1->repetitions = 1;
+	p.push_back(entry1);
+	int x_0 = 0, y_0 = SCREEN_H / 2;
+	int oldDx = 0, oldDy = 0;
+	for (float y = 1; y <= SCREEN_H / 2; y++){
+		for (float x = 1; x <= SCREEN_W / 2; x++){
+			if( ((float)(float) pow(x - x_0, 2) + (float)pow(y - y_0, 2)) == (float)pow(SCREEN_H / 2, 2)){
+				std::cout << "x: " << x << ", y: " << y << std::endl;
+				struct PathEntry *entry1 = new PathEntry();
+				entry1->dx = (x - oldDx)/30;
+				entry1->dy = (y - oldDy)/30;
+				entry1->frame = 1;
+				entry1->delay = 10;
+				entry1->repetitions = 30;
+				p.push_back(entry1);
+				oldDx = x;
+				oldDy = y;
+			}
+		}
+	}
+
+	animation = new MovingPathAnimation(p, 1);
+	animator = new MovingPathAnimator();
 	animator->Start(this, animation, 0);
+	animator->SetOnFinish(OnAnimationFinish, this);
 	AnimatorHolder::Register(animator);
-	//AnimatorHolder::MarkAsRunning(animator);
+	AnimatorHolder::MarkAsRunning(animator);
 }
 
 void Enemy::CollisionResult(spritetype_t type){
@@ -19,7 +48,7 @@ void Enemy::CollisionResult(spritetype_t type){
 }
 
 void Enemy::AnimationFinish(void){
-	LatelyDestroyable::Add(this);
+	//LatelyDestroyable::Add(this);
 }
 
 Enemy::~Enemy(){

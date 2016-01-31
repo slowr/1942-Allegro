@@ -18,11 +18,16 @@
 #include "CollisionChecker.h"
 #include "Enemy.h"
 #include "LatelyDestroyable.h"
+#include "GameMenu.h"
 
 unsigned long tickCount = 0;
 
 enum MYKEYS {
-	KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT
+	KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_P, KEY_SPACE, KEY_ENTER, KEY_ESCAPE
+};
+
+enum STATES{
+	PAUSED, PLAYING, MENU, EXIT
 };
 
 int main(int argc, char **argv)
@@ -34,7 +39,8 @@ int main(int argc, char **argv)
 
 	BitmapLoader bitmapLoader;
 
-	bool key[4] = { false, false, false, false };
+	bool key[8] = { false, false, false, false, false, false, false, false };
+	bool states[4] = { false, false, true, false };
 	bool redraw = true;
 	bool pause = false;
 	bool doexit = false;
@@ -92,6 +98,8 @@ int main(int argc, char **argv)
 	/* Initialize an enemy */
 	Enemy * enemy = new Enemy();
 	/**********************/
+	GameMenu *menu = new GameMenu();
+
 
 	fprintf(stderr, "Loaded scrolling background [%f, %f]\n",
 		bgWidth, bgHeight);
@@ -140,7 +148,28 @@ int main(int argc, char **argv)
 			redraw = true;
 
 			CollisionChecker::Get().Check();
-			player->Move(key[KEY_UP], key[KEY_DOWN], key[KEY_LEFT], key[KEY_RIGHT], TIMESTAMP(tickCount));
+			if (states[PLAYING]) player->Move(key[KEY_UP], key[KEY_DOWN], key[KEY_LEFT], key[KEY_RIGHT], TIMESTAMP(tickCount));
+			else if (states[MENU]){
+				if (key[KEY_UP]) {
+					menu->MoveUp();
+					key[KEY_UP] = false;
+				}
+
+				if (key[KEY_DOWN]) {
+					menu->MoveDown();
+					key[KEY_DOWN] = false;
+				}
+
+				if (key[KEY_ENTER]){
+
+				}
+
+				if (key[KEY_ESCAPE]){
+					doexit = true;
+				}
+
+				menu->Update();
+			}
 
 			if (bgHeight - (SCREEN_H / bgScaleFactor) - y <= 0) {
 				// TODO: done scrolling!
@@ -169,6 +198,14 @@ int main(int argc, char **argv)
 				pause = !pause;
 				break;
 
+			case ALLEGRO_KEY_ENTER:
+				key[KEY_ENTER] = true;
+				if (menu->GetSelected() == 0){
+					states[PLAYING] = true; states[MENU] = false; menu->LeaveMenu(); y = 0;
+					tickCount = 0;
+				}
+				break;
+
 			case ALLEGRO_KEY_SPACE:
 				PlayerBullet::FireBullets(bullets, player->getPos(), TIMESTAMP(tickCount));
 			}
@@ -191,6 +228,10 @@ int main(int argc, char **argv)
 				key[KEY_RIGHT] = false;
 				break;
 
+			case ALLEGRO_KEY_ENTER:
+				key[KEY_ENTER] = false;
+				break;
+
 			case ALLEGRO_KEY_ESCAPE:
 				doexit = true;
 				break;
@@ -208,9 +249,14 @@ int main(int argc, char **argv)
 				0, 0, bgScaledWidth, bgScaledHeight,
 				0);
 
-			LatelyDestroyable::Destroy();
-			AnimatorHolder::Progress(TIMESTAMP(tickCount));
-			SpriteHolder::Get().DrawSprites(al_get_backbuffer(display));
+			if (states[MENU]){
+				menu->Draw(al_get_backbuffer(display));
+			}
+			else if (states[PLAYING]){
+				LatelyDestroyable::Destroy();
+				AnimatorHolder::Progress(TIMESTAMP(tickCount));
+				SpriteHolder::Get().DrawSprites(al_get_backbuffer(display));
+			}
 
 			al_flip_display();
 		}

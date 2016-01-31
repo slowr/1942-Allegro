@@ -12,11 +12,11 @@ protected:
 	bool isVisible;
 	byte frameNo;
 	Rect frameBox;
-	AnimationFilm* currFilm;
 	spritetype_t type;
 	spritestate_t state;
 	void NotifyCollision(Sprite* arg);
 public:
+	AnimationFilm* currFilm;
 	spritetype_t GetType(void);
 	spritestate_t GetState(void);
 	void SetState(spritestate_t _s);
@@ -29,8 +29,8 @@ public:
 	bool IsVisible(void) const;
 	void Move(offset_t dx, offset_t dy);
 	Sprite(float _x, float _y, AnimationFilm* film, spritetype_t _type);
-	virtual void CollisionResult(spritetype_t type) = 0;
+	virtual void CollisionResult(spritetype_t type) {};
 	virtual void Draw(ALLEGRO_BITMAP * dest);
-	virtual void AnimationFinish(void) = 0;
+	virtual void AnimationFinish(void) {};
 	virtual ~Sprite();
 };

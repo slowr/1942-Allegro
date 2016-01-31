@@ -77,7 +77,9 @@
     <ClInclude Include="Animator.h" />
     <ClInclude Include="AnimatorHolder.h" />
     <ClInclude Include="BitmapLoader.h" />
+    <ClInclude Include="GameMenu.h" />
     <ClInclude Include="LatelyDestroyable.h" />
+    <ClInclude Include="MovingPathAnimator.h" />
     <ClInclude Include="PlayerBullet.h" />
     <ClInclude Include="CollisionChecker.h" />
     <ClInclude Include="Enemy.h" />
@@ -116,6 +118,7 @@
     <ClCompile Include="MovingAnimation.cpp" />
     <ClCompile Include="MovingAnimator.cpp" />
     <ClCompile Include="MovingPathAnimation.cpp" />
+    <ClCompile Include="MovingPathAnimator.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerBullet.cpp" />
     <ClCompile Include="CollisionChecker.cpp" />

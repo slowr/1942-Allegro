@@ -11,6 +11,7 @@ void AnimationFilmHolder::Load(const std::string& catalogue) {
 			if (fin.eof()) break;
 			char *path;
 			int numBitmaps;
+			int r, g, b;
 			{
 				/* 
 					Read the path of sprite sheet and the number of total bitmaps inside
@@ -20,10 +21,13 @@ void AnimationFilmHolder::Load(const std::string& catalogue) {
 
 				path = strtok(buf, DELIMITER);
 				numBitmaps = atoi(strtok(0, DELIMITER));
+				r = atoi(strtok(0, DELIMITER));
+				g = atoi(strtok(0, DELIMITER));
+				b = atoi(strtok(0, DELIMITER));
 			}
 
 			ALLEGRO_BITMAP * bmp = bitmaps.Load(path);
-			al_convert_mask_to_alpha(bmp, al_map_rgb(0, 67, 171));
+			al_convert_mask_to_alpha(bmp, al_map_rgb(r, g, b));
 
 			/*
 				For each bitmap read the id, number of frames and construct the rectangles
