@@ -17,6 +17,7 @@ protected:
 	typedef std::map<unsigned, SpriteList> SpritesByType;
 	SpritesByType sprites;
 public:
+	void RemoveByType(spritetype_t t);
 	void SetPower(powertype_t p);
 	void Add(Sprite* s);
 	void Remove(Sprite* s);

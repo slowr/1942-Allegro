@@ -48,6 +48,17 @@ void SpriteHolder::Remove(Sprite* s){
 	sprites[s->GetType()].remove(s);
 }
 
+void SpriteHolder::RemoveByType(spritetype_t t){
+	SpriteList * doomed = new SpriteList();
+	GetSprites(t, doomed);
+
+	for (std::list<Sprite *>::iterator it = doomed->begin(); it != doomed->end(); ++it){
+		Sprite * s = (*it);
+		if(!sprites[t].empty()) Remove(s);
+		else break;
+	}
+}
+
 void SpriteHolder::GetSprites(spritetype_t type, SpriteList* result) {
 	SpritesByType::iterator i = sprites.find(type);
 	if (i != sprites.end())
