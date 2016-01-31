@@ -36,15 +36,17 @@ const Point Player::getPos() const {
 void Player::CollisionResult(spritetype_t type){
 	switch (type){
 	case spritetype_t::ENEMY:
-		state = spritestate_t::DEAD;
-		isVisible = false;
-		break;
 	case spritetype_t::ENEMY_BULLET:
 		state = spritestate_t::DEAD;
 		isVisible = false;
 		break;
 	}
 }
+
+void Player::AnimationFinish(void){
+	LatelyDestroyable::Add(this);
+}
+
 
 Player::~Player(){
 	AnimatorHolder::MarkAsSuspended(animator);

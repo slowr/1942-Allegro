@@ -69,4 +69,5 @@ void Sprite::Draw(ALLEGRO_BITMAP *dest){
 
 Sprite::~Sprite(void){
 	SpriteHolder::Get().Remove(this);
+
 }

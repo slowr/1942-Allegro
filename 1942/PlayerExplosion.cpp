@@ -15,6 +15,10 @@ void PlayerExplosion::CollisionResult(spritetype_t type){
 	return;
 }
 
+void PlayerExplosion::AnimationFinish(void){
+	LatelyDestroyable::Add(this);
+}
+
 PlayerExplosion::~PlayerExplosion(){
 	AnimatorHolder::MarkAsSuspended(animator);
 	AnimatorHolder::Cancel(animator);

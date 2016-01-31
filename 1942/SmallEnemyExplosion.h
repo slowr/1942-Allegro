@@ -14,5 +14,6 @@ class SmallEnemyExplosion : public Sprite {
 public:
 	SmallEnemyExplosion(int x, int y);
 	virtual void CollisionResult(spritetype_t type);
+	virtual void AnimationFinish(void);
 	~SmallEnemyExplosion(void);
 };

@@ -22,3 +22,7 @@ SmallEnemyExplosion::~SmallEnemyExplosion(){
 	delete animation;
 }
 
+void SmallEnemyExplosion::AnimationFinish(){
+	LatelyDestroyable::Add(this);
+}
+

@@ -11,14 +11,15 @@ Enemy::Enemy(void) : Sprite(SCREEN_W / 2 - AnimationFilmHolder::Get().GetFilm("e
 void Enemy::CollisionResult(spritetype_t type){
 	switch (type){
 	case spritetype_t::PLAYER_BULLET:
-		state = spritestate_t::DEAD;
-		isVisible = false;
-		break;
 	case spritetype_t::PLAYER:
 		state = spritestate_t::DEAD;
 		isVisible = false;
 		break;
 	}
+}
+
+void Enemy::AnimationFinish(void){
+	LatelyDestroyable::Add(this);
 }
 
 Enemy::~Enemy(){

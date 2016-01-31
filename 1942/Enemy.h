@@ -8,6 +8,7 @@
 #include "MovingAnimator.h"
 #include "SpriteHolder.h"
 #include "PlayerBullet.h"
+#include "LatelyDestroyable.h"
 
 class Enemy : public Sprite {
 	MovingAnimator * animator;
@@ -18,5 +19,6 @@ class Enemy : public Sprite {
 public:
 	Enemy(void);
 	virtual void CollisionResult(spritetype_t type);
+	virtual void AnimationFinish(void);
 	~Enemy(void);
 };

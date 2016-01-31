@@ -14,5 +14,6 @@ class PlayerExplosion : public Sprite {
 public:
 	PlayerExplosion(int x, int y);
 	virtual void CollisionResult(spritetype_t type);
+	virtual void AnimationFinish(void);
 	~PlayerExplosion(void);
 };

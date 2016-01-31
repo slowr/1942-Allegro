@@ -6,6 +6,7 @@
 #include "AnimatorHolder.h"
 #include "FrameRangeAnimation.h"
 #include "SpriteHolder.h"
+#include "LatelyDestroyable.h"
 
 class Player : public Sprite {
 	FrameRangeAnimator * animator;
@@ -18,5 +19,6 @@ public:
 	void Move(bool up, bool down, bool left, bool right, timestamp_t curr_timestamp);
 	const Point getPos() const;
 	virtual void CollisionResult(spritetype_t type);
+	virtual void AnimationFinish(void);
 	~Player(void);
 };

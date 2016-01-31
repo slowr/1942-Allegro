@@ -20,5 +20,6 @@ public:
 	static void FireBullets(PlayerBullet b[], Point p, timestamp_t curr_timestamp);
 	virtual void PlayerBullet::Draw(ALLEGRO_BITMAP *dest);
 	virtual void CollisionResult(spritetype_t type);
+	virtual void AnimationFinish(void);
 	~PlayerBullet(void);
 };
