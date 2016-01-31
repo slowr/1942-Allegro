@@ -54,6 +54,10 @@ void SpriteHolder::GetSprites(spritetype_t type, SpriteList* result) {
 		*result = i->second;
 }
 
+void SpriteHolder::SetPower(powertype_t p){
+	currPower = p;
+}
+
 void SpriteHolder::DrawSprites(ALLEGRO_BITMAP *dest){
 	for (int i = 0; i <= spritetype_t::EXPLOSION; i++){
 		SpriteList * result = new SpriteList();
