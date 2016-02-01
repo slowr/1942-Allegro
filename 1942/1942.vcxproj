@@ -98,6 +98,7 @@
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="SpriteHolder.h" />
     <ClInclude Include="types.h" />
+    <ClInclude Include="Waves.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="resources\1942_sprite_sheet.png" />
@@ -115,6 +116,7 @@
     <ClCompile Include="FrameListAnimation.cpp" />
     <ClCompile Include="FrameRangeAnimation.cpp" />
     <ClCompile Include="FrameRangeAnimator.cpp" />
+    <ClCompile Include="GameMenu.cpp" />
     <ClCompile Include="LatelyDestroyable.cpp" />
     <ClCompile Include="MovingAnimation.cpp" />
     <ClCompile Include="MovingAnimator.cpp" />

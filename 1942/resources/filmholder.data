@@ -67,16 +67,20 @@ enemy.explosion_small 6
 169 169 32 32
 202 169 32 32
 235 169 32 32
-resources/1945_sprite_sheet.bmp 4 0 0 0
-menu.back 1
+resources/1945_sprite_sheet.bmp 8 0 0 0
+game.menu_background 1
 103 577 276 139
-game.menu 5
+game.menu_playgame 1
 581 390 98 15
+game.menu_options 1
 581 407 75 15
+game.menu_credits 1
 581 427 75 15
+game.menu_scoring 1
 581 443 75 15
+game.menu_quit 1
 581 462 42 15
-menu.pointer 1
+game.menu_pointer 1
 570 390 7 12
 powerup.sprite 7
 74 140 13 10

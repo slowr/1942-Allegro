@@ -26,10 +26,6 @@ enum MYKEYS {
 	KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_P, KEY_SPACE, KEY_ENTER, KEY_ESCAPE
 };
 
-enum STATES{
-	PAUSED, PLAYING, MENU, EXIT
-};
-
 int main(int argc, char **argv)
 {
 	ALLEGRO_DISPLAY *display = NULL;
@@ -40,10 +36,11 @@ int main(int argc, char **argv)
 	BitmapLoader bitmapLoader;
 
 	bool key[8] = { false, false, false, false, false, false, false, false };
-	bool states[4] = { false, false, true, false };
 	bool redraw = true;
 	bool pause = false;
 	bool doexit = false;
+
+	gamestates_t state = gamestates_t::MENU;
 
 	int gameFps = 0;
 	unsigned long oldTick = 0;
@@ -91,12 +88,9 @@ int main(int argc, char **argv)
 
 	/* Load all animation films */
 	AnimationFilmHolder::Get().Load("resources/filmholder.data");
-	/* Initialize the bullet sprite */
-	PlayerBullet bullets[PlayerBullet::MAX_BULLETS];
-	/* Initialize the player sprite */
-	Player * player = new Player();
-	/* Initialize an enemy */
-	Enemy * enemy = new Enemy();
+	PlayerBullet * bullets;
+	Player * player;
+	Enemy * enemy;
 	/**********************/
 	GameMenu *menu = new GameMenu();
 
@@ -147,28 +141,9 @@ int main(int argc, char **argv)
 			y += (BG_SCROLL_SPEED / FPS);
 			redraw = true;
 
-			CollisionChecker::Get().Check();
-			if (states[PLAYING]) player->Move(key[KEY_UP], key[KEY_DOWN], key[KEY_LEFT], key[KEY_RIGHT], TIMESTAMP(tickCount));
-			else if (states[MENU]){
-				if (key[KEY_UP]) {
-					menu->MoveUp();
-					key[KEY_UP] = false;
-				}
-
-				if (key[KEY_DOWN]) {
-					menu->MoveDown();
-					key[KEY_DOWN] = false;
-				}
-
-				if (key[KEY_ENTER]){
-
-				}
-
-				if (key[KEY_ESCAPE]){
-					doexit = true;
-				}
-
-				menu->Update();
+			if (state == gamestates_t::PLAYING){
+				CollisionChecker::Get().Check();
+				player->Move(key[KEY_UP], key[KEY_DOWN], key[KEY_LEFT], key[KEY_RIGHT], TIMESTAMP(tickCount));
 			}
 
 			if (bgHeight - (SCREEN_H / bgScaleFactor) - y <= 0) {
@@ -179,11 +154,13 @@ int main(int argc, char **argv)
 		else if (ev.type == ALLEGRO_EVENT_KEY_DOWN) {
 			switch (ev.keyboard.keycode) {
 			case ALLEGRO_KEY_UP:
-				key[KEY_UP] = true;
+				if (state == gamestates_t::MENU) menu->MoveUp();
+				else key[KEY_UP] = true;
 				break;
 
 			case ALLEGRO_KEY_DOWN:
-				key[KEY_DOWN] = true;
+				if (state == gamestates_t::MENU) menu->MoveDown();
+				else key[KEY_DOWN] = true;
 				break;
 
 			case ALLEGRO_KEY_LEFT:
@@ -201,13 +178,18 @@ int main(int argc, char **argv)
 			case ALLEGRO_KEY_ENTER:
 				key[KEY_ENTER] = true;
 				if (menu->GetSelected() == 0){
-					states[PLAYING] = true; states[MENU] = false; menu->LeaveMenu(); y = 0;
+					state = gamestates_t::PLAYING;
+					menu->LeaveMenu(); 
+					y = 0;
 					tickCount = 0;
+					bullets = new PlayerBullet[MAX_BULLETS];
+					player = new Player();
+					enemy = new Enemy();
 				}
 				break;
 
 			case ALLEGRO_KEY_SPACE:
-				PlayerBullet::FireBullets(bullets, player->getPos(), TIMESTAMP(tickCount));
+				if (state == gamestates_t::PLAYING) PlayerBullet::FireBullets(bullets, player->getPos(), TIMESTAMP(tickCount));
 			}
 		}
 		else if (ev.type == ALLEGRO_EVENT_KEY_UP) {
@@ -249,10 +231,10 @@ int main(int argc, char **argv)
 				0, 0, bgScaledWidth, bgScaledHeight,
 				0);
 
-			if (states[MENU]){
-				menu->Draw(al_get_backbuffer(display));
+			if (state == gamestates_t::MENU){
+				SpriteHolder::Get().DrawSprites(al_get_backbuffer(display));
 			}
-			else if (states[PLAYING]){
+			else if (state == gamestates_t::PLAYING){
 				LatelyDestroyable::Destroy();
 				AnimatorHolder::Progress(TIMESTAMP(tickCount));
 				SpriteHolder::Get().DrawSprites(al_get_backbuffer(display));

@@ -14,9 +14,9 @@ protected:
 	Rect frameBox;
 	spritetype_t type;
 	spritestate_t state;
+	AnimationFilm* currFilm;
 	void NotifyCollision(Sprite* arg);
 public:
-	AnimationFilm* currFilm;
 	spritetype_t GetType(void);
 	spritestate_t GetState(void);
 	void SetState(spritestate_t _s);

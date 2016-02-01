@@ -16,6 +16,7 @@ const float FPS = 1000;
 const float SCREEN_W = 800;
 const float SCREEN_H = 600;
 const int BG_SCROLL_SPEED = 25;		// pixels per second
+const int MAX_BULLETS = 10;
 
 //timestamp_t getSystemTime(void){
 //	SYSTEMTIME time;
@@ -60,4 +61,8 @@ enum spritetype_t {
 
 enum spritestate_t {
 	ALIVE, DEAD, WAIT
+};
+
+enum gamestates_t {
+	PAUSED, PLAYING, MENU, EXIT
 };

@@ -12,7 +12,6 @@ class PlayerBullet : public Sprite {
 	const static int speed = 10;
 	const static int delay = 50;
 public:
-	const static int MAX_BULLETS = 10;
 	static timestamp_t last_timestamp;
 	PlayerBullet(void);
 	void FireBullet(Point p, timestamp_t curr_timestamp);

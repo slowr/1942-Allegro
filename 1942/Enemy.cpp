@@ -8,7 +8,7 @@ Enemy::Enemy(void) : Sprite(SCREEN_W / 2 - 32, SCREEN_H / 2, AnimationFilmHolder
 	float px, py;
 	float oldDx = x;
 	float oldDy = y;
-	float radius = 100;
+	float radius = 200;
 	// oss << radius << std::endl;
 	float center_x = x - radius;
 	float center_y = y;
@@ -21,6 +21,7 @@ Enemy::Enemy(void) : Sprite(SCREEN_W / 2 - 32, SCREEN_H / 2, AnimationFilmHolder
 		float dy_move = py - oldDy;
 		pE->dx = dx_move;
 		pE->dy = dy_move;
+
 		//oss << dx_move << ":" << dy_move << " ";
 		if (degrees >= 0 && degrees < 22.5)
 			pE->frame = 0;
@@ -41,7 +42,7 @@ Enemy::Enemy(void) : Sprite(SCREEN_W / 2 - 32, SCREEN_H / 2, AnimationFilmHolder
 		else if (degrees >= 337.5 && degrees <= 360)
 			pE->frame = 0;
 		pE->repetitions = 1;
-		pE->delay = 10;
+		pE->delay = 3000 / 360;
 		p.push_back(pE);
 		oldDx = px;
 		oldDy = py;

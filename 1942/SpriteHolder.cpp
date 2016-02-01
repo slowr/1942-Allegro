@@ -1,6 +1,7 @@
 #include "SpriteHolder.h"
 #include "SmallEnemyExplosion.h"
 #include "PlayerExplosion.h"
+#include "LatelyDestroyable.h"
 
 SpriteHolder SpriteHolder::holder;
 
@@ -69,7 +70,7 @@ void SpriteHolder::DrawSprites(ALLEGRO_BITMAP *dest){
 				if(s->GetType() == spritetype_t::ENEMY)	SmallEnemyExplosion * see = new SmallEnemyExplosion(s->GetX(), s->GetY());
 				else if (s->GetType() == spritetype_t::PLAYER) PlayerExplosion * see = new PlayerExplosion(s->GetX(), s->GetY());
 
-				(*it)->SetState(spritestate_t::WAIT);
+				LatelyDestroyable::Add(*it);
 			}
 		}
 	}
