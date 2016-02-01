@@ -61,32 +61,3 @@ enum spritetype_t {
 enum spritestate_t {
 	ALIVE, DEAD, WAIT
 };
-
-// enemy's specific type
-enum enemysubtype_t{
-	GREEN_MONO, GREEN_DOUBLE, GREEN_JET, GRAY_MONO, GRAY_DOUBLE, GRAY_JET, GREEN_MID, GRAY_MID, GREEN_LARGE, GRAY_LARGE, BOSS, RED 
-};
-
-enum powertype_t{
-	QUAD_GUN, ENEMY_CRASH, SIDE_FIGHTERS, EXTRA_LIFE, NO_ENEMY_BULLETS, EXTRA_LOOP, THOUSAND_POINTS
-};
-
-/*
-
-QUAD_GUN					Expands adouble barrel gun to a quad barrel gun, doubling the attack width (but not damage).
-
-ENEMY_CRASH					Every enemy currently on the screen will be instantly destroyed.
-
-SIDE_FIGHTERS				2 fighters spawn on either side of the player, moving and firing as assistance.
-							The fighters remain active until they crash into an enemy, get hit by a bullet, or the player loses a life.
-							TIP: If they collide with a larger plane (besides boss planes), they are instantly destroyed.
-							Collecting the Side Fighters POV while having an active side fighter gives 1000 bonus points.
-
-EXTRA_LIFE					Earn one extra life.
-
-NO_ENEMY_BULLETS			Enemies that are not large planes cannot fire any bullets for a limited time.
-
-EXTRA_LOOP					Earn one extra loop maneuver only for one stage.
-
-1000_POINTS					Gives 1000 points.
-*/

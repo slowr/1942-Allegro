@@ -93,7 +93,6 @@
     <ClInclude Include="MovingPathAnimation.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerExplosion.h" />
-    <ClInclude Include="PowerUp.h" />
     <ClInclude Include="ScrollAnimation.h" />
     <ClInclude Include="SmallEnemyExplosion.h" />
     <ClInclude Include="Sprite.h" />
