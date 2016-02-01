@@ -27,7 +27,7 @@ void PlayerBullet::StopBullet(){
 }
 
 void PlayerBullet::FireBullets(PlayerBullet b[], Point p, timestamp_t curr_timestamp){
-	if (curr_timestamp - last_timestamp > 50){
+	if (curr_timestamp - last_timestamp > 500){
 		for (int i = 0; i < MAX_BULLETS; i++){
 			if (!b[i].isVisible){
 				b[i].FireBullet(p, curr_timestamp);

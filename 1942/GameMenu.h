@@ -9,9 +9,6 @@ private:
 	std::vector<Sprite *> * Menu;
 	float pos_x;
 	float pos_y;
-	float point_x;
-	float point_y;
-	int positions[5];
 	int currentPos = 0;
 
 public:

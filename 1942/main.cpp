@@ -136,7 +136,9 @@ int main(int argc, char **argv)
 			if (key[KEY_UP]){}
 			if (key[KEY_DOWN]){}
 			if (key[KEY_LEFT]){}
-			if (key[KEY_RIGHT]){}
+			if (key[KEY_SPACE]){
+				if (state == gamestates_t::PLAYING) PlayerBullet::FireBullets(bullets, player->getPos(), TIMESTAMP(tickCount));
+			}
 
 			y += (BG_SCROLL_SPEED / FPS);
 			redraw = true;
@@ -189,7 +191,9 @@ int main(int argc, char **argv)
 				break;
 
 			case ALLEGRO_KEY_SPACE:
-				if (state == gamestates_t::PLAYING) PlayerBullet::FireBullets(bullets, player->getPos(), TIMESTAMP(tickCount));
+				key[KEY_SPACE] = true;
+				break;
+
 			}
 		}
 		else if (ev.type == ALLEGRO_EVENT_KEY_UP) {
@@ -212,6 +216,10 @@ int main(int argc, char **argv)
 
 			case ALLEGRO_KEY_ENTER:
 				key[KEY_ENTER] = false;
+				break;
+
+			case ALLEGRO_KEY_SPACE:
+				key[KEY_SPACE] = false;
 				break;
 
 			case ALLEGRO_KEY_ESCAPE:
