@@ -176,6 +176,9 @@
     <ClInclude Include="types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PowerUp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="resources\1942_sprite_sheet.png">
