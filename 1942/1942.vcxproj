@@ -69,6 +69,7 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="resources\filmholder.data" />
+    <None Include="resources\MovementStepsRadius.data" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animation.h" />

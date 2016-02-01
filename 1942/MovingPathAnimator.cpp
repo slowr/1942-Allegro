@@ -26,7 +26,6 @@ void MovingPathAnimator::Progress(timestamp_t currTime) {
 		lastTime += p->delay;
 
 		if (anim->GetPath().empty()) {
-			std::cout << "ADSDSADSADSASD" << std::endl;
 			state = ANIMATOR_FINISHED;
 			NotifyStopped();
 			return;

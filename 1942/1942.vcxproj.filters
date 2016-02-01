@@ -19,6 +19,9 @@
     <None Include="resources\filmholder.data">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="resources\MovementStepsRadius.data">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -96,82 +99,82 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animation.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="AnimationFilm.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="AnimationFilmHolder.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Animator.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="AnimatorHolder.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BitmapLoader.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FlashAnimation.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FrameListAnimation.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FrameRangeAnimation.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FrameRangeAnimator.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MovingAnimation.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MovingAnimator.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MovingPathAnimation.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ScrollAnimation.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sprite.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="types.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Player.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SpriteHolder.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CollisionChecker.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Enemy.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerBullet.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="FlashAnimation.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SmallEnemyExplosion.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="FrameListAnimation.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LatelyDestroyable.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="FrameRangeAnimation.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerExplosion.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="FrameRangeAnimator.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GameMenu.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LatelyDestroyable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MovingAnimation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MovingAnimator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MovingPathAnimation.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MovingPathAnimator.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerBullet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerExplosion.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ScrollAnimation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SmallEnemyExplosion.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sprite.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SpriteHolder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="types.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
