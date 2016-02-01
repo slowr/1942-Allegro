@@ -78,3 +78,12 @@ game.menu 5
 581 462 42 15
 menu.pointer 1
 570 390 7 12
+resources/1942_sprite_sheet.bmp
+powerup.sprite 7
+74 140 13 10
+6 140 13 10
+40 140 13 10
+23 140 13 10
+57 140 13 10
+91 140 13 10
+108 140 13 10
