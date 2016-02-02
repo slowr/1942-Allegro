@@ -106,6 +106,7 @@
     <Image Include="resources\1942_sprite_sheet.png" />
     <Image Include="resources\1945_sprite_sheet.bmp" />
     <Image Include="resources\sample_terrain.bmp" />
+    <Image Include="resources\tumble.png" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimationFilm.cpp" />

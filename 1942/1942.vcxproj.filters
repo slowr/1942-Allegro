@@ -205,5 +205,8 @@
     <Image Include="resources\sample_terrain.bmp">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="resources\tumble.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

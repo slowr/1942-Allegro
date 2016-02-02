@@ -13,7 +13,7 @@ void Enemy::AnimationInit(){
 	std::list<PathEntry *> p;
 	PathEntry * pE;
 	switch (subtype){
-	case RED:
+	case enemysubtype_t::RED:
 		pE = new PathEntry();
 		pE->dx = 5;
 		pE->dy = 0;
@@ -27,6 +27,9 @@ void Enemy::AnimationInit(){
 		animator->SetOnFinish(OnAnimationFinish, this);
 		AnimatorHolder::Register(animator);
 		AnimatorHolder::MarkAsRunning(animator);
+		break;
+	case enemysubtype_t::GRAY_MONO:
+
 		break;
 	default:
 		//std::ostringstream oss;
