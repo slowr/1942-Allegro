@@ -93,6 +93,7 @@
     <ClInclude Include="MovingPathAnimation.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerExplosion.h" />
+    <ClInclude Include="PowerUp.h" />
     <ClInclude Include="ScrollAnimation.h" />
     <ClInclude Include="SmallEnemyExplosion.h" />
     <ClInclude Include="Sprite.h" />
@@ -125,6 +126,7 @@
     <ClCompile Include="CollisionChecker.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PlayerExplosion.cpp" />
+    <ClCompile Include="PowerUp.cpp" />
     <ClCompile Include="ScrollAnimation.cpp" />
     <ClCompile Include="SmallEnemyExplosion.cpp" />
     <ClCompile Include="Sprite.cpp" />
