@@ -11,13 +11,16 @@
 #include "LatelyDestroyable.h"
 
 class Enemy : public Sprite {
-	MovingPathAnimator * animator;
-	MovingPathAnimation * animation;
+	enemysubtype_t subtype;
+	Animator * animator;
+	Animation * animation;
 	timestamp_t last_timestamp;
 	const static int speed = 5;
 	const static int delay = 50;
 public:
-	Enemy(void);
+	enemysubtype_t GetSubType();
+	void AnimationInit();
+	Enemy(float _x, float _y, std::string sprite, enemysubtype_t t);
 	virtual void CollisionResult(spritetype_t type);
 	virtual void AnimationFinish(void);
 	~Enemy(void);

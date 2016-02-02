@@ -1,12 +1,53 @@
 #include "Player.h"
 
+void Player::movementAnimatorCallback(Animator *a, void *c){
+	LatelyDestroyable::Add(a);
+}
+
 Player::Player(void) : Sprite(SCREEN_W / 2 - AnimationFilmHolder::Get().GetFilm("player.sprite")->GetFrameBox(0).w / 2, SCREEN_H - AnimationFilmHolder::Get().GetFilm("player.sprite")->GetFrameBox(0).h, AnimationFilmHolder::Get().GetFilm("player.sprite"), spritetype_t::PLAYER){
-	animation = new FrameRangeAnimation(0, 2, 0, 0, delay, true, 1);
-	animator = new FrameRangeAnimator();
-	animator->Start(this, animation, 0);
-	AnimatorHolder::Register(animator);
-	AnimatorHolder::MarkAsRunning(animator);
+	
+	leftAnimation = new FrameRangeAnimation(4, 6, 0, 0, delay, false, 1);
+	leftAnimator = new FrameRangeAnimator();
+	leftAnimator->SetOnFinish(movementAnimatorCallback, this);
+	leftAnimator->Start(this, leftAnimation, TIMESTAMP(tickCount));
+
+	rightAnimation = new FrameRangeAnimation(1, 3, 0, 0, delay, false, 1);
+	rightAnimator = new FrameRangeAnimator();
+	rightAnimator->SetOnFinish(movementAnimatorCallback, this);
+	rightAnimator->Start(this, rightAnimation, TIMESTAMP(tickCount));
+
+	//tumbleAnimation = new FrameRangeAnimation()
+
+	AnimatorHolder::Register(leftAnimator);
+	AnimatorHolder::Register(rightAnimator);
 	last_timestamp = 0;
+}
+
+void Player::StopMoving(){
+	SetFrame(0);
+	movement = NONE;
+	AnimatorHolder::MarkAsSuspended(leftAnimator);
+	AnimatorHolder::MarkAsSuspended(rightAnimator);
+}
+
+void Player::MoveLeft(){
+	if (movement == LEFT) return;
+	AnimatorHolder::MarkAsSuspended(rightAnimator);
+	leftAnimator->Start(this, leftAnimation, TIMESTAMP(tickCount));
+	AnimatorHolder::MarkAsRunning(leftAnimator);
+	movement = LEFT;
+}
+
+void Player::MoveRight(){
+	if (movement == RIGHT) return;
+	AnimatorHolder::MarkAsSuspended(leftAnimator);
+	rightAnimator->Start(this, rightAnimation, TIMESTAMP(tickCount));
+	AnimatorHolder::MarkAsRunning(rightAnimator);
+	movement = RIGHT;
+}
+
+void Player::Tumble(){
+	//TO DO
 }
 
 void Player::Move(bool up, bool down, bool left, bool right, timestamp_t curr_timestamp){
@@ -34,10 +75,12 @@ const Point Player::getPos() const {
 }
 
 void Player::CollisionResult(spritetype_t type){
+	
 	switch (type){
 	case spritetype_t::ENEMY:
 	case spritetype_t::ENEMY_BULLET:
 		state = spritestate_t::DEAD;
+		lifes--;
 		isVisible = false;
 		break;
 	}
@@ -49,8 +92,12 @@ void Player::AnimationFinish(void){
 
 
 Player::~Player(){
-	AnimatorHolder::MarkAsSuspended(animator);
-	AnimatorHolder::Cancel(animator);
-	delete animator;
-	delete animation;
+	AnimatorHolder::MarkAsSuspended(leftAnimator);
+	AnimatorHolder::Cancel(leftAnimator);
+	delete leftAnimator;
+	delete leftAnimation;
+	AnimatorHolder::MarkAsSuspended(rightAnimator);
+	AnimatorHolder::Cancel(rightAnimator);
+	delete rightAnimator;
+	delete rightAnimation;
 }

@@ -1,8 +1,8 @@
 #include "MovingPathAnimator.h"
 
-void MovingPathAnimator::Start(Sprite* s, MovingPathAnimation* a, timestamp_t t) {
+void MovingPathAnimator::Start(Sprite* s, Animation* a, timestamp_t t) {
 	sprite = s;
-	anim = a;
+	anim = (MovingPathAnimation *)a;
 	lastTime = t;
 	state = ANIMATOR_RUNNING;
 }

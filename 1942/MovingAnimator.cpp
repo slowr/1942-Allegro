@@ -1,8 +1,8 @@
 #include "MovingAnimator.h"
 
-void MovingAnimator::Start(Sprite* s, MovingAnimation* a, timestamp_t t) {
+void MovingAnimator::Start(Sprite* s, Animation* a, timestamp_t t) {
 	sprite = s;
-	anim = a;
+	anim = (MovingAnimation *) a;
 	lastTime = t;
 	state = ANIMATOR_RUNNING;
 }

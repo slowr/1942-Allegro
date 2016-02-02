@@ -19,6 +19,7 @@
 #include "Enemy.h"
 #include "LatelyDestroyable.h"
 #include "GameMenu.h"
+#include "Waves.h"
 
 unsigned long tickCount = 0;
 
@@ -30,8 +31,17 @@ enum STATES{
 	PAUSED, PLAYING, MENU, EXIT
 };
 
+timestamp_t getSystemTime(void){
+	SYSTEMTIME time;
+	GetSystemTime(&time);
+	return (time.wSecond * 1000) + time.wMilliseconds;
+}
+
 int main(int argc, char **argv)
 {
+	srand(getSystemTime());
+
+	std::vector<Enemy*> reds;
 	ALLEGRO_DISPLAY *display = NULL;
 	ALLEGRO_EVENT_QUEUE *event_queue = NULL;
 	ALLEGRO_TIMER *timer = NULL;
@@ -40,7 +50,7 @@ int main(int argc, char **argv)
 	BitmapLoader bitmapLoader;
 
 	bool key[8] = { false, false, false, false, false, false, false, false };
-	bool states[4] = { false, false, true, false };
+	bool states[4] = { false, true , false, false };
 	bool redraw = true;
 	bool pause = false;
 	bool doexit = false;
@@ -89,16 +99,20 @@ int main(int argc, char **argv)
 	float bgScaleFactor = ((float)bgScaledWidth / (float)bgWidth);
 	float bgScaledHeight = bgScaleFactor * bgHeight;
 
+	//Waves::Get().CreateWaves("resources/waves_init.data");
 	/* Load all animation films */
-	AnimationFilmHolder::Get().Load("resources/filmholder.data");
+	AnimationFilmHolder::Get().Load("resources/deeznutz.data");
 	/* Initialize the bullet sprite */
 	PlayerBullet bullets[PlayerBullet::MAX_BULLETS];
 	/* Initialize the player sprite */
 	Player * player = new Player();
 	/* Initialize an enemy */
-	Enemy * enemy = new Enemy();
+	//Enemy * enemy = new Enemy(50,50, "green.jet", RED);
+	for (int i = 0; i < 5; i++){
+		reds.push_back(new Enemy(-i*30, 300, "red.plane", enemysubtype_t::RED));
+	}
 	/**********************/
-	GameMenu *menu = new GameMenu();
+	//GameMenu *menu = new GameMenu();
 
 
 	fprintf(stderr, "Loaded scrolling background [%f, %f]\n",
@@ -144,12 +158,23 @@ int main(int argc, char **argv)
 			if (key[KEY_LEFT]){}
 			if (key[KEY_RIGHT]){}
 
+			if (key[KEY_LEFT] && !key[KEY_RIGHT]){
+				player->MoveLeft();
+			} else if (key[KEY_RIGHT] && !key[KEY_LEFT]){
+				player->MoveRight();
+			} else if (!key[KEY_LEFT] && !key[KEY_RIGHT]){
+				player->StopMoving();
+			} else if (key[KEY_LEFT] && key[KEY_RIGHT]){
+				player->StopMoving();
+			}
+
 			y += (BG_SCROLL_SPEED / FPS);
 			redraw = true;
 
 			CollisionChecker::Get().Check();
+			//Waves::Get().SpawnWave(tickCount);
 			if (states[PLAYING]) player->Move(key[KEY_UP], key[KEY_DOWN], key[KEY_LEFT], key[KEY_RIGHT], TIMESTAMP(tickCount));
-			else if (states[MENU]){
+			/*else if (states[MENU]){
 				if (key[KEY_UP]) {
 					menu->MoveUp();
 					key[KEY_UP] = false;
@@ -169,7 +194,7 @@ int main(int argc, char **argv)
 				}
 
 				menu->Update();
-			}
+			}*/
 
 			if (bgHeight - (SCREEN_H / bgScaleFactor) - y <= 0) {
 				// TODO: done scrolling!
@@ -192,18 +217,20 @@ int main(int argc, char **argv)
 
 			case ALLEGRO_KEY_RIGHT:
 				key[KEY_RIGHT] = true;
+
 				break;
 
 			case ALLEGRO_KEY_P:
+				std::cout << "THIS" << tickCount << std::endl;
 				pause = !pause;
 				break;
 
 			case ALLEGRO_KEY_ENTER:
 				key[KEY_ENTER] = true;
-				if (menu->GetSelected() == 0){
+				/*if (menu->GetSelected() == 0){
 					states[PLAYING] = true; states[MENU] = false; menu->LeaveMenu(); y = 0;
 					tickCount = 0;
-				}
+				}*/
 				break;
 
 			case ALLEGRO_KEY_SPACE:
@@ -249,10 +276,11 @@ int main(int argc, char **argv)
 				0, 0, bgScaledWidth, bgScaledHeight,
 				0);
 
-			if (states[MENU]){
+			/*if (states[MENU]){
 				menu->Draw(al_get_backbuffer(display));
 			}
-			else if (states[PLAYING]){
+			else*/ 
+			if (states[PLAYING]){
 				LatelyDestroyable::Destroy();
 				AnimatorHolder::Progress(TIMESTAMP(tickCount));
 				SpriteHolder::Get().DrawSprites(al_get_backbuffer(display));

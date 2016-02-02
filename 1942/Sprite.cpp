@@ -14,6 +14,14 @@ spritestate_t Sprite::GetState(void) {
 	return state;
 }
 
+void Sprite::SetX(float _x){
+	x = _x;
+}
+
+void Sprite::SetY(float _y){
+	y = _y;
+}
+
 void Sprite::SetState(spritestate_t _s) {
 	state = _s;
 }

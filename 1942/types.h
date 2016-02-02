@@ -17,12 +17,6 @@ const float SCREEN_W = 800;
 const float SCREEN_H = 600;
 const int BG_SCROLL_SPEED = 25;		// pixels per second
 
-//timestamp_t getSystemTime(void){
-//	SYSTEMTIME time;
-//	GetSystemTime(&time);
-//	return (time.wSecond * 1000) + time.wMilliseconds;
-//}
-
 class Point
 {
 public:

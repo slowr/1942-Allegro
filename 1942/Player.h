@@ -8,11 +8,23 @@
 #include "SpriteHolder.h"
 #include "LatelyDestroyable.h"
 
+enum playermovement_t {
+	LEFT, RIGHT, NONE
+};
+
 class Player : public Sprite {
-	FrameRangeAnimator * animator;
-	FrameRangeAnimation * animation;
+	FrameRangeAnimator * leftAnimator;
+	FrameRangeAnimation * leftAnimation;
+	FrameRangeAnimator * rightAnimator;
+	FrameRangeAnimation * rightAnimation;
+	FrameRangeAnimator * tumbleAnimator;
+	FrameRangeAnimation * tumbleAnimation;
 	timestamp_t last_timestamp;
+	playermovement_t movement;
 	const static int delay = 200;
+	unsigned lifes = 3;
+
+	static void movementAnimatorCallback(Animator *, void *);
 public:
 	const static int speed = 5;
 	Player(void);
@@ -20,5 +32,9 @@ public:
 	const Point getPos() const;
 	virtual void CollisionResult(spritetype_t type);
 	virtual void AnimationFinish(void);
+	void Tumble();
+	void MoveLeft();
+	void MoveRight();
+	void StopMoving();
 	~Player(void);
 };

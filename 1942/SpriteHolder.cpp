@@ -1,6 +1,7 @@
 #include "SpriteHolder.h"
 #include "SmallEnemyExplosion.h"
 #include "PlayerExplosion.h"
+#include "Enemy.h"
 
 SpriteHolder SpriteHolder::holder;
 
@@ -81,10 +82,13 @@ void SpriteHolder::DrawSprites(ALLEGRO_BITMAP *dest){
 				s->Draw(dest);
 			}
 			else if (state == spritestate_t::DEAD) {
-				if(s->GetType() == spritetype_t::ENEMY)	SmallEnemyExplosion * see = new SmallEnemyExplosion(s->GetX(), s->GetY());
+				if (s->GetType() == spritetype_t::ENEMY){
+					LatelyDestroyable::Add(s);
+					SmallEnemyExplosion * see = new SmallEnemyExplosion(s->GetX(), s->GetY());
+				}
 				else if (s->GetType() == spritetype_t::PLAYER) PlayerExplosion * see = new PlayerExplosion(s->GetX(), s->GetY());
 
-				(*it)->SetState(spritestate_t::WAIT);
+				s->SetState(spritestate_t::WAIT);
 			}
 		}
 	}

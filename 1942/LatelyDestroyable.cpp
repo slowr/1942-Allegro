@@ -1,15 +1,40 @@
 #include "LatelyDestroyable.h"
+#include "Enemy.h"
+#include "PowerUp.h"
 
 DeadList LatelyDestroyable::dead;
+toBeSuspendedAnimatorsList LatelyDestroyable::toBeSuspendedAnimators;
+int LatelyDestroyable::RedPlanesDestroyed;
 
 void LatelyDestroyable::Add(Sprite *o){
 	dead.push_back(o);
 }
 
+void LatelyDestroyable::Add(Animator *a){
+	toBeSuspendedAnimators.push_back(a);
+}
+
 void LatelyDestroyable::Destroy(void){
 	for (DeadList::iterator it = dead.begin(); it != dead.end(); ++it){
+		Sprite *s = (*it);
+		std::cout << "Destroying sprite with type " << s->GetType() << std::endl;
+		if (s->GetType() == spritetype_t::ENEMY && ((Enemy *)s)->GetSubType() == enemysubtype_t::RED){
+			std::cout << "Red plane destroyed" << std::endl;
+
+			if (++RedPlanesDestroyed == 5){
+				new PowerUp(s->GetX(), s->GetY(), (powertype_t) (rand() % 7));
+				RedPlanesDestroyed = 0;
+			}
+		}
 		delete (*it);
 	}
+
+	for (toBeSuspendedAnimatorsList::iterator it = toBeSuspendedAnimators.begin(); it != toBeSuspendedAnimators.end(); ++it){
+		AnimatorHolder::MarkAsSuspended(*it);
+	}
+
+	if (!toBeSuspendedAnimators.empty()) toBeSuspendedAnimators.clear();
+
 	if(!dead.empty()) dead.clear();
 }
 

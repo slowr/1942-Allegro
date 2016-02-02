@@ -24,6 +24,8 @@ public:
 	void CollisionCheck(Sprite* s);
 	void SetFrame(byte i);
 	byte GetFrame(void) const;
+	void SetX(float _x);
+	void SetY(float _y);
 	float GetX(void);
 	float GetY(void);
 	bool IsVisible(void) const;
