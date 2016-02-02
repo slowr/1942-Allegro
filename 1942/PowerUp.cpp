@@ -32,8 +32,8 @@ PowerUp::PowerUp(float _dx, float _dy, powertype_t _power) : Sprite(_dx, _dy, An
 	}
 }
 
-void PowerUp::CollisionResult(spritetype_t type){
-	switch (type){
+void PowerUp::CollisionResult(Sprite *s){
+	switch (s->GetType()){
 	case spritetype_t::PLAYER:
 		SpriteHolder::Get().SetPower(power);
 		state = spritestate_t::DEAD;

@@ -25,7 +25,7 @@ private:
 	static Waves waves;
 	bool isSpawnTime(timestamp_t time);
 public:
-	void CreateWaves(const std::string& path);		// initializes waves
+	void CreateWaves();		// initializes waves
 	void DestroyLastWave(bool d);							// destroys last wave
 	bool isCheckPoint(timestamp_t time);			// decide if timestamp is checkpoint
 	void SpawnWave(timestamp_t time);				// spawn wave after delay

@@ -68,6 +68,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="resources\deeznutz.data" />
     <None Include="resources\filmholder.data" />
     <None Include="resources\MovementStepsRadius.data" />
   </ItemGroup>
@@ -99,6 +100,7 @@
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="SpriteHolder.h" />
     <ClInclude Include="types.h" />
+    <ClInclude Include="Waves.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="resources\1942_sprite_sheet.png" />
@@ -116,6 +118,7 @@
     <ClCompile Include="FrameListAnimation.cpp" />
     <ClCompile Include="FrameRangeAnimation.cpp" />
     <ClCompile Include="FrameRangeAnimator.cpp" />
+    <ClCompile Include="GameMenu.cpp" />
     <ClCompile Include="LatelyDestroyable.cpp" />
     <ClCompile Include="MovingAnimation.cpp" />
     <ClCompile Include="MovingAnimator.cpp" />
@@ -131,6 +134,7 @@
     <ClCompile Include="SmallEnemyExplosion.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="SpriteHolder.cpp" />
+    <ClCompile Include="Waves.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

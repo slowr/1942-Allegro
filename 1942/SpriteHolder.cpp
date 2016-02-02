@@ -71,7 +71,7 @@ void SpriteHolder::SetPower(powertype_t p){
 }
 
 void SpriteHolder::DrawSprites(ALLEGRO_BITMAP *dest){
-	for (int i = 0; i <= spritetype_t::EXPLOSION; i++){
+	for (int i = 0; i <= spritetype_t::UI; i++){
 		SpriteList * result = new SpriteList();
 		GetSprites((spritetype_t)i, result);
 		for (std::list<Sprite *>::iterator it = result->begin(); it != result->end(); ++it){

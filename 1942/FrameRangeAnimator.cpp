@@ -20,7 +20,10 @@ void FrameRangeAnimator::Progress(timestamp_t currTime) {
 			std::cout << "LOL" << std::endl;
 			currFrame = anim->GetStartFrame();
 		} else {
-			++currFrame;
+			if (anim->GetStartFrame() > anim->GetEndFrame())
+				--currFrame;
+			else
+				++currFrame;
 		}
 		sprite->Move(anim->GetDx(), anim->GetDy());
 		sprite->SetFrame(currFrame);

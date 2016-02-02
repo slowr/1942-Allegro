@@ -4,12 +4,12 @@
 #include "Sprite.h"
 #include "FrameRangeAnimator.h"
 #include "AnimatorHolder.h"
-#include "FrameRangeAnimation.h"
+#include "MovingPathAnimator.h"
 #include "SpriteHolder.h"
 #include "LatelyDestroyable.h"
 
 enum playermovement_t {
-	LEFT, RIGHT, NONE
+	LEFT, RIGHT, NONE, TUMBLE
 };
 
 class Player : public Sprite {
@@ -17,24 +17,31 @@ class Player : public Sprite {
 	FrameRangeAnimation * leftAnimation;
 	FrameRangeAnimator * rightAnimator;
 	FrameRangeAnimation * rightAnimation;
-	FrameRangeAnimator * tumbleAnimator;
-	FrameRangeAnimation * tumbleAnimation;
+	FrameRangeAnimator * revleftAnimator;
+	FrameRangeAnimation * revleftAnimation;
+	FrameRangeAnimator * revrightAnimator;
+	FrameRangeAnimation * revrightAnimation;
+	MovingPathAnimator * tumbleAnimator;
+	MovingPathAnimation * tumbleAnimation;
 	timestamp_t last_timestamp;
 	playermovement_t movement;
+	std::list<PathEntry *> tumbleList;
 	const static int delay = 200;
 	unsigned lifes = 3;
 
 	static void movementAnimatorCallback(Animator *, void *);
+	static void tumbleAnimatorCallback(Animator *, void *);
 public:
 	const static int speed = 5;
 	Player(void);
 	void Move(bool up, bool down, bool left, bool right, timestamp_t curr_timestamp);
 	const Point getPos() const;
-	virtual void CollisionResult(spritetype_t type);
+	virtual void CollisionResult(Sprite *s);
 	virtual void AnimationFinish(void);
 	void Tumble();
 	void MoveLeft();
 	void MoveRight();
 	void StopMoving();
+	playermovement_t GetMovement();
 	~Player(void);
 };

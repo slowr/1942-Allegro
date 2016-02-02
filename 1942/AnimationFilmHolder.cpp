@@ -21,7 +21,7 @@ void AnimationFilmHolder::Load(const std::string& catalogue) {
 
 				path = strtok(buf, DELIMITER);
 				numBitmaps = atoi(strtok(0, DELIMITER));
-				std::cout << "Going to read " << numBitmaps << " sprites" << std::endl;
+				//std::cout << "Going to read " << numBitmaps << " sprites" << std::endl;
 				r = atoi(strtok(0, DELIMITER));
 				g = atoi(strtok(0, DELIMITER));
 				b = atoi(strtok(0, DELIMITER));
@@ -43,7 +43,7 @@ void AnimationFilmHolder::Load(const std::string& catalogue) {
 
 					id = strtok(buf, DELIMITER);
 					numFrames = atoi(strtok(0, DELIMITER));
-					std::cout << "Reading sprite with name " << id << " and " << numFrames << " frames." << std::endl;
+					//std::cout << "Reading sprite with name " << id << " and " << numFrames << " frames." << std::endl;
 				}
 				{
 					for (int i = 0; i < numFrames; i++){
@@ -54,7 +54,7 @@ void AnimationFilmHolder::Load(const std::string& catalogue) {
 						y = atoi(strtok(0, DELIMITER));
 						w = atoi(strtok(0, DELIMITER));
 						h = atoi(strtok(0, DELIMITER));
-						std::cout << "New rect [" << x << ", " << y << ", " << w << ", " << h << "]" << std::endl;
+						//std::cout << "New rect [" << x << ", " << y << ", " << w << ", " << h << "]" << std::endl;
 						rects.push_back(Rect(Point(x, y), w, h));
 
 						/*

@@ -31,7 +31,7 @@ public:
 	bool IsVisible(void) const;
 	void Move(offset_t dx, offset_t dy);
 	Sprite(float _x, float _y, AnimationFilm* film, spritetype_t _type);
-	virtual void CollisionResult(spritetype_t type) {};
+	virtual void CollisionResult(Sprite *s) {};
 	virtual void Draw(ALLEGRO_BITMAP * dest);
 	virtual void AnimationFinish(void) {};
 	virtual ~Sprite();

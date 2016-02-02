@@ -11,7 +11,7 @@ Sprite(x, y, AnimationFilmHolder::Get().GetFilm("player.explosion"), spritetype_
 	AnimatorHolder::MarkAsRunning(animator);
 }
 
-void PlayerExplosion::CollisionResult(spritetype_t type){
+void PlayerExplosion::CollisionResult(Sprite *s){
 	return;
 }
 

@@ -14,8 +14,8 @@ PlayerBullet::PlayerBullet(void) : Sprite(0, 0, AnimationFilmHolder::Get().GetFi
 void PlayerBullet::FireBullet(Point p, timestamp_t curr_timestamp){
 	animator->TimeSet(curr_timestamp);
 	state = spritestate_t::ALIVE;
-	x = p.x + AnimationFilmHolder::Get().GetFilm("player.sprite")->GetFrameBox(0).w / 4;
-	y = p.y - AnimationFilmHolder::Get().GetFilm("player.sprite")->GetFrameBox(0).h / 4;
+	x = p.x + AnimationFilmHolder::Get().GetFilm("player.sprite")->GetFrameBox(0).w / 3 * ScaleFactor;
+	y = p.y - AnimationFilmHolder::Get().GetFilm("player.sprite")->GetFrameBox(0).h / 3 * ScaleFactor;
 	AnimatorHolder::MarkAsRunning(animator);
 	isVisible = true;
 }
@@ -27,7 +27,7 @@ void PlayerBullet::StopBullet(){
 }
 
 void PlayerBullet::FireBullets(PlayerBullet b[], Point p, timestamp_t curr_timestamp){
-	if (curr_timestamp - last_timestamp > 50){
+	if (curr_timestamp - last_timestamp > 250){
 		for (int i = 0; i < MAX_BULLETS; i++){
 			if (!b[i].isVisible){
 				b[i].FireBullet(p, curr_timestamp);
@@ -43,8 +43,8 @@ void PlayerBullet::Draw(ALLEGRO_BITMAP *dest){
 	else currFilm->DisplayFrame(dest, Point(x, y), frameNo);
 }
 
-void PlayerBullet::CollisionResult(spritetype_t type){
-	switch (type){
+void PlayerBullet::CollisionResult(Sprite *s){
+	switch (s->GetType()){
 	case spritetype_t::ENEMY:
 		StopBullet();
 		break;

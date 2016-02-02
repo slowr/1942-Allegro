@@ -2,8 +2,8 @@
 #include "SpriteHolder.h"
 
 void Sprite::NotifyCollision(Sprite* arg){
-	this->CollisionResult(arg->GetType());
-	arg->CollisionResult(this->GetType());
+	this->CollisionResult(arg);
+	arg->CollisionResult(this);
 }
 
 spritetype_t Sprite::GetType(void) {
@@ -31,12 +31,12 @@ void Sprite::CollisionCheck(Sprite* s){
 	float x1, y1, x2, y2, x3, y3, x4, y4;
 	x1 = x;
 	y1 = y;
-	x2 = x + frameBox.w;
-	y2 = y + frameBox.h;
+	x2 = x + frameBox.w * 2;
+	y2 = y + frameBox.h * 2;
 	x3 = s->x;
 	y3 = s->y;
-	x4 = s->x + s->frameBox.w;
-	y4 = s->y + s->frameBox.h;
+	x4 = s->x + s->frameBox.w * ScaleFactor * 0.85;
+	y4 = s->y + s->frameBox.h * ScaleFactor * 0.85;
 	if (!(x4 < x1 || x2 < x3 || y4 < y1 || y2 < y3)){
 		NotifyCollision(s);
 	}

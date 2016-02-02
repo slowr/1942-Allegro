@@ -21,7 +21,7 @@ public:
 	enemysubtype_t GetSubType();
 	void AnimationInit();
 	Enemy(float _x, float _y, std::string sprite, enemysubtype_t t);
-	virtual void CollisionResult(spritetype_t type);
+	virtual void CollisionResult(Sprite *s);
 	virtual void AnimationFinish(void);
 	~Enemy(void);
 };

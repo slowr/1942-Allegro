@@ -11,11 +11,13 @@ typedef unsigned short animid_t;
 typedef unsigned long timestamp_t;
 
 extern unsigned long tickCount;
+extern float ScaleFactor;
 
 const float FPS = 1000;
 const float SCREEN_W = 800;
 const float SCREEN_H = 600;
 const int BG_SCROLL_SPEED = 25;		// pixels per second
+const int MAX_BULLETS = 10;
 
 class Point
 {
@@ -49,11 +51,15 @@ public:
 };
 
 enum spritetype_t {
-	PLAYER, PLAYER_BULLET, ENEMY_BULLET, ENEMY, POWER_UP, UI, EXPLOSION
+	PLAYER_BULLET, ENEMY_BULLET, ENEMY, POWER_UP, PLAYER, EXPLOSION, UI
 };
 
 enum spritestate_t {
 	ALIVE, DEAD, WAIT
+};
+
+enum gamestates_t {
+	PAUSED, PLAYING, MENU, EXIT
 };
 
 // enemy's specific type

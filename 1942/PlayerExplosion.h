@@ -13,7 +13,7 @@ class PlayerExplosion : public Sprite {
 	const static int delay = 200;
 public:
 	PlayerExplosion(int x, int y);
-	virtual void CollisionResult(spritetype_t type);
+	virtual void CollisionResult(Sprite *s);
 	virtual void AnimationFinish(void);
 	~PlayerExplosion(void);
 };

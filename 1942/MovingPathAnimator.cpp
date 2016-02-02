@@ -20,7 +20,7 @@ void MovingPathAnimator::Progress(timestamp_t currTime) {
 		sprite->SetFrame(p->frame);
 
 		if (--p->repetitions == 0) {
-			anim->GetPath().pop_front();
+			anim->GetPath().remove(p);
 		}
 
 		lastTime += p->delay;

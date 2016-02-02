@@ -9,7 +9,7 @@ class PowerUp : public Sprite
 private:
 	powertype_t power;
 public:
-	void CollisionResult(spritetype_t type);
+	void CollisionResult(Sprite *s);
 	PowerUp(float _dx, float _dy, powertype_t _power);
 	~PowerUp();
 };

@@ -22,6 +22,9 @@
     <None Include="resources\MovementStepsRadius.data">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="resources\deeznutz.data">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -97,6 +100,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PowerUp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameMenu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Waves.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -180,6 +189,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PowerUp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Waves.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
