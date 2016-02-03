@@ -49,6 +49,11 @@ void Sprite::SetFrame(byte i) {
 	}
 }
 
+Rect Sprite::GetFrameBox(byte i) const{
+	assert(i < currFilm->GetTotalFrames());
+	return currFilm->GetFrameBox(i);
+}
+
 float Sprite::GetX(void){
 	return x;
 }

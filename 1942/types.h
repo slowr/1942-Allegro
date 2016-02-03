@@ -5,7 +5,7 @@
 #define TIMESTAMP(x) x*(1000/FPS)
 
 typedef unsigned char frame_t;
-typedef signed char offset_t;
+typedef float offset_t;
 typedef unsigned short delay_t;
 typedef unsigned short animid_t;
 typedef unsigned long timestamp_t;

@@ -30,6 +30,7 @@ class Player : public Sprite {
 	unsigned lifes = 3;
 
 	static void movementAnimatorCallback(Animator *, void *);
+	static void reverseAnimatorCallback(Animator *, void *);
 	static void tumbleAnimatorCallback(Animator *, void *);
 public:
 	const static int speed = 5;

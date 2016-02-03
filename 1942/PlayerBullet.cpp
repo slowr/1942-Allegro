@@ -14,8 +14,8 @@ PlayerBullet::PlayerBullet(void) : Sprite(0, 0, AnimationFilmHolder::Get().GetFi
 void PlayerBullet::FireBullet(Point p, timestamp_t curr_timestamp){
 	animator->TimeSet(curr_timestamp);
 	state = spritestate_t::ALIVE;
-	x = p.x + AnimationFilmHolder::Get().GetFilm("player.sprite")->GetFrameBox(0).w / 3 * ScaleFactor;
-	y = p.y - AnimationFilmHolder::Get().GetFilm("player.sprite")->GetFrameBox(0).h / 3 * ScaleFactor;
+	x = p.x + (AnimationFilmHolder::Get().GetFilm("player.sprite")->GetFrameBox(0).w * ScaleFactor) / 2 - (AnimationFilmHolder::Get().GetFilm("player.bullet")->GetFrameBox(0).w*ScaleFactor) / 2;
+	y = p.y - (AnimationFilmHolder::Get().GetFilm("player.bullet")->GetFrameBox(0).w*ScaleFactor) / 2;
 	AnimatorHolder::MarkAsRunning(animator);
 	isVisible = true;
 }

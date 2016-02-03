@@ -4,6 +4,11 @@ void Player::movementAnimatorCallback(Animator *a, void *c){
 	LatelyDestroyable::Add(a);
 }
 
+void Player::reverseAnimatorCallback(Animator *a, void *c){
+	LatelyDestroyable::Add(a);
+	((Player *)c)->SetFrame(0);
+}
+
 void Player::tumbleAnimatorCallback(Animator *a, void *c){
 	((Player *)c)->movement = NONE;
 }
@@ -20,11 +25,11 @@ Player::Player(void) : Sprite(SCREEN_W / 2 - AnimationFilmHolder::Get().GetFilm(
 
 	revleftAnimation = new FrameRangeAnimation(6, 4, 0, 0, delay, false, 1);
 	revleftAnimator = new FrameRangeAnimator();
-	revleftAnimator->SetOnFinish(movementAnimatorCallback, this);
+	revleftAnimator->SetOnFinish(reverseAnimatorCallback, this);
 
 	revrightAnimation = new FrameRangeAnimation(3, 1, 0, 0, delay, false, 1);
 	revrightAnimator = new FrameRangeAnimator();
-	revrightAnimator->SetOnFinish(movementAnimatorCallback, this);
+	revrightAnimator->SetOnFinish(reverseAnimatorCallback, this);
 
 	PathEntry * pE;
 	for (int i = 0; i < 15; i++){
@@ -61,7 +66,7 @@ Player::Player(void) : Sprite(SCREEN_W / 2 - AnimationFilmHolder::Get().GetFilm(
 
 	pE = new PathEntry();
 	pE->dx = 0;
-	pE->dy = -10;
+	pE->dy = 0;
 	pE->delay = 120;
 	pE->repetitions = 1;
 	pE->frame = 0;
@@ -103,6 +108,7 @@ void Player::MoveLeft(){
 	if (movement == LEFT || movement == TUMBLE) return;
 	AnimatorHolder::MarkAsSuspended(rightAnimator);
 	AnimatorHolder::MarkAsSuspended(revrightAnimator);
+	AnimatorHolder::MarkAsSuspended(revleftAnimator);
 	leftAnimator->Start(this, leftAnimation, TIMESTAMP(tickCount));
 	AnimatorHolder::MarkAsRunning(leftAnimator);
 	movement = LEFT;
@@ -112,13 +118,13 @@ void Player::MoveRight(){
 	if (movement == RIGHT || movement == TUMBLE) return;
 	AnimatorHolder::MarkAsSuspended(leftAnimator);
 	AnimatorHolder::MarkAsSuspended(revleftAnimator);
+	AnimatorHolder::MarkAsSuspended(revrightAnimator);
 	rightAnimator->Start(this, rightAnimation, TIMESTAMP(tickCount));
 	AnimatorHolder::MarkAsRunning(rightAnimator);
 	movement = RIGHT;
 }
 
 void Player::Tumble(){
-	std::cout << "tumble" << std::endl;
 	if (movement == TUMBLE) return;
 	for (PathEntry *e : tumbleList){
 		e->repetitions = 1;

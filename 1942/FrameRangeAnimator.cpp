@@ -16,17 +16,25 @@ FrameRangeAnimator::~FrameRangeAnimator() {}
 
 void FrameRangeAnimator::Progress(timestamp_t currTime) {
 	while (currTime > lastTime && currTime - lastTime >= anim->GetDelay()) {
+		float dx = 0, dy = 0;
 		if (currFrame == anim->GetEndFrame()){
-			std::cout << "LOL" << std::endl;
 			currFrame = anim->GetStartFrame();
 		} else {
-			if (anim->GetStartFrame() > anim->GetEndFrame())
+			if (anim->GetStartFrame() > anim->GetEndFrame()){
 				--currFrame;
-			else
+			}
+			else{
 				++currFrame;
+			}
 		}
-		sprite->Move(anim->GetDx(), anim->GetDy());
+		
+		dx = sprite->GetFrameBox(sprite->GetFrame()).w / 2;
+		dy = sprite->GetFrameBox(sprite->GetFrame()).h / 2;
 		sprite->SetFrame(currFrame);
+		dx -= sprite->GetFrameBox(sprite->GetFrame()).w / 2;
+		dy -= sprite->GetFrameBox(sprite->GetFrame()).h / 2;
+
+		sprite->Move(anim->GetDx() + dx, anim->GetDy() + dy);
 		lastTime += anim->GetDelay();
 
 		if (currFrame == anim->GetEndFrame() && !anim->GetContinuous()) {
