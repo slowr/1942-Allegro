@@ -284,7 +284,11 @@ int main(int argc, char **argv)
 				0, 0, bgScaledWidth, bgScaledHeight,
 				0);
 
-			//al_draw_text(font, al_map_rgb(0, 0, 0), 640 / 2, (480 / 4), ALLEGRO_ALIGN_CENTRE, "Your Text Here!");
+			if (state == gamestates_t::PLAYING){
+				al_draw_text(font, al_map_rgb(255, 255, 0), SCREEN_W / 2, 0, ALLEGRO_ALIGN_CENTRE, "HIGH SCORE");
+				al_draw_text(font, al_map_rgb(255, 255, 255), SCREEN_W * 0.1, 0, ALLEGRO_ALIGN_LEFT, "1UP");
+				al_draw_text(font, al_map_rgb(255, 255, 255), SCREEN_W * 0.9, 0, ALLEGRO_ALIGN_RIGHT, "2UP");
+			}
 
 			LatelyDestroyable::Destroy();
 			if (state == gamestates_t::PLAYING) AnimatorHolder::Progress(TIMESTAMP(tickCount));

@@ -1,4 +1,4 @@
-resources/1942_sprite_sheet.png 9 255 255 255
+resources/1942_sprite_sheet.png 10 255 255 255
 player.sprite 22
 5 6 25 16
 38 6 24 16
@@ -74,9 +74,9 @@ enemy.explosion 6
 257 79 16 15
 enemy.bullet 1
 123 90 4 4
-resources/1945_sprite_sheet.bmp 7 0 0 0
 game.menu_background 1
-103 577 276 139
+71 706 177 45
+resources/1945_sprite_sheet.bmp 6 0 0 0
 game.menu_playgame 1
 581 390 98 15
 game.menu_options 1
@@ -88,4 +88,4 @@ game.menu_scoring 1
 game.menu_quit 1
 581 462 42 15
 game.menu_pointer 1
-570 390 7 12
+570 390 7 15

@@ -6,17 +6,34 @@ enum SELECT {
 
 GameMenu::GameMenu(){
 	Menu = new std::vector<Sprite *>[7];
-	pos_x = 200;
-	pos_y = 400;
+	pos_x = SCREEN_W / 2;
+	pos_y = SCREEN_H / 2;
 	currentPos = 0;
 
-	Menu->push_back(new Sprite(100, 100, AnimationFilmHolder::Get().GetFilm("game.menu_background"), spritetype_t::UI));
-	Menu->push_back(new Sprite(pos_x - 20, pos_y, AnimationFilmHolder::Get().GetFilm("game.menu_pointer"), spritetype_t::UI));
-	Menu->push_back(new Sprite(pos_x, pos_y, AnimationFilmHolder::Get().GetFilm("game.menu_playgame"), spritetype_t::UI));
-	Menu->push_back(new Sprite(pos_x, pos_y + 20, AnimationFilmHolder::Get().GetFilm("game.menu_options"), spritetype_t::UI));
-	Menu->push_back(new Sprite(pos_x, pos_y + 40, AnimationFilmHolder::Get().GetFilm("game.menu_credits"), spritetype_t::UI));
-	Menu->push_back(new Sprite(pos_x, pos_y + 60, AnimationFilmHolder::Get().GetFilm("game.menu_scoring"), spritetype_t::UI));
-	Menu->push_back(new Sprite(pos_x, pos_y + 80, AnimationFilmHolder::Get().GetFilm("game.menu_quit"), spritetype_t::UI));
+	AnimationFilm * film = AnimationFilmHolder::Get().GetFilm("game.menu_pointer");
+	Menu->push_back(new Sprite(pos_x - (AnimationFilmHolder::Get().GetFilm("game.menu_playgame")->GetFrameBox(0).w / 1.65) * ScaleFactor, pos_y, film, spritetype_t::UI));
+
+	film = AnimationFilmHolder::Get().GetFilm("game.menu_background");
+	Menu->push_back(new Sprite(SCREEN_W / 2 - (film->GetFrameBox(0).w / 2) * ScaleFactor, (film->GetFrameBox(0).h / 2)*ScaleFactor, film, spritetype_t::UI));
+	
+	film = AnimationFilmHolder::Get().GetFilm("game.menu_playgame");
+	Menu->push_back(new Sprite(pos_x - (film->GetFrameBox(0).w / 2) * ScaleFactor, pos_y, film, spritetype_t::UI));
+	
+	film = AnimationFilmHolder::Get().GetFilm("game.menu_options");
+	pos_y += film->GetFrameBox(0).h * ScaleFactor;
+	Menu->push_back(new Sprite(pos_x - (film->GetFrameBox(0).w / 2) * ScaleFactor, pos_y, film, spritetype_t::UI));
+	
+	film = AnimationFilmHolder::Get().GetFilm("game.menu_credits");
+	pos_y += film->GetFrameBox(0).h  * ScaleFactor;
+	Menu->push_back(new Sprite(pos_x - (film->GetFrameBox(0).w / 2) * ScaleFactor, pos_y, film, spritetype_t::UI));
+	
+	film = AnimationFilmHolder::Get().GetFilm("game.menu_scoring");
+	pos_y += film->GetFrameBox(0).h  * ScaleFactor;
+	Menu->push_back(new Sprite(pos_x - (film->GetFrameBox(0).w / 2) * ScaleFactor, pos_y, film, spritetype_t::UI));
+	
+	film = AnimationFilmHolder::Get().GetFilm("game.menu_quit");
+	pos_y += film->GetFrameBox(0).h  * ScaleFactor;
+	Menu->push_back(new Sprite(pos_x - (film->GetFrameBox(0).w / 2) * ScaleFactor, pos_y, film, spritetype_t::UI));
 }
 
 void GameMenu::LeaveMenu(){
@@ -25,25 +42,27 @@ void GameMenu::LeaveMenu(){
 }
 
 void GameMenu::MoveUp(){
+	AnimationFilm * film = AnimationFilmHolder::Get().GetFilm("game.menu_pointer");
 	if (currentPos == 0){
-		Menu->at(1)->Move(0, 80);
+		Menu->at(0)->Move(0, film->GetFrameBox(0).h * ScaleFactor * 4);
 		currentPos = 4;
 	}
 	else{
 		currentPos--;
-		Menu->at(1)->Move(0, -20);
+		Menu->at(0)->Move(0, -film->GetFrameBox(0).h * ScaleFactor);
 	}
 
 }
 
 void GameMenu::MoveDown(){
+	AnimationFilm * film = AnimationFilmHolder::Get().GetFilm("game.menu_pointer");
 	if (currentPos == 4){
-		Menu->at(1)->Move(0, -80);
+		Menu->at(0)->Move(0, -film->GetFrameBox(0).h * ScaleFactor * 4);
 		currentPos = 0;
 	}
 	else{
 		currentPos++;
-		Menu->at(1)->Move(0, 20);
+		Menu->at(0)->Move(0, film->GetFrameBox(0).h * ScaleFactor);
 	}
 }
 
