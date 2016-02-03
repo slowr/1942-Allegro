@@ -3,6 +3,8 @@
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_primitives.h>
 #include <vector>
+#include <allegro5/allegro_font.h>
+#include <allegro5/allegro_ttf.h>
 #include "types.h"
 #include "AnimationFilm.h"
 #include "Sprite.h"
@@ -83,6 +85,9 @@ int main(int argc, char **argv)
 
 	al_init_image_addon();
 
+	al_init_font_addon(); // initialize the font addon
+	al_init_ttf_addon();// initialize the ttf (True Type Font) addon
+
 	scrollingBackgroundBitmap = bitmapLoader.Load("resources/sample_terrain.bmp");
 	if (!scrollingBackgroundBitmap) {
 		fprintf(stderr, "failed to create background bitmap!\n");
@@ -99,6 +104,7 @@ int main(int argc, char **argv)
 
 	ScaleFactor = bgScaleFactor * 0.57;
 
+	ALLEGRO_FONT *font = al_load_font("resources/BAUHS93.TTF",22,0);
 	ALLEGRO_BITMAP *backBuffer = al_get_backbuffer(display);
 	//Waves::Get().CreateWaves("resources/waves_init.data");
 	/* Load all animation films */
@@ -277,6 +283,8 @@ int main(int argc, char **argv)
 				0, bgHeight - (SCREEN_H / bgScaleFactor) - y, bgWidth, bgHeight,
 				0, 0, bgScaledWidth, bgScaledHeight,
 				0);
+
+			//al_draw_text(font, al_map_rgb(0, 0, 0), 640 / 2, (480 / 4), ALLEGRO_ALIGN_CENTRE, "Your Text Here!");
 
 			LatelyDestroyable::Destroy();
 			if (state == gamestates_t::PLAYING) AnimatorHolder::Progress(TIMESTAMP(tickCount));

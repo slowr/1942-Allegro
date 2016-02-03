@@ -3,11 +3,16 @@
 #include "Animation.h"
 #include <list>
 
+enum pathentryaction_t {
+	NO_ACTION, SHOOT
+};
+
 struct PathEntry {
 	offset_t dx, dy;
 	frame_t frame;
 	delay_t delay;
 	int repetitions;
+	pathentryaction_t action;
 	PathEntry(void);
 	PathEntry(const PathEntry& p);
 };

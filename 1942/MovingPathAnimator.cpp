@@ -1,5 +1,5 @@
 #include "MovingPathAnimator.h"
-
+#include "Enemy.h"
 void MovingPathAnimator::Start(Sprite* s, Animation* a, timestamp_t t) {
 	sprite = s;
 	anim = (MovingPathAnimation *)a;
@@ -26,6 +26,11 @@ void MovingPathAnimator::Progress(timestamp_t currTime) {
 		sprite->Move(p->dx + dx, p->dy + dy);
 
 		if (--p->repetitions == 0) {
+			if (p->action == SHOOT){
+				if (sprite->GetType() == ENEMY){
+					((Enemy *)sprite)->shoot();
+				}
+			}
 			anim->GetPath().remove(p);
 		}
 

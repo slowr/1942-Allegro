@@ -1,5 +1,6 @@
 #include "Enemy.h"
 #include "PowWave.h"
+#include "EnemyBullet.h"
 
 Enemy::Enemy(float _x, float _y, std::string sprite, enemysubtype_t t) : 
 Sprite(_x, _y, AnimationFilmHolder::Get().GetFilm(sprite), spritetype_t::ENEMY), subtype(t), health(1){
@@ -47,6 +48,11 @@ void Enemy::AnimationInit(){
 
 		for (int i = 0; i < 4; i++){
 			pE = new PathEntry();
+
+			if (i == 0){
+				pE->action = SHOOT;
+			}
+
 			pE->delay = 25;
 			pE->frame = i + 1;
 			pE->repetitions = 5;
@@ -190,6 +196,10 @@ void Enemy::CollisionResult(Sprite *s){
 
 void Enemy::AnimationFinish(void){
 	LatelyDestroyable::Add(this);
+}
+
+void Enemy::shoot(){
+	new EnemyBullet(GetX() + frameBox.w / 2, GetY() + frameBox.h / 2);
 }
 
 Enemy::~Enemy(){

@@ -1,6 +1,6 @@
 #include "MovingPathAnimation.h"
 
-PathEntry::PathEntry(void) : dx(0), dy(0), frame(0xff), delay(0) {}
+PathEntry::PathEntry(void) : dx(0), dy(0), frame(0xff), delay(0), action(NO_ACTION) {}
 
 PathEntry::PathEntry(const PathEntry& p) :
 dx(p.dx), dy(p.dy), frame(p.frame), delay(p.delay) {}

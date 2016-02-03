@@ -18,7 +18,6 @@ void CollisionChecker::Cancel(Sprite *s1, Sprite *s2){
 void CollisionChecker::CancelAll(Sprite *s){
 	for (std::list<Pair>::iterator i = pairs.begin(); i != pairs.end();){
 		if ((*i).first == s || (*i).second == s){
-			std::cout << "Removing pair\n";
 			i = pairs.erase(i);
 		}
 		else {

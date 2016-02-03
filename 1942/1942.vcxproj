@@ -40,6 +40,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Allegro_AddonImage>true</Allegro_AddonImage>
+    <Allegro_AddonTTF>true</Allegro_AddonTTF>
+    <Allegro_AddonFont>true</Allegro_AddonFont>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -79,6 +81,7 @@
     <ClInclude Include="Animator.h" />
     <ClInclude Include="AnimatorHolder.h" />
     <ClInclude Include="BitmapLoader.h" />
+    <ClInclude Include="EnemyBullet.h" />
     <ClInclude Include="GameController.h" />
     <ClInclude Include="GameMenu.h" />
     <ClInclude Include="LatelyDestroyable.h" />
@@ -115,6 +118,7 @@
     <ClCompile Include="AnimatorHolder.cpp" />
     <ClCompile Include="BitmapLoader.cpp" />
     <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="EnemyBullet.cpp" />
     <ClCompile Include="FlashAnimation.cpp" />
     <ClCompile Include="FrameListAnimation.cpp" />
     <ClCompile Include="FrameRangeAnimation.cpp" />
@@ -137,6 +141,9 @@
     <ClCompile Include="SmallEnemyExplosion.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="SpriteHolder.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="resources\BAUHS93.TTF" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

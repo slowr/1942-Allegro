@@ -28,5 +28,6 @@ public:
 	Enemy(float _x, float _y, std::string sprite, enemysubtype_t t);
 	virtual void CollisionResult(Sprite *s);
 	virtual void AnimationFinish(void);
+	void shoot();
 	~Enemy(void);
 };
