@@ -15,34 +15,41 @@ void SpriteHolder::Add(Sprite* s){
 		for (SpriteList::iterator it = list->begin(); it != list->end(); ++it){
 			CollisionChecker::Get().Register(s, *it);
 		}
+		list->clear();
 		GetSprites(spritetype_t::ENEMY, list);
 		for (SpriteList::iterator it = list->begin(); it != list->end(); ++it){
 			CollisionChecker::Get().Register(s, *it);
 		}
+		list->clear();
 		break;
 	case spritetype_t::PLAYER_BULLET:
 		GetSprites(spritetype_t::ENEMY, list);
 		for (SpriteList::iterator it = list->begin(); it != list->end(); ++it){
 			CollisionChecker::Get().Register(s, *it);
 		}
+		list->clear();
 		break;
 	case spritetype_t::ENEMY:
 		GetSprites(spritetype_t::PLAYER, list);
 		for (SpriteList::iterator it = list->begin(); it != list->end(); ++it){
 			CollisionChecker::Get().Register(s, *it);
 		}
+		list->clear();
 		GetSprites(spritetype_t::PLAYER_BULLET, list);
 		for (SpriteList::iterator it = list->begin(); it != list->end(); ++it){
 			CollisionChecker::Get().Register(s, *it);
 		}
+		list->clear();
 		break;
 	case spritetype_t::ENEMY_BULLET:
 		GetSprites(spritetype_t::PLAYER, list);
 		for (SpriteList::iterator it = list->begin(); it != list->end(); ++it){
 			CollisionChecker::Get().Register(s, *it);
 		}
+		list->clear();
 		break;
 	}
+	delete list;
 }
 
 void SpriteHolder::Remove(Sprite* s){
@@ -58,6 +65,9 @@ void SpriteHolder::RemoveByType(spritetype_t t){
 		if(!sprites[t].empty()) Remove(s);
 		else break;
 	}
+
+	doomed->clear();
+	delete doomed;
 }
 
 void SpriteHolder::GetSprites(spritetype_t type, SpriteList* result) {
@@ -66,13 +76,10 @@ void SpriteHolder::GetSprites(spritetype_t type, SpriteList* result) {
 		*result = i->second;
 }
 
-void SpriteHolder::SetPower(powertype_t p){
-	currPower = p;
-}
-
 void SpriteHolder::DrawSprites(ALLEGRO_BITMAP *dest){
+	SpriteList * result = new SpriteList();
 	for (int i = 0; i <= spritetype_t::UI; i++){
-		SpriteList * result = new SpriteList();
+		
 		GetSprites((spritetype_t)i, result);
 		for (std::list<Sprite *>::iterator it = result->begin(); it != result->end(); ++it){
 			Sprite * s = (*it);
@@ -91,7 +98,9 @@ void SpriteHolder::DrawSprites(ALLEGRO_BITMAP *dest){
 				s->SetState(spritestate_t::WAIT);
 			}
 		}
+		result->clear();
 	}
+	delete result;
 }
 
 SpriteHolder& SpriteHolder::Get(void) { 

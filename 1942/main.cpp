@@ -20,6 +20,7 @@
 #include "LatelyDestroyable.h"
 #include "GameMenu.h"
 #include "Waves.h"
+#include "PowWave.h"
 
 unsigned long tickCount = 0;
 float ScaleFactor = 1;
@@ -38,7 +39,6 @@ int main(int argc, char **argv)
 {
 	srand(getSystemTime());
 
-	std::vector<Enemy*> reds;
 	ALLEGRO_DISPLAY *display = NULL;
 	ALLEGRO_EVENT_QUEUE *event_queue = NULL;
 	ALLEGRO_TIMER *timer = NULL;
@@ -99,6 +99,7 @@ int main(int argc, char **argv)
 
 	ScaleFactor = bgScaleFactor * 0.57;
 
+	ALLEGRO_BITMAP *backBuffer = al_get_backbuffer(display);
 	//Waves::Get().CreateWaves("resources/waves_init.data");
 	/* Load all animation films */
 	AnimationFilmHolder::Get().Load("resources/filmholder.data");
@@ -116,7 +117,7 @@ int main(int argc, char **argv)
 		bgScaledWidth, bgScaledHeight);
 
 	//al_set_target_bitmap(scrollingBackgroundBitmap);
-	al_set_target_bitmap(al_get_backbuffer(display));
+	al_set_target_bitmap(backBuffer);
 
 	event_queue = al_create_event_queue();
 	if (!event_queue) {
@@ -137,11 +138,11 @@ int main(int argc, char **argv)
 	al_flip_display();
 
 	al_start_timer(timer);
+	
+	ALLEGRO_EVENT ev;
 
 	while (!doexit)
 	{
-		ALLEGRO_EVENT ev;
-
 		al_wait_for_event(event_queue, &ev);
 
 		if (ev.type == ALLEGRO_EVENT_TIMER) {
@@ -168,12 +169,8 @@ int main(int argc, char **argv)
 			}
 
 			if (state == gamestates_t::PLAYING){
-				if (((int)y % 100) == 0){
-					std::cout << y << std::endl;
-					for (int i = 1; i <= 5; i++){
-						reds.push_back(new Enemy(SCREEN_W/2 + i * 30, 300, "green.jet", enemysubtype_t::GRAY_JET));
-					}
-					y += 1;
+				if (((int)y % 1000) == 0){
+					PowWave::Get().SpawnWave();
 				}
 			}
 
@@ -279,14 +276,9 @@ int main(int argc, char **argv)
 				0, 0, bgScaledWidth, bgScaledHeight,
 				0);
 
-			if (state == gamestates_t::MENU){
-				SpriteHolder::Get().DrawSprites(al_get_backbuffer(display));
-			}
-			else if (state == gamestates_t::PLAYING){
-				LatelyDestroyable::Destroy();
-				AnimatorHolder::Progress(TIMESTAMP(tickCount));
-				SpriteHolder::Get().DrawSprites(al_get_backbuffer(display));
-			}
+			LatelyDestroyable::Destroy();
+			if (state == gamestates_t::PLAYING) AnimatorHolder::Progress(TIMESTAMP(tickCount));
+			SpriteHolder::Get().DrawSprites(backBuffer);
 
 			al_flip_display();
 		}

@@ -17,6 +17,7 @@ void AnimationFilm::DisplayFrame(ALLEGRO_BITMAP *dest, const Point& at, byte fra
 	al_draw_scaled_bitmap(tmp,
 		0, 0, box.w, box.h,
 		at.x, at.y, box.w * ScaleFactor, box.h * ScaleFactor, 0);
+	al_destroy_bitmap(tmp);
 }
 
 AnimationFilm::AnimationFilm(ALLEGRO_BITMAP *source, const std::vector<Rect> rects, const std::string& sid) : bitmap(source), boxes(rects), id(sid) {}

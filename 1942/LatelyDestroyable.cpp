@@ -18,14 +18,6 @@ void LatelyDestroyable::Destroy(void){
 	for (DeadList::iterator it = dead.begin(); it != dead.end(); ++it){
 		Sprite *s = (*it);
 		std::cout << "Destroying sprite with type " << s->GetType() << std::endl;
-		if (s->GetType() == spritetype_t::ENEMY && ((Enemy *)s)->GetSubType() == enemysubtype_t::RED){
-			std::cout << "Red plane destroyed" << std::endl;
-
-			if (++RedPlanesDestroyed == 5){
-				new PowerUp(s->GetX(), s->GetY(), (powertype_t) (rand() % 7));
-				RedPlanesDestroyed = 0;
-			}
-		}
 		delete (*it);
 	}
 

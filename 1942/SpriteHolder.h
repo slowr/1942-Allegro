@@ -10,7 +10,6 @@
 
 class SpriteHolder {
 private:
-	powertype_t currPower;
 	typedef std::list<Sprite*> SpriteList;
 	static SpriteHolder holder;
 protected:
@@ -18,7 +17,6 @@ protected:
 	SpritesByType sprites;
 public:
 	void RemoveByType(spritetype_t t);
-	void SetPower(powertype_t p);
 	void Add(Sprite* s);
 	void Remove(Sprite* s);
 	void GetSprites(spritetype_t type, SpriteList* result);

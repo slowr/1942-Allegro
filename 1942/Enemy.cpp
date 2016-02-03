@@ -2,6 +2,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include "Player.h"
+#include "PowWave.h"
 
 Enemy::Enemy(float _x, float _y, std::string sprite, enemysubtype_t t) : 
 Sprite(_x, _y, AnimationFilmHolder::Get().GetFilm(sprite), spritetype_t::ENEMY), subtype(t){
@@ -132,6 +133,9 @@ void Enemy::AnimationFinish(void){
 }
 
 Enemy::~Enemy(){
+	if (subtype == enemysubtype_t::RED) {
+		PowWave::Get().OnRedPlaneDead(this);
+	}
 	AnimatorHolder::MarkAsSuspended(animator);
 	AnimatorHolder::Cancel(animator);
 	delete animator;
