@@ -1,11 +1,8 @@
 #include "Enemy.h"
-#define _USE_MATH_DEFINES
-#include <math.h>
-#include "Player.h"
 #include "PowWave.h"
 
 Enemy::Enemy(float _x, float _y, std::string sprite, enemysubtype_t t) : 
-Sprite(_x, _y, AnimationFilmHolder::Get().GetFilm(sprite), spritetype_t::ENEMY), subtype(t){
+Sprite(_x, _y, AnimationFilmHolder::Get().GetFilm(sprite), spritetype_t::ENEMY), subtype(t), health(1){
 	AnimationInit();
 }
 
@@ -13,12 +10,13 @@ Sprite(_x, _y, AnimationFilmHolder::Get().GetFilm(sprite), spritetype_t::ENEMY),
 void Enemy::AnimationInit(){
 	std::list<PathEntry *> p;
 	PathEntry * pE;
+	float distance;
 	switch (subtype){
 	case enemysubtype_t::RED:
 		pE = new PathEntry();
-		pE->dx = 5;
+		pE->dx = speed;
 		pE->dy = 0;
-		pE->delay = 50;
+		pE->delay = delay;
 		pE->frame = 0;
 		pE->repetitions = (SCREEN_W - x) / pE->dx;
 		p.push_back(pE);
@@ -30,7 +28,59 @@ void Enemy::AnimationInit(){
 		AnimatorHolder::MarkAsRunning(animator);
 		break;
 	case enemysubtype_t::GRAY_MONO:
+		float dx, dy;
+		int repetitions;
+		pE = new PathEntry();
 
+		dx = GameController::Get().getPlayer()->GetX() - x;
+		dy = GameController::Get().getPlayer()->GetY() - y;
+		distance = sqrt(pow(dx, 2) + pow(dy, 2));
+		pE->delay = 25;
+		pE->frame = 0;
+
+		repetitions = distance / speed;
+		pE->dx = dx / repetitions;
+		pE->dy = dy / repetitions;
+		pE->repetitions = repetitions - 10;
+
+		p.push_back(pE);
+
+		for (int i = 0; i < 4; i++){
+			pE = new PathEntry();
+			pE->delay = 25;
+			pE->frame = i + 1;
+			pE->repetitions = 5;
+			pE->dx = dx / repetitions;
+			switch (i) {
+			case 0:
+			case 1:
+				pE->dy = dy / repetitions;
+				break;
+			case 2:
+			case 3:
+				pE->dy = -(dy / repetitions);
+				break;
+			}
+			p.push_back(pE);
+		}
+
+		pE = new PathEntry();
+
+		pE->delay = 25;
+		pE->frame = 5;
+		
+		pE->dx = dx / repetitions;
+		pE->dy = - (dy / repetitions);
+		pE->repetitions = repetitions - 10;
+
+		p.push_back(pE);
+
+		animation = new MovingPathAnimation(p, 1);
+		animator = new MovingPathAnimator();
+		animator->Start(this, animation, TIMESTAMP(tickCount));
+		animator->SetOnFinish(OnAnimationFinish, this);
+		AnimatorHolder::Register(animator);
+		AnimatorHolder::MarkAsRunning(animator);
 		break;
 	default:
 		//std::ostringstream oss;
@@ -87,7 +137,7 @@ void Enemy::AnimationInit(){
 				pE->frame = 0;
 
 			pE->repetitions = 1;
-			pE->delay = 10;
+			pE->delay = 5;
 			p.push_back(pE);
 			oldDx = px;
 			oldDy = py;
@@ -116,6 +166,14 @@ enemysubtype_t Enemy::GetSubType(){
 	return subtype;
 }
 
+/*
+	Small green mono : 30, grey = 50
+	Small duo : 70, grey = 90
+	Small jet : 110, grey = 130
+	Medium green : 1000, 100 per hit, grey = 1500, 150 per hit
+	Large green : 2000, 100 per hit, grey = 2500, 150 per hit
+	Boss : 20000 points
+*/
 void Enemy::CollisionResult(Sprite *s){
 	switch (s->GetType()){
 	case spritetype_t::PLAYER_BULLET:
@@ -123,7 +181,9 @@ void Enemy::CollisionResult(Sprite *s){
 		if (s->GetType() == PLAYER){
 			if (((Player *)s)->GetMovement() == TUMBLE) return;
 		}
-		state = spritestate_t::DEAD;
+		if (--health == 0){
+			state = spritestate_t::DEAD;
+		}
 		break;
 	}
 }

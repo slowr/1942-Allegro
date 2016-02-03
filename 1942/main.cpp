@@ -19,8 +19,8 @@
 #include "Enemy.h"
 #include "LatelyDestroyable.h"
 #include "GameMenu.h"
-#include "Waves.h"
 #include "PowWave.h"
+#include "GameController.h"
 
 unsigned long tickCount = 0;
 float ScaleFactor = 1;
@@ -169,7 +169,7 @@ int main(int argc, char **argv)
 			}
 
 			if (state == gamestates_t::PLAYING){
-				if (((int)y % 1000) == 0){
+				if (((int)y % 100) == 0){
 					PowWave::Get().SpawnWave();
 				}
 			}
@@ -220,6 +220,8 @@ int main(int argc, char **argv)
 					tickCount = 0;
 					bullets = new PlayerBullet[MAX_BULLETS];
 					player = new Player();
+					GameController::Get().Reset();
+					GameController::Get().SetPlayer(player);
 				}
 				break;
 

@@ -16,7 +16,6 @@ protected:
 	typedef std::map<unsigned, SpriteList> SpritesByType;
 	SpritesByType sprites;
 public:
-	void RemoveByType(spritetype_t t);
 	void Add(Sprite* s);
 	void Remove(Sprite* s);
 	void GetSprites(spritetype_t type, SpriteList* result);

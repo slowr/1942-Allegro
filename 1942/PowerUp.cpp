@@ -1,6 +1,5 @@
 #include "PowerUp.h"
 
-
 PowerUp::PowerUp(float _dx, float _dy, powertype_t _power) : Sprite(_dx, _dy, AnimationFilmHolder::Get().GetFilm("powerup.sprite"), spritetype_t::POWER_UP)
 {
 	power = _power;
@@ -33,6 +32,7 @@ PowerUp::PowerUp(float _dx, float _dy, powertype_t _power) : Sprite(_dx, _dy, An
 }
 
 void PowerUp::CollisionResult(Sprite *s){
+	std::cout << "pow col" << std::endl;
 	switch (s->GetType()){
 	case spritetype_t::PLAYER:
 		state = spritestate_t::DEAD;

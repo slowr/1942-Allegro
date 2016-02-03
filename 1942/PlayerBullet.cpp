@@ -39,7 +39,7 @@ void PlayerBullet::FireBullets(PlayerBullet b[], Point p, timestamp_t curr_times
 }
 
 void PlayerBullet::Draw(ALLEGRO_BITMAP *dest){
-	if (y < -frameBox.h) PlayerBullet::StopBullet();
+	if (y < -frameBox.h*ScaleFactor) PlayerBullet::StopBullet();
 	else currFilm->DisplayFrame(dest, Point(x, y), frameNo);
 }
 

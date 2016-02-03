@@ -16,5 +16,6 @@ public:
 	void Register(Sprite *s1, Sprite *s2);
 	void Cancel(Sprite *s1, Sprite *s2);
 	void Check(void) const;
+	void CancelAll(Sprite *s);
 	static CollisionChecker& Get();
 };

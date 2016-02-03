@@ -15,38 +15,34 @@ void SpriteHolder::Add(Sprite* s){
 		for (SpriteList::iterator it = list->begin(); it != list->end(); ++it){
 			CollisionChecker::Get().Register(s, *it);
 		}
-		list->clear();
 		GetSprites(spritetype_t::ENEMY, list);
 		for (SpriteList::iterator it = list->begin(); it != list->end(); ++it){
 			CollisionChecker::Get().Register(s, *it);
 		}
-		list->clear();
 		break;
 	case spritetype_t::PLAYER_BULLET:
 		GetSprites(spritetype_t::ENEMY, list);
 		for (SpriteList::iterator it = list->begin(); it != list->end(); ++it){
 			CollisionChecker::Get().Register(s, *it);
 		}
-		list->clear();
 		break;
 	case spritetype_t::ENEMY:
 		GetSprites(spritetype_t::PLAYER, list);
 		for (SpriteList::iterator it = list->begin(); it != list->end(); ++it){
 			CollisionChecker::Get().Register(s, *it);
 		}
-		list->clear();
 		GetSprites(spritetype_t::PLAYER_BULLET, list);
 		for (SpriteList::iterator it = list->begin(); it != list->end(); ++it){
 			CollisionChecker::Get().Register(s, *it);
 		}
-		list->clear();
 		break;
 	case spritetype_t::ENEMY_BULLET:
 		GetSprites(spritetype_t::PLAYER, list);
 		for (SpriteList::iterator it = list->begin(); it != list->end(); ++it){
 			CollisionChecker::Get().Register(s, *it);
 		}
-		list->clear();
+		break;
+	default:
 		break;
 	}
 	delete list;
@@ -54,20 +50,7 @@ void SpriteHolder::Add(Sprite* s){
 
 void SpriteHolder::Remove(Sprite* s){
 	sprites[s->GetType()].remove(s);
-}
-
-void SpriteHolder::RemoveByType(spritetype_t t){
-	SpriteList * doomed = new SpriteList();
-	GetSprites(t, doomed);
-
-	for (std::list<Sprite *>::iterator it = doomed->begin(); it != doomed->end(); ++it){
-		Sprite * s = (*it);
-		if(!sprites[t].empty()) Remove(s);
-		else break;
-	}
-
-	doomed->clear();
-	delete doomed;
+	CollisionChecker::Get().CancelAll(s);
 }
 
 void SpriteHolder::GetSprites(spritetype_t type, SpriteList* result) {
@@ -98,7 +81,6 @@ void SpriteHolder::DrawSprites(ALLEGRO_BITMAP *dest){
 				s->SetState(spritestate_t::WAIT);
 			}
 		}
-		result->clear();
 	}
 	delete result;
 }

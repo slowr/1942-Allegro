@@ -35,8 +35,8 @@ void Sprite::CollisionCheck(Sprite* s){
 	y2 = y + frameBox.h * 2;
 	x3 = s->x;
 	y3 = s->y;
-	x4 = s->x + s->frameBox.w * ScaleFactor * 0.85;
-	y4 = s->y + s->frameBox.h * ScaleFactor * 0.85;
+	x4 = s->x + s->frameBox.w * ScaleFactor;
+	y4 = s->y + s->frameBox.h * ScaleFactor;
 	if (!(x4 < x1 || x2 < x3 || y4 < y1 || y2 < y3)){
 		NotifyCollision(s);
 	}

@@ -9,12 +9,17 @@
 #include "SpriteHolder.h"
 #include "PlayerBullet.h"
 #include "LatelyDestroyable.h"
+#define _USE_MATH_DEFINES
+#include <math.h>
+#include "Player.h"
+#include "GameController.h"
 
 class Enemy : public Sprite {
 	enemysubtype_t subtype;
 	Animator * animator;
 	Animation * animation;
 	timestamp_t last_timestamp;
+	int health;
 	const static int speed = 5;
 	const static int delay = 50;
 public:

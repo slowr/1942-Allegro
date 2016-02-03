@@ -12,6 +12,19 @@ void CollisionChecker::Register(Sprite *s1, Sprite *s2){
 
 void CollisionChecker::Cancel(Sprite *s1, Sprite *s2){
 	pairs.remove(Pair(s1, s2));
+	pairs.remove(Pair(s2, s1));
+}
+
+void CollisionChecker::CancelAll(Sprite *s){
+	for (std::list<Pair>::iterator i = pairs.begin(); i != pairs.end();){
+		if ((*i).first == s || (*i).second == s){
+			std::cout << "Removing pair\n";
+			i = pairs.erase(i);
+		}
+		else {
+			i++;
+		}
+	}
 }
 
 void CollisionChecker::Check(void) const {

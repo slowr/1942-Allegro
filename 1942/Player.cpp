@@ -45,13 +45,13 @@ Player::Player(void) : Sprite(SCREEN_W / 2 - AnimationFilmHolder::Get().GetFilm(
 			pE->dy = -10;
 			break;
 		case 3:
-		case 7:
 		case 11:
 			pE->dy = 0;
 			break;
 		case 4:
 		case 5:
 		case 6:
+		case 7:
 		case 8:
 		case 9:
 		case 10:
@@ -66,7 +66,7 @@ Player::Player(void) : Sprite(SCREEN_W / 2 - AnimationFilmHolder::Get().GetFilm(
 
 	pE = new PathEntry();
 	pE->dx = 0;
-	pE->dy = 0;
+	pE->dy = -10;
 	pE->delay = 120;
 	pE->repetitions = 1;
 	pE->frame = 0;
@@ -155,8 +155,12 @@ void Player::Move(bool up, bool down, bool left, bool right, timestamp_t curr_ti
 	if (left) _x = -moveSpeed;
 	if (right) _x += moveSpeed;
 
-	if (x + _x < 0 || x + _x + frameBox.w*ScaleFactor > SCREEN_W) return;
-	if (y + _y < 0 || y + _y + frameBox.h*ScaleFactor > SCREEN_H) return;
+	if (x + _x < 0 || x + _x + frameBox.w*ScaleFactor > SCREEN_W){
+		_x = 0;
+	}
+	if (y + _y < 0 || y + _y + frameBox.h*ScaleFactor > SCREEN_H){
+		_y = 0;
+	}
 
 	if (curr_timestamp - last_timestamp > 25){
 		x += _x;
