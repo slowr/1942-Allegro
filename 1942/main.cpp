@@ -286,8 +286,8 @@ int main(int argc, char **argv)
 
 			if (state == gamestates_t::PLAYING){
 				al_draw_text(font, al_map_rgb(255, 255, 0), SCREEN_W / 2, 0, ALLEGRO_ALIGN_CENTRE, "HIGH SCORE");
-				al_draw_text(font, al_map_rgb(255, 255, 255), SCREEN_W * 0.1, 0, ALLEGRO_ALIGN_LEFT, "1UP");
-				al_draw_text(font, al_map_rgb(255, 255, 255), SCREEN_W * 0.9, 0, ALLEGRO_ALIGN_RIGHT, "2UP");
+				al_draw_text(font, al_map_rgb(255, 255, 255), SCREEN_W * 0.05, 0, ALLEGRO_ALIGN_LEFT, "1UP");
+				al_draw_text(font, al_map_rgb(255, 255, 255), SCREEN_W * 0.95, 0, ALLEGRO_ALIGN_RIGHT, "2UP");
 			}
 
 			LatelyDestroyable::Destroy();
