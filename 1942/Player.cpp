@@ -1,4 +1,5 @@
 #include "Player.h"
+#include "GameController.h"
 
 void Player::movementAnimatorCallback(Animator *a, void *c){
 	LatelyDestroyable::Add(a);
@@ -125,7 +126,7 @@ void Player::MoveRight(){
 }
 
 void Player::Tumble(){
-	if (movement == TUMBLE) return;
+	if (movement == TUMBLE || GameController::Get().getTumbles() == 0) return;
 	for (PathEntry *e : tumbleList){
 		e->repetitions = 1;
 	}
@@ -137,6 +138,7 @@ void Player::Tumble(){
 	AnimatorHolder::MarkAsSuspended(revleftAnimator);
 	AnimatorHolder::MarkAsRunning(tumbleAnimator);
 	movement = TUMBLE;
+	GameController::Get().decTumbles();
 }
 
 playermovement_t Player::GetMovement(){
@@ -148,6 +150,8 @@ void Player::Move(bool up, bool down, bool left, bool right, timestamp_t curr_ti
 
 	if (!(up || down || left || right)) return;
 
+	
+
 	float moveSpeed = ((up || down) && (right || left) ? (float) sqrt((pow(speed, 2)/2.0f)) : speed);
 
 	if (up) _y = -moveSpeed;
@@ -158,7 +162,7 @@ void Player::Move(bool up, bool down, bool left, bool right, timestamp_t curr_ti
 	if (x + _x < 0 || x + _x + frameBox.w*ScaleFactor > SCREEN_W){
 		_x = 0;
 	}
-	if (y + _y < 0 || y + _y + frameBox.h*ScaleFactor > SCREEN_H){
+	if (y + _y + (movement == TUMBLE ? -60 : 0) < 0 || y + _y + frameBox.h*ScaleFactor + (movement == TUMBLE ? 60 : 0) > SCREEN_H){
 		_y = 0;
 	}
 
@@ -180,8 +184,8 @@ void Player::CollisionResult(Sprite *s){
 	case spritetype_t::ENEMY_BULLET:
 		if (movement == TUMBLE) return;
 		state = spritestate_t::DEAD;
-		lifes--;
 		isVisible = false;
+		GameController::Get().decLives();
 		break;
 	}
 }

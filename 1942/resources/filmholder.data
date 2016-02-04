@@ -76,7 +76,7 @@ enemy.bullet 1
 123 90 4 4
 game.menu_background 1
 71 706 177 45
-resources/1945_sprite_sheet.bmp 6 0 0 0
+resources/1945_sprite_sheet.png 6 0 0 0
 game.menu_playgame 1
 581 390 98 15
 game.menu_options 1

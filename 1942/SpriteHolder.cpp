@@ -42,10 +42,22 @@ void SpriteHolder::Add(Sprite* s){
 			CollisionChecker::Get().Register(s, *it);
 		}
 		break;
+	case spritetype_t::POWER_UP:
+		GetSprites(spritetype_t::PLAYER, list);
+		for (SpriteList::iterator it = list->begin(); it != list->end(); ++it) {
+			CollisionChecker::Get().Register(s, *it);
+		}
+		break;
 	default:
 		break;
 	}
 	delete list;
+}
+
+void SpriteHolder::DestroyEnemies(void) {
+	for (Sprite *e : sprites[spritetype_t::ENEMY]) {
+		e->SetState(spritestate_t::DEAD);
+	}
 }
 
 void SpriteHolder::Remove(Sprite* s){
