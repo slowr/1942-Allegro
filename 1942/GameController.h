@@ -1,8 +1,11 @@
 #pragma once
 #include "Player.h"
-
+#include <allegro5/allegro.h>
+#include <allegro5/allegro_font.h>
+#include <allegro5/allegro_ttf.h>
 
 class GameController {
+	static int FONT_SIZE;
 	Player * player;
 	float Score;
 	int lives;
@@ -12,6 +15,8 @@ class GameController {
 	static GameController controller;
 	GameController();
 	~GameController();
+	ALLEGRO_FONT *font;
+	ALLEGRO_FONT *fontAwesome;
 public:
 	static GameController& Get(void);
 	void SetPlayer(Player * p);
@@ -28,7 +33,8 @@ public:
 	int getLives(void);
 	int getTumbles(void);
 	int getTakedowns(void);
-
+	
 	void Reset(void);
+	void DrawUI(void);
 };
 
