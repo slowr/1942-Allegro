@@ -88,6 +88,78 @@ void Enemy::AnimationInit(){
 		AnimatorHolder::Register(animator);
 		AnimatorHolder::MarkAsRunning(animator);
 		break;
+	case enemysubtype_t::GREEN_LARGE:
+		pE = new PathEntry();
+		pE->dx = 0;
+		pE->dy = -5;
+		pE->delay = delay;
+		pE->frame = 0;
+		pE->repetitions = (SCREEN_H/2)/5;
+		p.push_back(pE);
+
+		pE = new PathEntry();
+		pE->dx = 3;
+		pE->dy = -2.5;
+		pE->delay = delay;
+		pE->frame = 0;
+		pE->repetitions = (SCREEN_W/2)/5;
+		pE->action = SHOOT;
+		p.push_back(pE);
+
+		pE = new PathEntry();
+		pE->dx = -5;
+		pE->dy = 0;
+		pE->delay = delay;
+		pE->frame = 0;
+		pE->repetitions = (SCREEN_W / 4) / 4;
+		pE->action = SHOOT;
+		p.push_back(pE);
+
+		for (int i = 0; i < 3; i++){
+
+			pE = new PathEntry();
+			pE->dx = 5;
+			pE->dy = 0;
+			pE->delay = delay;
+			pE->frame = 0;
+			pE->repetitions = (SCREEN_W / 2) / 4;
+			pE->action = SHOOT;
+			p.push_back(pE);
+
+			pE = new PathEntry();
+			pE->dx = -5;
+			pE->dy = 0;
+			pE->delay = delay;
+			pE->frame = 0;
+			pE->repetitions = (SCREEN_W / 2) / 4;
+			pE->action = SHOOT;
+			p.push_back(pE);
+			
+		}
+		pE = new PathEntry();
+		pE->dx = 0;
+		pE->dy = 0;
+		pE->delay = delay;
+		pE->frame = 0;
+		pE->repetitions = 10;
+		pE->action = SHOOT;
+		p.push_back(pE);
+
+		pE = new PathEntry();
+		pE->dx = 0;
+		pE->dy = -5;
+		pE->delay = delay;
+		pE->frame = 0;
+		pE->repetitions = (SCREEN_H-GetY()) / 5;
+		p.push_back(pE);
+
+		animation = new MovingPathAnimation(p, 1);
+		animator = new MovingPathAnimator();
+		animator->Start(this, animation, TIMESTAMP(tickCount));
+		animator->SetOnFinish(OnAnimationFinish, this);
+		AnimatorHolder::Register(animator);
+		AnimatorHolder::MarkAsRunning(animator);
+		break;
 	default:
 		//std::ostringstream oss;
 		float px, py;
@@ -198,8 +270,14 @@ void Enemy::AnimationFinish(void){
 	LatelyDestroyable::Add(this);
 }
 
-void Enemy::shoot(){
-	new EnemyBullet(GetX() + frameBox.w / 2, GetY() + frameBox.h / 2);
+void Enemy::shoot(timestamp_t currTime){
+	int multipleBullets = rand() % 8;
+
+	if (subtype == GREEN_LARGE){
+		new EnemyBullet(GetX() + frameBox.w / 2, GetY() + frameBox.h * 2);
+	}
+	else
+		new EnemyBullet(GetX() + frameBox.w / 2, GetY() + frameBox.h / 2);
 }
 
 Enemy::~Enemy(){

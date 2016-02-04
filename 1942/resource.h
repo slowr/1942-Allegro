@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by HY454_1942.rc
+// Used by 19422.rc
 
 // Next default values for new objects
 // 

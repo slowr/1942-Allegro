@@ -25,7 +25,7 @@ void PowWave::SpawnWave() {
 		for (int i = 0; i < NUMBER_OF_PLANES; i++) {
 			new Enemy((i + 1) * -40.f, y, std::string("green.mono"), enemysubtype_t::GRAY_MONO);
 		}
-
+		new Enemy(100, SCREEN_H - 63, std::string("green.large"), enemysubtype_t::GREEN_LARGE);
 		waveAlive = true;
 		alivePlanes = NUMBER_OF_PLANES;
 	}

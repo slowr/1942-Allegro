@@ -25,10 +25,31 @@ void MovingPathAnimator::Progress(timestamp_t currTime) {
 
 		sprite->Move(p->dx + dx, p->dy + dy);
 
-		if (--p->repetitions == 0) {
+		--p->repetitions;
+
+		if ((sprite->GetType() == ENEMY) && ((Enemy *)sprite)->GetSubType() == GREEN_LARGE){
+			if (p->action == SHOOT){
+				switch (p->repetitions){
+				case 5:
+					((Enemy *)sprite)->shoot(TIMESTAMP(tickCount));
+					break;
+				case 10:
+					((Enemy *)sprite)->shoot(TIMESTAMP(tickCount));
+					break;
+				case 15:
+					((Enemy *)sprite)->shoot(TIMESTAMP(tickCount));
+					break;
+				case 20:
+					((Enemy *)sprite)->shoot(TIMESTAMP(tickCount));
+					break;
+				}
+			}
+		}
+
+		if (p->repetitions == 0) {
 			if (p->action == SHOOT){
 				if (sprite->GetType() == ENEMY){
-					((Enemy *)sprite)->shoot();
+					((Enemy *)sprite)->shoot(TIMESTAMP(tickCount));
 				}
 			}
 			anim->GetPath().remove(p);

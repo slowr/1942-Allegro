@@ -13,6 +13,7 @@
 #include <math.h>
 #include "Player.h"
 #include "GameController.h"
+#include "types.h"
 
 class Enemy : public Sprite {
 	enemysubtype_t subtype;
@@ -28,6 +29,6 @@ public:
 	Enemy(float _x, float _y, std::string sprite, enemysubtype_t t);
 	virtual void CollisionResult(Sprite *s);
 	virtual void AnimationFinish(void);
-	void shoot();
+	void shoot(timestamp_t currTime);
 	~Enemy(void);
 };
