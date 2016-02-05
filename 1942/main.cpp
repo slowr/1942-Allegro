@@ -214,7 +214,14 @@ int main(int argc, char **argv)
 				break;
 
 			case ALLEGRO_KEY_P:
-				pause = !pause;
+				if (state == PLAYING) {
+					pause = !pause;
+					if (pause) {
+						GameController::Get().DrawPaused();
+						redraw = false;
+						continue;
+					}
+				}
 				break;
 
 			case ALLEGRO_KEY_ENTER:

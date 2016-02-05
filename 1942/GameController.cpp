@@ -110,3 +110,9 @@ void GameController::DrawUI(void) {
 	al_ustr_free(lives_string);
 	al_ustr_free(tumbles_string);
 }
+
+void GameController::DrawPaused(void) {
+	char *pausedStr = "GAME PAUSED";
+	al_draw_text(font, al_map_rgb(255, 0, 0), SCREEN_W / 2 - (al_get_text_width(font, pausedStr) / 2), SCREEN_H / 2, 0, pausedStr);
+	al_flip_display();
+}

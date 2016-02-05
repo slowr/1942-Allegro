@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "GameController.h"
+#include "PlayerExplosion.h"
 
 void Player::movementAnimatorCallback(Animator *a, void *c){
 	LatelyDestroyable::Add(a);
@@ -150,8 +151,6 @@ void Player::Move(bool up, bool down, bool left, bool right, timestamp_t curr_ti
 
 	if (!(up || down || left || right)) return;
 
-	
-
 	float moveSpeed = ((up || down) && (right || left) ? (float) sqrt((pow(speed, 2)/2.0f)) : speed);
 
 	if (up) _y = -moveSpeed;
@@ -166,7 +165,7 @@ void Player::Move(bool up, bool down, bool left, bool right, timestamp_t curr_ti
 		_y = 0;
 	}
 
-	if (curr_timestamp - last_timestamp > delay){
+	if (curr_timestamp - last_timestamp > move_delay){
 		x += _x;
 		y += _y;
 		last_timestamp = curr_timestamp;
@@ -177,6 +176,10 @@ const Point Player::getPos() const {
 	return Point(x, y);
 }
 
+void Player::Explode() {
+	new PlayerExplosion(x, y);
+}
+
 void Player::CollisionResult(Sprite *s){
 	switch (s->GetType()){
 	case spritetype_t::ENEMY:
@@ -185,6 +188,7 @@ void Player::CollisionResult(Sprite *s){
 		state = spritestate_t::DEAD;
 		isVisible = false;
 		GameController::Get().decLives();
+		Explode();
 		break;
 	}
 }

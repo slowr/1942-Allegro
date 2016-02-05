@@ -37,5 +37,6 @@ public:
 
 	void Reset(void);
 	void DrawUI(void);
+	void DrawPaused(void);
 };
 

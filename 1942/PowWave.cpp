@@ -22,34 +22,36 @@ void PowWave::SpawnWave() {
 	if (!waveAlive && PowerUpsSpawned < 7) {
 		std::cout << "Spawning new PowWave." << std::endl;
 		float y = (rand() % ((int)SCREEN_H / 2)) + 50;
-		for (int i = 0; i < 1; i++) {
+		for (int i = 0; i < NUMBER_OF_PLANES; i++) {
 			new Enemy((i + 1) * -40.f, y, std::string("green.jet"), enemysubtype_t::RED);
 		}
 
 		waveAlive = true;
 		alivePlanes = NUMBER_OF_PLANES;
+		shotPlanes = 0;
 	}
 }
 
 void PowWave::SpawnPow(int x, int y) {
 	int powNumber;
 	if (PowerUpsSpawned == 7) return;
-	while (PowsSpawned[(powNumber = rand() % 7)]) {
-		
-	}
+	while (PowsSpawned[(powNumber = rand() % 7)]) { }
 	std::cout << "Spawning pow type " << powNumber << std::endl;
 	new PowerUp(x, y, (powertype_t)powNumber);
 	PowsSpawned[powNumber] = 1;
 	PowerUpsSpawned++;
 }
 
+void PowWave::OnRedPlaneShotDown(Enemy *e) {
+	std::cout << "OnRedPlaneShotDown()" << std::endl;
+	if (++shotPlanes == NUMBER_OF_PLANES) {
+		SpawnPow(e->GetX(), e->GetY());
+	}
+}
+
 void PowWave::OnRedPlaneDead(Enemy *e) {
 	std::cout << "OnRedPlaneDead()" << std::endl;
 	if (--alivePlanes == 0) {
-		std::cout << "Last plane at [" << e->GetX() << ", " << e->GetY() << "]" << std::endl;
-		if (e->GetX() < SCREEN_W && e->GetY() < SCREEN_H){
-			SpawnPow(e->GetX(), e->GetY());
-		}
 		waveAlive = false;
 	}
 }

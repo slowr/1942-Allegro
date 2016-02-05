@@ -26,8 +26,8 @@ class Player : public Sprite {
 	timestamp_t last_timestamp;
 	playermovement_t movement;
 	std::list<PathEntry *> tumbleList;
-	const static int delay = 15;
-	unsigned lifes = 3;
+	const static int delay = 150;
+	const static int move_delay = 15;
 	const static int speed = 7;
 	static void movementAnimatorCallback(Animator *, void *);
 	static void reverseAnimatorCallback(Animator *, void *);
@@ -42,6 +42,7 @@ public:
 	void MoveLeft();
 	void MoveRight();
 	void StopMoving();
+	void Explode();
 	playermovement_t GetMovement();
 	~Player(void);
 };

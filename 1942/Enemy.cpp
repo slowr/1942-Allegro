@@ -1,13 +1,85 @@
 #include "Enemy.h"
 #include "PowWave.h"
 #include "EnemyBullet.h"
+#include "SmallEnemyExplosion.h"
+
+/*
+GREEN_MONO,
+GREEN_DOUBLE,
+GREEN_JET,
+GRAY_MONO,
+GRAY_DOUBLE,
+GRAY_JET,
+GREEN_MID,
+GRAY_MID,
+GREEN_LARGE,
+GRAY_LARGE,
+BOSS,
+RED
+*/
+
+const int HEALTH_PER_TYPE[12] = {
+	1,
+	1,
+	1,
+	1,
+	1,
+	1,
+	3,
+	5,
+	6,
+	8,
+	15,
+	1
+};
+
+/*
+Small green mono : 30, grey = 50
+Small duo : 70, grey = 90
+Small jet : 110, grey = 130
+Medium green : 1000, 100 per hit, grey = 1500, 150 per hit
+Large green : 2000, 100 per hit, grey = 2500, 150 per hit
+Boss : 20000 points
+*/
+
+const int POINTS_PER_HIT[12] = {
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	100,
+	150,
+	100,
+	150,
+	0,
+	0
+};
+
+const int POINTS_PER_DESTRUCTION[12] = {
+	30,
+	70,
+	110,
+	50,
+	90,
+	130,
+	1000,
+	1500,
+	2000,
+	2500,
+	20000,
+	10
+};
+
+
 
 Enemy::Enemy(float _x, float _y, std::string sprite, enemysubtype_t t) : 
-Sprite(_x, _y, AnimationFilmHolder::Get().GetFilm(sprite), spritetype_t::ENEMY), subtype(t), health(1){
+Sprite(_x, _y, AnimationFilmHolder::Get().GetFilm(sprite), spritetype_t::ENEMY), subtype(t), health(HEALTH_PER_TYPE[subtype]){
 	AnimationInit();
 }
 
-void Enemy::doCircle(Enemy::enemylook_t direction, std::list<PathEntry *> &p, float radius) {
+void Enemy::doCircle(Enemy::enemylook_t direction, std::list<PathEntry *> &p, float radius, int resolution = 1) {
 	//std::ostringstream oss;
 	float px, py;
 	float oldDx = 0;
@@ -15,60 +87,67 @@ void Enemy::doCircle(Enemy::enemylook_t direction, std::list<PathEntry *> &p, fl
 	// oss << radius << std::endl;
 	oldDx = radius*cos(direction*(M_PI / 180)) - radius;
 	oldDy = radius*sin(direction*(M_PI / 180));
-	for (float degrees = direction; degrees != direction - 1; degrees++) {
+	bool doBreakWhenDone = false;
+	delay_t delay = (speed * 360) / (360 / resolution);
+	PathEntry *pE;
+	for (float degrees = direction;; degrees += resolution) {
+		if (doBreakWhenDone && degrees >= direction - 1){
+			break;
+		}
 		float radians = degrees*(M_PI / 180);
 		px = radius*cos(radians) - radius;
 		py = radius*sin(radians);
-		PathEntry * pE = new PathEntry();
+		pE = new PathEntry();
 		float dx_move = px - oldDx;
 		float dy_move = py - oldDy;
 		pE->dx = dx_move;
 		pE->dy = dy_move;
 		pE->repetitions = 1;
-		pE->delay = 5;
+		pE->delay = delay;
 		pE->frame = getFrame(degrees);
 		p.push_back(pE);
 		oldDx = px;
 		oldDy = py;
-		if (degrees == 360) degrees = 0;
+		if (degrees >= 360) {
+			degrees = 0;
+			doBreakWhenDone = true;
+		}
 	}
 }
 
 int Enemy::getFrame(float degrees) {
-	if (degrees >= 0 && degrees < 11.25)
+	if (degrees >= 348.75)
 		return 0;
-	else if (degrees >= 11.25 && degrees < 33.75)
-		return 15;
-	else if (degrees >= 33.75 && degrees < 56.25)
-		return 14;
-	else if (degrees >= 56.25 && degrees < 78.75)
-		return 13;
-	else if (degrees >= 78.75 && degrees < 101.25)
-		return 12;
-	else if (degrees >= 101.25 && degrees < 123.75)
-		return 11;
-	else if (degrees >= 123.75 && degrees < 143.25)
-		return 10;
-	else if (degrees >= 143.25 && degrees < 168.75)
-		return 9;
-	else if (degrees >= 168.75 && degrees < 191.25)
-		return 8;
-	else if (degrees >= 191.25 && degrees <= 213.75)
-		return 7;
-	else if (degrees >= 213.75 && degrees <= 236.25)
-		return 6;
-	else if (degrees >= 236.25 && degrees <= 258.75)
-		return 5;
-	else if (degrees >= 258.75 && degrees <= 281.25)
-		return 4;
-	else if (degrees >= 281.25 && degrees <= 303.75)
-		return 3;
-	else if (degrees >= 303.75 && degrees <= 326.25)
-		return 2;
-	else if (degrees >= 326.25 && degrees <= 348.75)
+	if (degrees >= 326.25)
 		return 1;
-	else if (degrees >= 348.75 && degrees <= 360)
-		return 0;
+	if (degrees >= 303.75)
+		return 2;
+	if (degrees >= 281.25)
+		return 3;
+	if (degrees >= 258.75)
+		return 4;
+	if (degrees >= 236.25)
+		return 5;
+	if (degrees >= 213.75)
+		return 6;
+	if (degrees >= 191.25)
+		return 7;
+	if (degrees >= 168.75)
+		return 8;
+	if (degrees >= 143.25)
+		return 9;
+	if (degrees >= 123.75)
+		return 10;
+	if (degrees >= 101.25)
+		return 11;
+	if (degrees >= 78.75)
+		return 12;
+	if (degrees >= 56.25)
+		return 13;
+	if (degrees >= 33.75)
+		return 14;
+	if (degrees >= 11.25)
+		return 15;
 	return 0;
 }
 
@@ -89,14 +168,14 @@ void Enemy::AnimationInit(){
 		pE->repetitions = loop_start;
 		p.push_back(pE);
 
-		doCircle(RIGHT, p, 100);
+		doCircle(RIGHT, p, 80, 6);
 		
 		pE = new PathEntry();
 		pE->dx = speed;
 		pE->dy = 0;
 		pE->delay = delay;
 		pE->frame = getFrame(RIGHT);
-		pE->repetitions = ((SCREEN_W - x) / speed) - loop_start;
+		pE->repetitions = ((SCREEN_W - x) / speed) - loop_start + 1;
 		p.push_back(pE);
 
 		animation = new MovingPathAnimation(p, 1);
@@ -192,24 +271,30 @@ enemysubtype_t Enemy::GetSubType(){
 	return subtype;
 }
 
-/*
-	Small green mono : 30, grey = 50
-	Small duo : 70, grey = 90
-	Small jet : 110, grey = 130
-	Medium green : 1000, 100 per hit, grey = 1500, 150 per hit
-	Large green : 2000, 100 per hit, grey = 2500, 150 per hit
-	Boss : 20000 points
-*/
+void Enemy::Explode(void) {
+	new SmallEnemyExplosion(x, y);
+}
+
+void Enemy::OnPlaneShot(void) {
+	if (--health == 0) {
+		if (subtype == enemysubtype_t::RED) {
+			PowWave::Get().OnRedPlaneShotDown(this);
+		}
+		state = spritestate_t::DEAD;
+		GameController::Get().incScore(POINTS_PER_DESTRUCTION[subtype]);
+		Explode();
+	}
+	else {
+		GameController::Get().incScore(POINTS_PER_HIT[subtype]);
+	}
+}
+
 void Enemy::CollisionResult(Sprite *s){
 	switch (s->GetType()){
 	case spritetype_t::PLAYER_BULLET:
 	case spritetype_t::PLAYER:
-		if (s->GetType() == PLAYER){
-			if (((Player *)s)->GetMovement() == TUMBLE) return;
-		}
-		if (--health == 0){
-			state = spritestate_t::DEAD;
-		}
+		if (s->GetType() == spritetype_t::PLAYER && ((Player *)s)->GetMovement() == TUMBLE) return;
+		OnPlaneShot();
 		break;
 	}
 }

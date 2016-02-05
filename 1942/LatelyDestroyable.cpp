@@ -7,11 +7,11 @@ toBeSuspendedAnimatorsList LatelyDestroyable::toBeSuspendedAnimators;
 int LatelyDestroyable::RedPlanesDestroyed;
 
 void LatelyDestroyable::Add(Sprite *o){
-	dead.push_back(o);
+	dead.insert(o);
 }
 
 void LatelyDestroyable::Add(Animator *a){
-	toBeSuspendedAnimators.push_back(a);
+	toBeSuspendedAnimators.insert(a);
 }
 
 void LatelyDestroyable::Destroy(void){

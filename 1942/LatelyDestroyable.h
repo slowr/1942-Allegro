@@ -8,9 +8,10 @@
 #include "Animator.h"
 #include "SpriteHolder.h"
 #include "AnimatorHolder.h"
+#include <set>
 
-typedef std::list<Sprite *> DeadList;
-typedef std::list<Animator *> toBeSuspendedAnimatorsList;
+typedef std::set<Sprite *> DeadList;
+typedef std::set<Animator *> toBeSuspendedAnimatorsList;
 class LatelyDestroyable {
 	static int RedPlanesDestroyed;
 	static DeadList dead;
