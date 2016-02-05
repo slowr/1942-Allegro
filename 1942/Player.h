@@ -26,7 +26,7 @@ class Player : public Sprite {
 	timestamp_t last_timestamp;
 	playermovement_t movement;
 	std::list<PathEntry *> tumbleList;
-	const static int delay = 200;
+	const static int delay = 15;
 	unsigned lifes = 3;
 
 	static void movementAnimatorCallback(Animator *, void *);

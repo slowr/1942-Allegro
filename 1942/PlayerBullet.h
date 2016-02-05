@@ -9,8 +9,8 @@
 class PlayerBullet : public Sprite {
 	MovingAnimator * animator;
 	MovingAnimation * animation;
-	const static int speed = 20;
-	const static int delay = 50;
+	const static int speed = 10;
+	const static int delay = 15;
 public:
 	const static int MAX_BULLETS = 10;
 	static timestamp_t last_timestamp;

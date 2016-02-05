@@ -21,7 +21,8 @@ class Enemy : public Sprite {
 	timestamp_t last_timestamp;
 	int health;
 	const static int speed = 5;
-	const static int delay = 50;
+	const static int delay = 15;
+	int getFrame(float degrees);
 public:
 	enemysubtype_t GetSubType();
 	void AnimationInit();

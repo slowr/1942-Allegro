@@ -22,8 +22,8 @@ void PowWave::SpawnWave() {
 	if (!waveAlive && PowerUpsSpawned < 7) {
 		std::cout << "Spawning new PowWave." << std::endl;
 		float y = (rand() % ((int)SCREEN_H / 2)) + 50;
-		for (int i = 0; i < NUMBER_OF_PLANES; i++) {
-			new Enemy((i + 1) * -40.f, y, std::string("green.mono"), enemysubtype_t::RED);
+		for (int i = 0; i < 1; i++) {
+			new Enemy((i + 1) * -40.f, y, std::string("green.jet"), enemysubtype_t::RED);
 		}
 
 		waveAlive = true;

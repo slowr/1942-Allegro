@@ -166,7 +166,7 @@ void Player::Move(bool up, bool down, bool left, bool right, timestamp_t curr_ti
 		_y = 0;
 	}
 
-	if (curr_timestamp - last_timestamp > 25){
+	if (curr_timestamp - last_timestamp > delay){
 		x += _x;
 		y += _y;
 		last_timestamp = curr_timestamp;
