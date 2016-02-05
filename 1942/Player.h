@@ -28,12 +28,11 @@ class Player : public Sprite {
 	std::list<PathEntry *> tumbleList;
 	const static int delay = 15;
 	unsigned lifes = 3;
-
+	const static int speed = 7;
 	static void movementAnimatorCallback(Animator *, void *);
 	static void reverseAnimatorCallback(Animator *, void *);
 	static void tumbleAnimatorCallback(Animator *, void *);
 public:
-	const static int speed = 5;
 	Player(void);
 	void Move(bool up, bool down, bool left, bool right, timestamp_t curr_timestamp);
 	const Point getPos() const;

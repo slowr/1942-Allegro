@@ -103,7 +103,7 @@ int main(int argc, char **argv)
 	float bgScaleFactor = ((float)bgScaledWidth / (float)bgWidth);
 	float bgScaledHeight = bgScaleFactor * bgHeight;
 
-	ScaleFactor = bgScaleFactor * 0.57;
+	ScaleFactor = bgScaleFactor * 0.8;
 
 	ALLEGRO_BITMAP *backBuffer = al_get_backbuffer(display);
 	//Waves::Get().CreateWaves("resources/waves_init.data");

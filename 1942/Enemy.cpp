@@ -42,6 +42,7 @@ int Enemy::getFrame(float degrees) {
 		return 1;
 	else if (degrees >= 348.75 && degrees <= 360)
 		return 0;
+	return 0;
 }
 
 void Enemy::AnimationInit(){
