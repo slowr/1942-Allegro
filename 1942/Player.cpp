@@ -178,7 +178,6 @@ const Point Player::getPos() const {
 }
 
 void Player::CollisionResult(Sprite *s){
-	
 	switch (s->GetType()){
 	case spritetype_t::ENEMY:
 	case spritetype_t::ENEMY_BULLET:

@@ -15,16 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
     <None Include="resources\filmholder.data">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="resources\MovementStepsRadius.data">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="resources\deeznutz.data">
-      <Filter>Resource Files</Filter>
-    </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -211,15 +205,18 @@
     <Image Include="resources\1942_sprite_sheet.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="resources\1945_sprite_sheet.bmp">
+    <Image Include="resources\sample_terrain.bmp">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="resources\sample_terrain.bmp">
+    <Image Include="resources\1945_sprite_sheet.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>
     <Font Include="resources\BAUHS93.TTF">
+      <Filter>Resource Files</Filter>
+    </Font>
+    <Font Include="resources\fontawesome-webfont.ttf">
       <Filter>Resource Files</Filter>
     </Font>
   </ItemGroup>

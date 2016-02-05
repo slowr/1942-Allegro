@@ -143,6 +143,8 @@ int main(int argc, char **argv)
 
 	al_start_timer(timer);
 	
+	al_init_primitives_addon();
+
 	ALLEGRO_EVENT ev;
 
 	while (!doexit)

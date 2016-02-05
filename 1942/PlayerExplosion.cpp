@@ -1,5 +1,6 @@
 #include "PlayerExplosion.h"
 #include "LatelyDestroyable.h"
+#include "GameController.h"
 
 PlayerExplosion::PlayerExplosion(int x, int y) :
 Sprite(x, y, AnimationFilmHolder::Get().GetFilm("player.explosion"), spritetype_t::EXPLOSION){

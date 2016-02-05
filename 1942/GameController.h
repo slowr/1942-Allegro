@@ -3,6 +3,7 @@
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
+#include <allegro5/allegro_primitives.h>
 
 class GameController {
 	static int FONT_SIZE;
@@ -33,7 +34,7 @@ public:
 	int getLives(void);
 	int getTumbles(void);
 	int getTakedowns(void);
-	
+
 	void Reset(void);
 	void DrawUI(void);
 };
