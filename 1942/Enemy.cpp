@@ -7,6 +7,33 @@ Sprite(_x, _y, AnimationFilmHolder::Get().GetFilm(sprite), spritetype_t::ENEMY),
 	AnimationInit();
 }
 
+void Enemy::doCircle(Enemy::enemylook_t direction, std::list<PathEntry *> &p, float radius) {
+	//std::ostringstream oss;
+	float px, py;
+	float oldDx = 0;
+	float oldDy = 0;
+	// oss << radius << std::endl;
+	oldDx = radius*cos(direction*(M_PI / 180)) - radius;
+	oldDy = radius*sin(direction*(M_PI / 180));
+	for (float degrees = direction; degrees != direction - 1; degrees++) {
+		float radians = degrees*(M_PI / 180);
+		px = radius*cos(radians) - radius;
+		py = radius*sin(radians);
+		PathEntry * pE = new PathEntry();
+		float dx_move = px - oldDx;
+		float dy_move = py - oldDy;
+		pE->dx = dx_move;
+		pE->dy = dy_move;
+		pE->repetitions = 1;
+		pE->delay = 5;
+		pE->frame = getFrame(degrees);
+		p.push_back(pE);
+		oldDx = px;
+		oldDy = py;
+		if (degrees == 360) degrees = 0;
+	}
+}
+
 int Enemy::getFrame(float degrees) {
 	if (degrees >= 0 && degrees < 11.25)
 		return 0;
@@ -49,68 +76,27 @@ void Enemy::AnimationInit(){
 	std::list<PathEntry *> p;
 	PathEntry * pE;
 	float distance;
-	//std::ostringstream oss;
-	float px, py;
-	float oldDx = 0;
-	float oldDy = 0;
-	float radius = 100;
-	// oss << radius << std::endl;
-	float center_x = -radius;
-	float center_y = 0;
 	float loop_start;
 
 	switch (subtype){
 	case enemysubtype_t::RED:
-		loop_start = rand() % (int) (( (SCREEN_W / 2) - x) / speed);
+		loop_start = ((100*2) / speed) + (rand() % (int) (( (SCREEN_W / 2) - x) / speed));
 		pE = new PathEntry();
 		pE->dx = speed;
 		pE->dy = 0;
 		pE->delay = delay;
-		pE->frame = getFrame(270);
+		pE->frame = getFrame(RIGHT);
 		pE->repetitions = loop_start;
 		p.push_back(pE);
 
-		oldDx = radius*cos(270*(M_PI / 180)) + center_x;
-		oldDy = radius*sin(270*(M_PI / 180)) + center_y;
-		for (float degrees = 270; degrees <= 360; degrees++) {
-			float radians = degrees*(M_PI / 180);
-			px = radius*cos(radians) + center_x;
-			py = radius*sin(radians) + center_y;
-			PathEntry * pE = new PathEntry();
-			float dx_move = px - oldDx;
-			float dy_move = py - oldDy;
-			pE->dx = dx_move;
-			pE->dy = dy_move;
-			pE->repetitions = 1;
-			pE->delay = 5;
-			pE->frame = getFrame(degrees);
-			p.push_back(pE);
-			oldDx = px;
-			oldDy = py;
-		}
-		for (float degrees = 0; degrees <= 270; degrees++) {
-			float radians = degrees*(M_PI / 180);
-			px = radius*cos(radians) + center_x;
-			py = radius*sin(radians) + center_y;
-			PathEntry * pE = new PathEntry();
-			float dx_move = px - oldDx;
-			float dy_move = py - oldDy;
-			pE->dx = dx_move;
-			pE->dy = dy_move;
-			pE->repetitions = 1;
-			pE->delay = 5;
-			pE->frame = getFrame(degrees);
-			p.push_back(pE);
-			oldDx = px;
-			oldDy = py;
-		}
-
+		doCircle(RIGHT, p, 100);
+		
 		pE = new PathEntry();
 		pE->dx = speed;
 		pE->dy = 0;
 		pE->delay = delay;
-		pE->frame = getFrame(270);
-		pE->repetitions = ((SCREEN_W - x) / speed) - loop_start - 360;
+		pE->frame = getFrame(RIGHT);
+		pE->repetitions = ((SCREEN_W - x) / speed) - loop_start;
 		p.push_back(pE);
 
 		animation = new MovingPathAnimation(p, 1);
@@ -181,57 +167,7 @@ void Enemy::AnimationInit(){
 		AnimatorHolder::MarkAsRunning(animator);
 		break;
 	default:
-		for (float degrees = 0; degrees <= 360; degrees++){
-			float radians = degrees*(M_PI / 180);
-			px = radius*cos(radians) + center_x;
-			py = radius*sin(radians) + center_y;
-			PathEntry * pE = new PathEntry();
-			float dx_move = px - oldDx;
-			float dy_move = py - oldDy;
-			pE->dx = dx_move;
-			pE->dy = dy_move;
-			//oss << dx_move << ":" << dy_move << " ";
-			if (degrees >= 0 && degrees < 11.25)
-				pE->frame = 0;
-			else if (degrees >= 11.25 && degrees < 33.75)
-				pE->frame = 15;
-			else if (degrees >= 33.75 && degrees < 56.25)
-				pE->frame = 14;
-			else if (degrees >= 56.25 && degrees < 78.75)
-				pE->frame = 13;
-			else if (degrees >= 78.75 && degrees < 101.25)
-				pE->frame = 12;
-			else if (degrees >= 101.25 && degrees < 123.75)
-				pE->frame = 11;
-			else if (degrees >= 123.75 && degrees < 143.25)
-				pE->frame = 10;
-			else if (degrees >= 143.25 && degrees < 168.75)
-				pE->frame = 9;
-			else if (degrees >= 168.75 && degrees < 191.25)
-				pE->frame = 8;
-			else if (degrees >= 191.25 && degrees <= 213.75)
-				pE->frame = 7;
-			else if (degrees >= 213.75 && degrees <= 236.25)
-				pE->frame = 6;
-			else if (degrees >= 236.25 && degrees <= 258.75)
-				pE->frame = 5;
-			else if (degrees >= 258.75 && degrees <= 281.25)
-				pE->frame = 4;
-			else if (degrees >= 281.25 && degrees <= 303.75)
-				pE->frame = 3;
-			else if (degrees >= 303.75 && degrees <= 326.25)
-				pE->frame = 2;
-			else if (degrees >= 326.25 && degrees <= 348.75)
-				pE->frame = 1;
-			else if (degrees >= 348.75 && degrees <= 360)
-				pE->frame = 0;
-
-			pE->repetitions = 1;
-			pE->delay = 5;
-			p.push_back(pE);
-			oldDx = px;
-			oldDy = py;
-		}
+		doCircle(BOTTOM, p, 100);
 
 		//{
 		//	std::ofstream outFile;
