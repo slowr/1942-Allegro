@@ -79,6 +79,7 @@ Sprite(_x, _y, AnimationFilmHolder::Get().GetFilm(sprite), spritetype_t::ENEMY),
 	AnimationInit();
 }
 
+/*
 int getFrameAntiClockWise(float degrees) {
 	if (degrees >= 348.75)
 		return 9;
@@ -149,6 +150,15 @@ int getFrameClockWise(float degrees) {
 	if (degrees >= 11.25)
 		return 15;
 	return 0;
+}
+*/
+
+int getFrameAntiClockWise(float degrees) {
+	return (int)((360 - degrees) / (360 / 16) + 8) % 16;
+}
+
+int getFrameClockWise(float degrees) {
+	return (int)((360 - degrees) / (360 / 16)) % 16;
 }
 
 /*
@@ -256,8 +266,7 @@ void Enemy::AnimationInit(){
 		pE->repetitions = loop_start;
 		p.push_back(pE);
 
-		doCircle(RIGHT, p, 80, ANTICLOCKWISE, 6);
-		doCircle(RIGHT, p, 80, CLOCKWISE, 6);
+		doCircle(RIGHT, p, 130, ANTICLOCKWISE, 6);
 		
 		pE = new PathEntry();
 		pE->dx = speed;
