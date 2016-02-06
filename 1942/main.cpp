@@ -3,6 +3,7 @@
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_primitives.h>
 #include <vector>
+#include <string>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
 #include "types.h"
@@ -40,6 +41,11 @@ timestamp_t getSystemTime(void){
 int main(int argc, char **argv)
 {
 	srand(getSystemTime());
+	al_init_image_addon();
+	al_init_font_addon(); // initialize the font addon
+	al_init_ttf_addon(); // initialize the ttf (True Type Font) addon
+
+	//std::cout << "Initialized allegro addons." << std::endl;
 
 	ALLEGRO_DISPLAY *display = NULL;
 	ALLEGRO_EVENT_QUEUE *event_queue = NULL;
@@ -49,16 +55,18 @@ int main(int argc, char **argv)
 	BitmapLoader bitmapLoader;
 
 	bool key[9] = { false, false, false, false, false, false, false, false, false };
-	bool redraw = true;
 	bool pause = false;
 	bool doexit = false;
 
-	gamestates_t state = gamestates_t::MENU;
+	//gamestates_t state = gamestates_t::MENU;
+	GameController::Get().setGameState(gamestates_t::MENU);
 
 	int gameFps = 0;
 	unsigned long oldTick = 0;
 	float gameTime = 0;
-	float y = 0;
+	
+
+	GameController::Get().setBackgroundY(0);
 
 	if (!al_init()) {
 		fprintf(stderr, "failed to initialize allegro!\n");
@@ -83,11 +91,6 @@ int main(int argc, char **argv)
 		return -1;
 	}
 
-	al_init_image_addon();
-
-	al_init_font_addon(); // initialize the font addon
-	al_init_ttf_addon();// initialize the ttf (True Type Font) addon
-
 	scrollingBackgroundBitmap = bitmapLoader.Load("resources/sample_terrain.bmp");
 	if (!scrollingBackgroundBitmap) {
 		fprintf(stderr, "failed to create background bitmap!\n");
@@ -102,27 +105,24 @@ int main(int argc, char **argv)
 	float bgScaleFactor = ((float)bgScaledWidth / (float)bgWidth);
 	float bgScaledHeight = bgScaleFactor * bgHeight;
 
-	ScaleFactor = bgScaleFactor * 0.57;
+	ScaleFactor = bgScaleFactor * 0.8;
 
-	ALLEGRO_FONT *font = al_load_font("resources/BAUHS93.TTF",22,0);
+	GameController::Get().bgPositionArgs(bgHeight, bgScaleFactor);
+
 	ALLEGRO_BITMAP *backBuffer = al_get_backbuffer(display);
-	//Waves::Get().CreateWaves("resources/waves_init.data");
 	/* Load all animation films */
 	AnimationFilmHolder::Get().Load("resources/filmholder.data");
 	/* Initialize the bullet sprite */
 	PlayerBullet * bullets;
 	Player * player;
-
 	/**********************/
 	GameMenu *menu = new GameMenu();
-
 
 	fprintf(stderr, "Loaded scrolling background [%f, %f]\n",
 		bgWidth, bgHeight);
 	fprintf(stderr, "Should be scaled to [%f, %f]\n",
 		bgScaledWidth, bgScaledHeight);
 
-	//al_set_target_bitmap(scrollingBackgroundBitmap);
 	al_set_target_bitmap(backBuffer);
 
 	event_queue = al_create_event_queue();
@@ -145,6 +145,8 @@ int main(int argc, char **argv)
 
 	al_start_timer(timer);
 	
+	al_init_primitives_addon();
+
 	ALLEGRO_EVENT ev;
 
 	while (!doexit)
@@ -155,7 +157,9 @@ int main(int argc, char **argv)
 			if (pause) continue;
 			tickCount++;
 
-			if (state == gamestates_t::PLAYING){
+			//std::cout << bgHeight - (SCREEN_H / bgScaleFactor) - GameController::Get().getBackgroundY() << std::endl;
+			if (GameController::Get().getGameState() == gamestates_t::PLAYING){
+
 				if (key[KEY_LEFT] && !key[KEY_RIGHT]){
 					player->MoveLeft();
 				}
@@ -170,38 +174,47 @@ int main(int argc, char **argv)
 				}
 
 				if (key[KEY_SPACE]){
-					if (state == gamestates_t::PLAYING && player->GetMovement() != TUMBLE) PlayerBullet::FireBullets(bullets, player->getPos(), TIMESTAMP(tickCount));
+					if (GameController::Get().getGameState() == gamestates_t::PLAYING && player->GetMovement() != TUMBLE) PlayerBullet::FireBullets(bullets, player->getPos());
 				}
 			}
 
-			if (state == gamestates_t::PLAYING){
-				if (((int)y % 100) == 0){
-					PowWave::Get().SpawnWave();
+			if (GameController::Get().getGameState() == gamestates_t::PLAYING && GameController::Get().isCheckPointStart()) {
+
+				std::cout << "IN CHECKPOINT" << std::endl;
+				GameController::Get().getPlayer()->SetCheckPoint(GameController::Get().isCheckPointStart());
+				GameController::Get().getPlayer()->CheckPointTumble();
+			}
+
+			if (GameController::Get().getGameState() == gamestates_t::PLAYING){
+				if (((int)GameController::Get().getBackgroundY() % 200) == 0){
+					PowWave::Get().SpawnWave(GameController::Get().isCheckPoint());
 				}
 			}
 
-			y += (BG_SCROLL_SPEED / FPS);
-			redraw = true;
+			GameController::Get().setBackgroundY(GameController::Get().getBackgroundY()+ (BG_SCROLL_SPEED / FPS));
+			GameController::Get().setRedraw(true);
 
-			if (state == gamestates_t::PLAYING){
+
+			if (GameController::Get().getGameState() == gamestates_t::PLAYING){
 				CollisionChecker::Get().Check();
-				player->Move(key[KEY_UP], key[KEY_DOWN], key[KEY_LEFT], key[KEY_RIGHT], TIMESTAMP(tickCount));
+				player->Move(key[KEY_UP], key[KEY_DOWN], key[KEY_LEFT], key[KEY_RIGHT]);
 			}
 
-			if (bgHeight - (SCREEN_H / bgScaleFactor) - y <= 0) {
+			if (bgHeight - (SCREEN_H / bgScaleFactor) - GameController::Get().getBackgroundY()<= 0) {
 				// TODO: done scrolling!
 				break;
 			}
 		}
 		else if (ev.type == ALLEGRO_EVENT_KEY_DOWN) {
+
 			switch (ev.keyboard.keycode) {
 			case ALLEGRO_KEY_UP:
-				if (state == gamestates_t::MENU) menu->MoveUp();
+				if (GameController::Get().getGameState() == gamestates_t::MENU) menu->MoveUp();
 				else key[KEY_UP] = true;
 				break;
 
 			case ALLEGRO_KEY_DOWN:
-				if (state == gamestates_t::MENU) menu->MoveDown();
+				if (GameController::Get().getGameState() == gamestates_t::MENU) menu->MoveDown();
 				else key[KEY_DOWN] = true;
 				break;
 
@@ -214,20 +227,27 @@ int main(int argc, char **argv)
 				break;
 
 			case ALLEGRO_KEY_P:
-				pause = !pause;
+				if (GameController::Get().getGameState() == PLAYING) {
+					pause = !pause;
+					if (pause) {
+						std::cout <<  bgHeight - (SCREEN_H / bgScaleFactor) - GameController::Get().getBackgroundY() << std::endl;
+						GameController::Get().DrawPaused();
+						continue;
+					}
+				}
 				break;
 
 			case ALLEGRO_KEY_ENTER:
 				key[KEY_ENTER] = true;
-				if (menu->GetSelected() == 0 && state == gamestates_t::MENU){
-					state = gamestates_t::PLAYING;
+				if (menu->GetSelected() == 0 && GameController::Get().getGameState() == gamestates_t::MENU){
+					GameController::Get().setGameState(gamestates_t::PLAYING);
 					menu->LeaveMenu();
-					y = 0;
 					tickCount = 0;
 					bullets = new PlayerBullet[MAX_BULLETS];
 					player = new Player();
 					GameController::Get().Reset();
 					GameController::Get().SetPlayer(player);
+
 				}
 				break;
 
@@ -236,7 +256,7 @@ int main(int argc, char **argv)
 				break;
 
 			case ALLEGRO_KEY_D:
-				if (state == gamestates_t::PLAYING) player->Tumble();
+				if (GameController::Get().getGameState() == gamestates_t::PLAYING) player->Tumble();
 				break;
 			}
 		}
@@ -276,23 +296,30 @@ int main(int argc, char **argv)
 			break;
 		}
 
-		if (redraw && al_is_event_queue_empty(event_queue)) {
-			redraw = false;
+		if (GameController::Get().getRedraw() && al_is_event_queue_empty(event_queue)) {
+
+			GameController::Get().setRedraw(false);
+
 			al_clear_to_color(al_map_rgb(0, 0, 0));
 			al_draw_scaled_bitmap(scrollingBackgroundBitmap,
-				0, bgHeight - (SCREEN_H / bgScaleFactor) - y, bgWidth, bgHeight,
+				0, bgHeight - (SCREEN_H / bgScaleFactor) - GameController::Get().getBackgroundY(), bgWidth, bgHeight,
 				0, 0, bgScaledWidth, bgScaledHeight,
 				0);
 
-			if (state == gamestates_t::PLAYING){
-				al_draw_text(font, al_map_rgb(255, 255, 0), SCREEN_W / 2, 0, ALLEGRO_ALIGN_CENTRE, "HIGH SCORE");
-				al_draw_text(font, al_map_rgb(255, 255, 255), SCREEN_W * 0.1, 0, ALLEGRO_ALIGN_LEFT, "1UP");
-				al_draw_text(font, al_map_rgb(255, 255, 255), SCREEN_W * 0.9, 0, ALLEGRO_ALIGN_RIGHT, "2UP");
+			LatelyDestroyable::Destroy();
+
+			if (GameController::Get().isPlayerDead() == true) {
+				GameController::Get().DrawUI();
+				SpriteHolder::Get().DrawSprites();
+				GameController::Get().DeathScreen();
 			}
 
-			LatelyDestroyable::Destroy();
-			if (state == gamestates_t::PLAYING) AnimatorHolder::Progress(TIMESTAMP(tickCount));
-			SpriteHolder::Get().DrawSprites(backBuffer);
+			if (GameController::Get().getGameState() == gamestates_t::PLAYING) AnimatorHolder::Progress();
+			SpriteHolder::Get().DrawSprites();
+
+			if (GameController::Get().getGameState() == gamestates_t::PLAYING){
+				GameController::Get().DrawUI();
+			}
 
 			al_flip_display();
 		}

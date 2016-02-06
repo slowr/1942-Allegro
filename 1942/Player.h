@@ -23,26 +23,33 @@ class Player : public Sprite {
 	FrameRangeAnimation * revrightAnimation;
 	MovingPathAnimator * tumbleAnimator;
 	MovingPathAnimation * tumbleAnimation;
+	MovingPathAnimation *checkPointAnimation;
+	MovingPathAnimator *checkPointAnimator;
 	timestamp_t last_timestamp;
 	playermovement_t movement;
 	std::list<PathEntry *> tumbleList;
-	const static int delay = 200;
-	unsigned lifes = 3;
-
+	std::list<PathEntry *> onboardList;
+	const static int delay = 150;
+	const static int move_delay = 15;
+	const static int speed = 7;
+	bool checkPoint;
 	static void movementAnimatorCallback(Animator *, void *);
 	static void reverseAnimatorCallback(Animator *, void *);
 	static void tumbleAnimatorCallback(Animator *, void *);
+	static void checkpointAnimatorCallback(Animator *a, void *);
 public:
-	const static int speed = 5;
 	Player(void);
-	void Move(bool up, bool down, bool left, bool right, timestamp_t curr_timestamp);
+	void Move(bool up, bool down, bool left, bool right);
 	const Point getPos() const;
 	virtual void CollisionResult(Sprite *s);
 	virtual void AnimationFinish(void);
+	void CheckPointTumble();
 	void Tumble();
 	void MoveLeft();
 	void MoveRight();
 	void StopMoving();
+	void Explode();
+	void SetCheckPoint(bool check);
 	playermovement_t GetMovement();
 	~Player(void);
 };

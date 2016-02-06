@@ -9,7 +9,7 @@ ALLEGRO_BITMAP *BitmapLoader::Load(const std::string& path) {
 	ALLEGRO_BITMAP *b = GetBitmap(path);
 	if (!b) {
 		bitmaps[path] = (b = al_load_bitmap(path.c_str()));
-		std::cout << path.c_str() << std::endl;
+		//std::cout << path.c_str() << std::endl;
 		assert(b);
 	}
 	return b;

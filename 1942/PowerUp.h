@@ -11,5 +11,6 @@ private:
 public:
 	void CollisionResult(Sprite *s);
 	PowerUp(float _dx, float _dy, powertype_t _power);
+	void handlePowerUp();
 	~PowerUp();
 };

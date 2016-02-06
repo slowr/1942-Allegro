@@ -50,6 +50,8 @@ public:
 	float bottom;
 };
 
+//lol
+
 enum spritetype_t {
 	PLAYER_BULLET, ENEMY_BULLET, ENEMY, POWER_UP, PLAYER, EXPLOSION, UI
 };
@@ -59,7 +61,7 @@ enum spritestate_t {
 };
 
 enum gamestates_t {
-	PAUSED, PLAYING, MENU, EXIT
+	PAUSED, PLAYING, MENU, EXIT, GAME_OVER
 };
 
 // enemy's specific type

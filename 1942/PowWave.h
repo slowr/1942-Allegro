@@ -11,14 +11,16 @@ private:
 
 	int PowerUpsSpawned;
 	int alivePlanes;
+	int shotPlanes;
 	bool waveAlive;
 	bool PowsSpawned[7];
 public:
 	static PowWave &Get();
 
-	void SpawnWave();
+	void SpawnWave(bool canSpawn);
 	void SpawnPow(int x, int y);
 	PowWave();
 	void OnRedPlaneDead(Enemy *e);
+	void OnRedPlaneShotDown(Enemy *e);
 	virtual ~PowWave();
 };

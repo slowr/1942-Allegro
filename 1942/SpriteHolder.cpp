@@ -1,7 +1,6 @@
 #include "SpriteHolder.h"
 #include "SmallEnemyExplosion.h"
 #include "PlayerExplosion.h"
-#include "LargeEnemyExplosion.h"
 #include "Enemy.h"
 
 SpriteHolder SpriteHolder::holder;
@@ -43,10 +42,23 @@ void SpriteHolder::Add(Sprite* s){
 			CollisionChecker::Get().Register(s, *it);
 		}
 		break;
+	case spritetype_t::POWER_UP:
+		GetSprites(spritetype_t::PLAYER, list);
+		for (SpriteList::iterator it = list->begin(); it != list->end(); ++it) {
+			CollisionChecker::Get().Register(s, *it);
+		}
+		break;
 	default:
 		break;
 	}
 	delete list;
+}
+
+void SpriteHolder::DestroyEnemies(void) {
+	for (Sprite *e : sprites[spritetype_t::ENEMY]) {
+		if(!GameController::Get().isPlayerDead() )((Enemy *)e)->Explode();
+		e->SetState(spritestate_t::DEAD);
+	}
 }
 
 void SpriteHolder::Remove(Sprite* s){
@@ -60,7 +72,7 @@ void SpriteHolder::GetSprites(spritetype_t type, SpriteList* result) {
 		*result = i->second;
 }
 
-void SpriteHolder::DrawSprites(ALLEGRO_BITMAP *dest){
+void SpriteHolder::DrawSprites(){
 	SpriteList * result = new SpriteList();
 	for (int i = 0; i <= spritetype_t::UI; i++){
 		
@@ -70,19 +82,10 @@ void SpriteHolder::DrawSprites(ALLEGRO_BITMAP *dest){
 			spritestate_t state = s->GetState();
 
 			if (state == spritestate_t::ALIVE){
-				s->Draw(dest);
+				s->Draw();
 			}
 			else if (state == spritestate_t::DEAD) {
-				if (s->GetType() == spritetype_t::ENEMY && ((Enemy*)(s))->GetSubType()!=enemysubtype_t::GREEN_LARGE){
-					LatelyDestroyable::Add(s);
-					SmallEnemyExplosion * see = new SmallEnemyExplosion(s->GetX(), s->GetY());
-				}
-				else if (s->GetType() == spritetype_t::ENEMY && ((Enemy*)(s))->GetSubType() == enemysubtype_t::GREEN_LARGE){
-					LatelyDestroyable::Add(s);
-					LargeEnemyExplosion * see = new LargeEnemyExplosion(s->GetX(), s->GetY());
-				}
-				else if (s->GetType() == spritetype_t::PLAYER) PlayerExplosion * see = new PlayerExplosion(s->GetX(), s->GetY());
-
+				if (s->GetType() != spritetype_t::PLAYER) LatelyDestroyable::Add(s);
 				s->SetState(spritestate_t::WAIT);
 			}
 		}

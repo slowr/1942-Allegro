@@ -39,10 +39,10 @@ EnemyBullet::EnemyBullet(float x, float y) : Sprite(x, y, AnimationFilmHolder::G
 	float tmpX, tmpY;
 	if (dx < 0 && dy < 0){
 		// top left
-		std::cout << "top left\n";
+		//std::cout << "top left\n";
 		// top
 		if ((tmpX = GetLineX(x, y, playerX, playerY, 0)) >= 0){
-			std::cout << "top\n";
+			//std::cout << "top\n";
 			distance = sqrt(pow(tmpX - x, 2) + pow(y, 2));
 			tmpY = 0;
 		}
@@ -55,7 +55,7 @@ EnemyBullet::EnemyBullet(float x, float y) : Sprite(x, y, AnimationFilmHolder::G
 	}
 	else if (dx < 0 && dy > 0){
 		// Bottom left
-		std::cout << " Bottom left\n";
+		//std::cout << " Bottom left\n";
 		// left
 		if ((tmpY = GetLineY(x, y, playerX, playerY, 0)) <= SCREEN_H){
 			distance = sqrt(pow(x, 2) + pow(y - tmpY, 2));
@@ -70,7 +70,7 @@ EnemyBullet::EnemyBullet(float x, float y) : Sprite(x, y, AnimationFilmHolder::G
 	}
 	else if (dx > 0 && dy < 0){
 		// top right
-		std::cout << "top right\n";
+		//std::cout << "top right\n";
 		// top
 		if ((tmpX = GetLineX(x, y, playerX, playerY, 0)) <= SCREEN_W){
 			distance = sqrt(pow(tmpX - x, 2) + pow(y, 2));
@@ -85,7 +85,7 @@ EnemyBullet::EnemyBullet(float x, float y) : Sprite(x, y, AnimationFilmHolder::G
 	}
 	else {
 		// bottom right
-		std::cout << "bottom right\n";
+		//std::cout << "bottom right\n";
 		// bottom
 		if ((tmpX = GetLineX(x, y, playerX, playerY, SCREEN_H)) >= SCREEN_W){
 			distance = sqrt(pow(x - tmpX, 2) + pow(y - SCREEN_H, 2));
@@ -114,7 +114,7 @@ EnemyBullet::EnemyBullet(float x, float y) : Sprite(x, y, AnimationFilmHolder::G
 
 	animation = new MovingPathAnimation(p, 1);
 	animator = new MovingPathAnimator();
-	animator->Start(this, animation, TIMESTAMP(tickCount));
+	animator->Start(this, animation);
 	animator->SetOnFinish(OnAnimationFinish, this);
 	AnimatorHolder::Register(animator);
 	AnimatorHolder::MarkAsRunning(animator);

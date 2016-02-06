@@ -1,6 +1,7 @@
 #include "PowWave.h"
 #include "Enemy.h"
 #include "PowerUp.h"
+#include "SpriteHolder.h"
 
 int PowWave::NUMBER_OF_PLANES = 5;
 PowWave PowWave::instance;
@@ -18,38 +19,41 @@ PowWave::~PowWave() {
 
 }
 
-void PowWave::SpawnWave() {
+void PowWave::SpawnWave(bool canSpawn) {
+	if (canSpawn) return;
 	if (!waveAlive && PowerUpsSpawned < 7) {
-		std::cout << "Spawning new PowWave." << std::endl;
-		float y = rand() % ((int)SCREEN_H / 2);
+		//std::cout << "Spawning new PowWave." << std::endl;
+		float y = (rand() % ((int)SCREEN_H / 2)) + 50;
 		for (int i = 0; i < NUMBER_OF_PLANES; i++) {
-			new Enemy((i + 1) * -40.f, y, std::string("green.mono"), enemysubtype_t::GRAY_MONO);
+			new Enemy((i + 1) * -40.f, y, std::string("green.jet"), enemysubtype_t::RED);
 		}
-		new Enemy(100, SCREEN_H - 63, std::string("green.large"), enemysubtype_t::GREEN_LARGE);
+
 		waveAlive = true;
 		alivePlanes = NUMBER_OF_PLANES;
+		shotPlanes = 0;
 	}
 }
 
 void PowWave::SpawnPow(int x, int y) {
 	int powNumber;
 	if (PowerUpsSpawned == 7) return;
-	while (PowsSpawned[(powNumber = rand() % 7)]) {
-		
-	}
-	std::cout << "Spawning pow type " << powNumber << std::endl;
+	while (PowsSpawned[(powNumber = rand() % 7)]) { }
+	//std::cout << "Spawning pow type " << powNumber << std::endl;
 	new PowerUp(x, y, (powertype_t)powNumber);
 	PowsSpawned[powNumber] = 1;
 	PowerUpsSpawned++;
 }
 
+void PowWave::OnRedPlaneShotDown(Enemy *e) {
+	//std::cout << "OnRedPlaneShotDown()" << std::endl;
+	if (++shotPlanes == NUMBER_OF_PLANES) {
+		SpawnPow(e->GetX(), e->GetY());
+	}
+}
+
 void PowWave::OnRedPlaneDead(Enemy *e) {
-	std::cout << "OnRedPlaneDead()" << std::endl;
+	//std::cout << "OnRedPlaneDead()" << std::endl;
 	if (--alivePlanes == 0) {
-		std::cout << "Last plane at [" << e->GetX() << ", " << e->GetY() << "]" << std::endl;
-		if (e->GetX() < SCREEN_W && e->GetY() < SCREEN_H){
-			SpawnPow(e->GetX(), e->GetY());
-		}
 		waveAlive = false;
 	}
 }

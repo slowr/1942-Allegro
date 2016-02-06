@@ -7,17 +7,17 @@ toBeSuspendedAnimatorsList LatelyDestroyable::toBeSuspendedAnimators;
 int LatelyDestroyable::RedPlanesDestroyed;
 
 void LatelyDestroyable::Add(Sprite *o){
-	dead.push_back(o);
+	dead.insert(o);
 }
 
 void LatelyDestroyable::Add(Animator *a){
-	toBeSuspendedAnimators.push_back(a);
+	toBeSuspendedAnimators.insert(a);
 }
 
 void LatelyDestroyable::Destroy(void){
 	for (DeadList::iterator it = dead.begin(); it != dead.end(); ++it){
 		Sprite *s = (*it);
-		std::cout << "Destroying sprite with type " << s->GetType() << std::endl;
+		//std::cout << "Destroying sprite with type " << s->GetType() << std::endl;
 		delete (*it);
 	}
 

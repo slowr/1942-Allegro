@@ -18,14 +18,14 @@ AnimatorList AnimatorHolder::running, AnimatorHolder::suspended;
 	running.remove(a); suspended.push_back(a);
 }
 
-void AnimatorHolder::Progress(timestamp_t currTime) {
+void AnimatorHolder::Progress() {
 	std::for_each(
-		running.begin(), running.end(), ProgressFunctor(currTime)
+		running.begin(), running.end(), ProgressFunctor()
 		);
 }
 
 void AnimatorHolder::ProgressFunctor::operator()(Animator* a) const { 
-	a->Progress(t); 
+	a->Progress(); 
 }
 
-AnimatorHolder::ProgressFunctor::ProgressFunctor(timestamp_t _t) : t(_t) {}
+AnimatorHolder::ProgressFunctor::ProgressFunctor() {}
