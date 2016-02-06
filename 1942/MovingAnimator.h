@@ -7,8 +7,8 @@ class MovingAnimator : public Animator {
 	Sprite* sprite;
 	MovingAnimation* anim;
 public:
-	virtual void Start(Sprite* s, Animation* a, timestamp_t t);
+	virtual void Start(Sprite* s, Animation* a);
 	MovingAnimator(void);
 	~MovingAnimator();
-	void Progress(timestamp_t currTime);
+	void Progress();
 };

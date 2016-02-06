@@ -34,7 +34,7 @@ class Player : public Sprite {
 	static void tumbleAnimatorCallback(Animator *, void *);
 public:
 	Player(void);
-	void Move(bool up, bool down, bool left, bool right, timestamp_t curr_timestamp);
+	void Move(bool up, bool down, bool left, bool right);
 	const Point getPos() const;
 	virtual void CollisionResult(Sprite *s);
 	virtual void AnimationFinish(void);

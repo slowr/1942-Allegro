@@ -1,9 +1,9 @@
 #include "MovingPathAnimator.h"
 #include "Enemy.h"
-void MovingPathAnimator::Start(Sprite* s, Animation* a, timestamp_t t) {
+void MovingPathAnimator::Start(Sprite* s, Animation* a) {
 	sprite = s;
 	anim = (MovingPathAnimation *)a;
-	lastTime = t;
+	lastTime = TIMESTAMP(tickCount);
 	state = ANIMATOR_RUNNING;
 }
 
@@ -12,7 +12,8 @@ sprite((Sprite*)0), anim((MovingPathAnimation*)0) {}
 
 MovingPathAnimator::~MovingPathAnimator() {}
 
-void MovingPathAnimator::Progress(timestamp_t currTime) {
+void MovingPathAnimator::Progress() {
+	timestamp_t currTime = TIMESTAMP(tickCount);
 	while (!anim->GetPath().empty() && currTime > lastTime && currTime - lastTime >= anim->GetPath().front()->delay) {
 		PathEntry *p = anim->GetPath().front();
 		float dx = 0, dy = 0;

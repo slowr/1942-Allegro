@@ -120,7 +120,6 @@ int main(int argc, char **argv)
 	fprintf(stderr, "Should be scaled to [%f, %f]\n",
 		bgScaledWidth, bgScaledHeight);
 
-	//al_set_target_bitmap(scrollingBackgroundBitmap);
 	al_set_target_bitmap(backBuffer);
 
 	event_queue = al_create_event_queue();
@@ -170,7 +169,7 @@ int main(int argc, char **argv)
 				}
 
 				if (key[KEY_SPACE]){
-					if (state == gamestates_t::PLAYING && player->GetMovement() != TUMBLE) PlayerBullet::FireBullets(bullets, player->getPos(), TIMESTAMP(tickCount));
+					if (state == gamestates_t::PLAYING && player->GetMovement() != TUMBLE) PlayerBullet::FireBullets(bullets, player->getPos());
 				}
 			}
 
@@ -185,7 +184,7 @@ int main(int argc, char **argv)
 
 			if (state == gamestates_t::PLAYING){
 				CollisionChecker::Get().Check();
-				player->Move(key[KEY_UP], key[KEY_DOWN], key[KEY_LEFT], key[KEY_RIGHT], TIMESTAMP(tickCount));
+				player->Move(key[KEY_UP], key[KEY_DOWN], key[KEY_LEFT], key[KEY_RIGHT]);
 			}
 
 			if (bgHeight - (SCREEN_H / bgScaleFactor) - y <= 0) {
@@ -292,8 +291,8 @@ int main(int argc, char **argv)
 				0);
 
 			LatelyDestroyable::Destroy();
-			if (state == gamestates_t::PLAYING) AnimatorHolder::Progress(TIMESTAMP(tickCount));
-			SpriteHolder::Get().DrawSprites(backBuffer);
+			if (state == gamestates_t::PLAYING) AnimatorHolder::Progress();
+			SpriteHolder::Get().DrawSprites();
 
 			if (state == gamestates_t::PLAYING){
 				GameController::Get().DrawUI();

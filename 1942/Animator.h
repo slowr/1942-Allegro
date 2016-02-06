@@ -20,9 +20,9 @@ protected:
 	void* finishClosure;
 	void NotifyStopped(void);
 public:
-	virtual void Start(Sprite* s, Animation* a, timestamp_t t) = 0;
+	virtual void Start(Sprite* s, Animation* a) = 0;
 	bool HasFinished(void) const;
-	virtual void Progress(timestamp_t currTime) = 0;
+	virtual void Progress() = 0;
 	void SetOnFinish(FinishCallback f, void* c = (void*)0);
 	virtual ~Animator();
 	void Stop(void);

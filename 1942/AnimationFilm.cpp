@@ -10,7 +10,7 @@ const Rect AnimationFilm::GetFrameBox(byte frameNo) const
 	return boxes[frameNo];
 }
 
-void AnimationFilm::DisplayFrame(ALLEGRO_BITMAP *dest, const Point& at, byte frameNo) const {
+void AnimationFilm::DisplayFrame(const Point& at, byte frameNo) const {
 	Rect box = boxes.at(frameNo);
 	ALLEGRO_BITMAP* tmp = al_create_sub_bitmap(bitmap,
 		box.left, box.top, box.w, box.h);

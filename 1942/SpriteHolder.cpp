@@ -72,7 +72,7 @@ void SpriteHolder::GetSprites(spritetype_t type, SpriteList* result) {
 		*result = i->second;
 }
 
-void SpriteHolder::DrawSprites(ALLEGRO_BITMAP *dest){
+void SpriteHolder::DrawSprites(){
 	SpriteList * result = new SpriteList();
 	for (int i = 0; i <= spritetype_t::UI; i++){
 		
@@ -82,7 +82,7 @@ void SpriteHolder::DrawSprites(ALLEGRO_BITMAP *dest){
 			spritestate_t state = s->GetState();
 
 			if (state == spritestate_t::ALIVE){
-				s->Draw(dest);
+				s->Draw();
 			}
 			else if (state == spritestate_t::DEAD) {
 				if (s->GetType() != spritetype_t::PLAYER) LatelyDestroyable::Add(s);

@@ -94,11 +94,11 @@ void Player::StopMoving(){
 	if (movement == NONE || movement == TUMBLE) return;
 	if (movement == LEFT){
 		AnimatorHolder::MarkAsRunning(revleftAnimator);
-		revleftAnimator->Start(this, revleftAnimation, TIMESTAMP(tickCount));
+		revleftAnimator->Start(this, revleftAnimation);
 	}
 	else{
 		AnimatorHolder::MarkAsRunning(revrightAnimator);
-		revrightAnimator->Start(this, revrightAnimation, TIMESTAMP(tickCount));
+		revrightAnimator->Start(this, revrightAnimation);
 	}
 	movement = NONE;
 
@@ -111,7 +111,7 @@ void Player::MoveLeft(){
 	AnimatorHolder::MarkAsSuspended(rightAnimator);
 	AnimatorHolder::MarkAsSuspended(revrightAnimator);
 	AnimatorHolder::MarkAsSuspended(revleftAnimator);
-	leftAnimator->Start(this, leftAnimation, TIMESTAMP(tickCount));
+	leftAnimator->Start(this, leftAnimation);
 	AnimatorHolder::MarkAsRunning(leftAnimator);
 	movement = LEFT;
 }
@@ -121,7 +121,7 @@ void Player::MoveRight(){
 	AnimatorHolder::MarkAsSuspended(leftAnimator);
 	AnimatorHolder::MarkAsSuspended(revleftAnimator);
 	AnimatorHolder::MarkAsSuspended(revrightAnimator);
-	rightAnimator->Start(this, rightAnimation, TIMESTAMP(tickCount));
+	rightAnimator->Start(this, rightAnimation);
 	AnimatorHolder::MarkAsRunning(rightAnimator);
 	movement = RIGHT;
 }
@@ -132,7 +132,7 @@ void Player::Tumble(){
 		e->repetitions = 1;
 	}
 	tumbleAnimation->SetPath(std::list<PathEntry *>(tumbleList));
-	tumbleAnimator->Start(this, tumbleAnimation, TIMESTAMP(tickCount));
+	tumbleAnimator->Start(this, tumbleAnimation);
 	AnimatorHolder::MarkAsSuspended(rightAnimator);
 	AnimatorHolder::MarkAsSuspended(revrightAnimator);
 	AnimatorHolder::MarkAsSuspended(leftAnimator);
@@ -146,7 +146,8 @@ playermovement_t Player::GetMovement(){
 	return movement;
 }
 
-void Player::Move(bool up, bool down, bool left, bool right, timestamp_t curr_timestamp){
+void Player::Move(bool up, bool down, bool left, bool right){
+	timestamp_t curr_timestamp = TIMESTAMP(tickCount);
 	float _x = 0, _y = 0;
 
 	if (!(up || down || left || right)) return;

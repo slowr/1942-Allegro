@@ -8,8 +8,8 @@ class FrameRangeAnimator : public Animator {
 	FrameRangeAnimation* anim;
 	frame_t currFrame;
 public:
-	virtual void Start(Sprite* s, Animation* a, timestamp_t t);
+	virtual void Start(Sprite* s, Animation* a);
 	FrameRangeAnimator(void);
 	~FrameRangeAnimator();
-	void FrameRangeAnimator::Progress(timestamp_t currTime);
+	void FrameRangeAnimator::Progress();
 };

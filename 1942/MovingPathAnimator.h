@@ -7,8 +7,8 @@ class MovingPathAnimator : public Animator {
 	Sprite* sprite;
 	MovingPathAnimation* anim;
 public:
-	virtual void MovingPathAnimator::Start(Sprite* s, Animation* a, timestamp_t t);
+	virtual void MovingPathAnimator::Start(Sprite* s, Animation* a);
 	MovingPathAnimator(void);
 	~MovingPathAnimator();
-	void Progress(timestamp_t currTime);
+	void Progress();
 };

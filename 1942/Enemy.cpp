@@ -278,7 +278,7 @@ void Enemy::AnimationInit(){
 
 		animation = new MovingPathAnimation(p, 1);
 		animator = new MovingPathAnimator();
-		animator->Start(this,animation, TIMESTAMP(tickCount));
+		animator->Start(this,animation);
 		animator->SetOnFinish(OnAnimationFinish, this);
 		AnimatorHolder::Register(animator);
 		AnimatorHolder::MarkAsRunning(animator);
@@ -338,7 +338,7 @@ void Enemy::AnimationInit(){
 
 		animation = new MovingPathAnimation(p, 1);
 		animator = new MovingPathAnimator();
-		animator->Start(this, animation, TIMESTAMP(tickCount));
+		animator->Start(this, animation);
 		animator->SetOnFinish(OnAnimationFinish, this);
 		AnimatorHolder::Register(animator);
 		AnimatorHolder::MarkAsRunning(animator);
@@ -357,7 +357,7 @@ void Enemy::AnimationInit(){
 
 		animation = new MovingPathAnimation(p, 1);
 		animator = new MovingPathAnimator();
-		animator->Start(this, animation, TIMESTAMP(tickCount));
+		animator->Start(this, animation);
 		animator->SetOnFinish(OnAnimationFinish, this);
 		AnimatorHolder::Register(animator);
 		AnimatorHolder::MarkAsRunning(animator);
