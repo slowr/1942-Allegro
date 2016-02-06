@@ -11,13 +11,17 @@ class PlayerBullet : public Sprite {
 	MovingAnimation * animation;
 	const static int speed = 10;
 	const static int delay = 15;
+	static PlayerBullet *bullets;
+	static bool quadBullets;
 public:
 	const static int MAX_BULLETS = 10;
 	static timestamp_t last_timestamp;
 	PlayerBullet(void);
 	void FireBullet(Point p);
 	void StopBullet();
-	static void FireBullets(PlayerBullet b[], Point p);
+	static void InitBullets();
+	static void SetQuadBullets(bool val);
+	static void FireBullets(Point p);
 	virtual void PlayerBullet::Draw();
 	virtual void CollisionResult(Sprite *s);
 	virtual void AnimationFinish(void);

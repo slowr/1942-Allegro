@@ -1,5 +1,7 @@
 #include "PowerUp.h"
+#include "PlayerBullet.h"
 #include "GameController.h"
+
 PowerUp::PowerUp(float _dx, float _dy, powertype_t _power) : Sprite(_dx, _dy, AnimationFilmHolder::Get().GetFilm("powerup.sprite"), spritetype_t::POWER_UP)
 {
 	power = _power;
@@ -46,6 +48,7 @@ void PowerUp::handlePowerUp() {
 	{
 	case QUAD_GUN:
 		std::cout << "Quad gun pow!" << std::endl;
+		PlayerBullet::SetQuadBullets(true);
 		break;
 	case ENEMY_CRASH:
 		std::cout << "Enemy crash pow!" << std::endl;

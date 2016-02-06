@@ -1,6 +1,8 @@
 #include "PlayerBullet.h"
 
 timestamp_t PlayerBullet::last_timestamp = 0;
+PlayerBullet *PlayerBullet::bullets = NULL;
+bool PlayerBullet::quadBullets = false;
 
 PlayerBullet::PlayerBullet(void) : Sprite(0, 0, AnimationFilmHolder::Get().GetFilm("player.bullet"), spritetype_t::PLAYER_BULLET) {
 	animation = new MovingAnimation(0, -speed, delay, true, 1);
@@ -14,10 +16,19 @@ PlayerBullet::PlayerBullet(void) : Sprite(0, 0, AnimationFilmHolder::Get().GetFi
 void PlayerBullet::FireBullet(Point p){
 	animator->TimeSet(tickCount);
 	state = spritestate_t::ALIVE;
-	x = p.x + (AnimationFilmHolder::Get().GetFilm("player.sprite")->GetFrameBox(0).w * ScaleFactor) / 2 - (AnimationFilmHolder::Get().GetFilm("player.bullet")->GetFrameBox(0).w*ScaleFactor) / 2;
-	y = p.y - (AnimationFilmHolder::Get().GetFilm("player.bullet")->GetFrameBox(0).w * ScaleFactor) / 2;
+	x = p.x + (AnimationFilmHolder::Get().GetFilm("player.sprite")->GetFrameBox(0).w * ScaleFactor) / 2 - (GetFrameBox(GetFrame()).w*ScaleFactor) / 2;
+	y = p.y - (GetFrameBox(GetFrame()).w * ScaleFactor) / 2;
 	AnimatorHolder::MarkAsRunning(animator);
 	isVisible = true;
+}
+
+void PlayerBullet::SetQuadBullets(bool val) {
+	quadBullets = val;
+}
+
+void PlayerBullet::InitBullets() {
+	if (bullets == NULL)
+		bullets = new PlayerBullet[MAX_BULLETS];
 }
 
 void PlayerBullet::StopBullet(){
@@ -26,21 +37,22 @@ void PlayerBullet::StopBullet(){
 	AnimatorHolder::MarkAsSuspended(animator);
 }
 
-void PlayerBullet::FireBullets(PlayerBullet b[], Point p){
+void PlayerBullet::FireBullets(Point p){
 	timestamp_t currTime = TIMESTAMP(tickCount);
 	if (currTime - last_timestamp > 250){
 		for (int i = 0; i < MAX_BULLETS; i++){
-			if (!b[i].isVisible){
-				b[i].FireBullet(p);
+			if (!bullets[i].isVisible){
+				bullets[i].SetFrame(quadBullets ? 1 : 0);
+				bullets[i].FireBullet(p);
+				last_timestamp = currTime;
 				break;
 			}
 		}
-		last_timestamp = currTime;
 	}
 }
 
 void PlayerBullet::Draw(){
-	if (y < -frameBox.h*ScaleFactor) PlayerBullet::StopBullet();
+	if (y < -frameBox.h*ScaleFactor) StopBullet();
 	else currFilm->DisplayFrame(Point(x, y), frameNo);
 }
 

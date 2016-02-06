@@ -372,7 +372,7 @@ void Enemy::AnimationFinish(void){
 }
 
 void Enemy::shoot(){
-	if (GameController::Get().GetNoEnemyBulletsPow()) return; // TODO: also check subtype?
+	if (GameController::Get().GetNoEnemyBulletsPow() && subtype <= enemysubtype_t::GRAY_MID) return;
 	new EnemyBullet(GetX() + frameBox.w / 2, GetY() + frameBox.h / 2);
 }
 

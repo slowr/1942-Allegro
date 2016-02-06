@@ -109,8 +109,6 @@ int main(int argc, char **argv)
 	//Waves::Get().CreateWaves("resources/waves_init.data");
 	/* Load all animation films */
 	AnimationFilmHolder::Get().Load("resources/filmholder.data");
-	/* Initialize the bullet sprite */
-	PlayerBullet * bullets;
 	Player * player;
 	/**********************/
 	GameMenu *menu = new GameMenu();
@@ -169,7 +167,7 @@ int main(int argc, char **argv)
 				}
 
 				if (key[KEY_SPACE]){
-					if (state == gamestates_t::PLAYING && player->GetMovement() != TUMBLE) PlayerBullet::FireBullets(bullets, player->getPos());
+					if (state == gamestates_t::PLAYING && player->GetMovement() != TUMBLE) PlayerBullet::FireBullets(player->getPos());
 				}
 			}
 
@@ -230,7 +228,7 @@ int main(int argc, char **argv)
 					menu->LeaveMenu();
 					y = 0;
 					tickCount = 0;
-					bullets = new PlayerBullet[MAX_BULLETS];
+					PlayerBullet::InitBullets();
 					player = new Player();
 					GameController::Get().Reset();
 					GameController::Get().SetPlayer(player);

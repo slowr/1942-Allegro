@@ -29,8 +29,9 @@ player.explosion 6
 105 101 31 31
 143 104 28 24
 178 104 24 24
-player.bullet 1
+player.bullet 2
 103 84 11 10
+140 82 17 12
 powerup.sprite 7
 6 140 13 10
 40 140 13 10
