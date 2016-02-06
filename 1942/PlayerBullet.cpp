@@ -5,14 +5,14 @@ timestamp_t PlayerBullet::last_timestamp = 0;
 PlayerBullet::PlayerBullet(void) : Sprite(0, 0, AnimationFilmHolder::Get().GetFilm("player.bullet"), spritetype_t::PLAYER_BULLET) {
 	animation = new MovingAnimation(0, -speed, delay, true, 1);
 	animator = new MovingAnimator();
-	animator->Start(this, animation, 0);
+	animator->Start(this, animation);
 	AnimatorHolder::Register(animator);
 	isVisible = false;
 	state = spritestate_t::WAIT;
 }
 
-void PlayerBullet::FireBullet(Point p, timestamp_t curr_timestamp){
-	animator->TimeSet(curr_timestamp);
+void PlayerBullet::FireBullet(Point p){
+	animator->TimeSet(tickCount);
 	state = spritestate_t::ALIVE;
 	x = p.x + (AnimationFilmHolder::Get().GetFilm("player.sprite")->GetFrameBox(0).w * ScaleFactor) / 2 - (AnimationFilmHolder::Get().GetFilm("player.bullet")->GetFrameBox(0).w*ScaleFactor) / 2;
 	y = p.y - (AnimationFilmHolder::Get().GetFilm("player.bullet")->GetFrameBox(0).w * ScaleFactor) / 2;
@@ -26,21 +26,22 @@ void PlayerBullet::StopBullet(){
 	AnimatorHolder::MarkAsSuspended(animator);
 }
 
-void PlayerBullet::FireBullets(PlayerBullet b[], Point p, timestamp_t curr_timestamp){
-	if (curr_timestamp - last_timestamp > 250){
+void PlayerBullet::FireBullets(PlayerBullet b[], Point p){
+	timestamp_t currTime = TIMESTAMP(tickCount);
+	if (currTime - last_timestamp > 250){
 		for (int i = 0; i < MAX_BULLETS; i++){
 			if (!b[i].isVisible){
-				b[i].FireBullet(p, curr_timestamp);
+				b[i].FireBullet(p);
 				break;
 			}
 		}
-		last_timestamp = curr_timestamp;
+		last_timestamp = currTime;
 	}
 }
 
-void PlayerBullet::Draw(ALLEGRO_BITMAP *dest){
+void PlayerBullet::Draw(){
 	if (y < -frameBox.h*ScaleFactor) PlayerBullet::StopBullet();
-	else currFilm->DisplayFrame(dest, Point(x, y), frameNo);
+	else currFilm->DisplayFrame(Point(x, y), frameNo);
 }
 
 void PlayerBullet::CollisionResult(Sprite *s){

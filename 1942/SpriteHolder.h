@@ -19,7 +19,7 @@ public:
 	void Add(Sprite* s);
 	void Remove(Sprite* s);
 	void GetSprites(spritetype_t type, SpriteList* result);
-	void DrawSprites(ALLEGRO_BITMAP *dest);
+	void DrawSprites();
 	void DestroyEnemies(void);
 	static SpriteHolder& Get(void);
 };

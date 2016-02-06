@@ -1,9 +1,9 @@
 #include "FrameRangeAnimator.h"
 
-void FrameRangeAnimator::Start(Sprite* s, Animation* a, timestamp_t t) {
+void FrameRangeAnimator::Start(Sprite* s, Animation* a) {
 	sprite = s;
 	anim = (FrameRangeAnimation *)a;
-	lastTime = t;
+	lastTime = TIMESTAMP(tickCount);
 	state = ANIMATOR_RUNNING;
 	sprite->SetFrame(currFrame = anim->GetStartFrame());
 }
@@ -14,7 +14,8 @@ anim((FrameRangeAnimation*)0), currFrame(0xFF) {}
 
 FrameRangeAnimator::~FrameRangeAnimator() {}
 
-void FrameRangeAnimator::Progress(timestamp_t currTime) {
+void FrameRangeAnimator::Progress() {
+	timestamp_t currTime = TIMESTAMP(tickCount);
 	while (currTime > lastTime && currTime - lastTime >= anim->GetDelay()) {
 		float dx = 0, dy = 0;
 		if (currFrame == anim->GetEndFrame()){

@@ -20,7 +20,6 @@ public:
 	spritetype_t GetType(void);
 	spritestate_t GetState(void);
 	void SetState(spritestate_t _s);
-	void ClearHandlers(void);
 	void CollisionCheck(Sprite* s);
 	void SetFrame(byte i);
 	byte GetFrame(void) const;
@@ -33,7 +32,7 @@ public:
 	void Move(offset_t dx, offset_t dy);
 	Sprite(float _x, float _y, AnimationFilm* film, spritetype_t _type);
 	virtual void CollisionResult(Sprite *s) {};
-	virtual void Draw(ALLEGRO_BITMAP * dest);
+	virtual void Draw();
 	virtual void AnimationFinish(void) {};
 	virtual ~Sprite();
 };

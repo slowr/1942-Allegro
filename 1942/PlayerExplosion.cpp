@@ -6,7 +6,7 @@ PlayerExplosion::PlayerExplosion(int x, int y) :
 Sprite(x, y, AnimationFilmHolder::Get().GetFilm("player.explosion"), spritetype_t::EXPLOSION){
 	animation = new FrameRangeAnimation(0, 5, 0, 0, delay, false, 3);
 	animator = new FrameRangeAnimator();
-	animator->Start(this, animation, TIMESTAMP(tickCount));
+	animator->Start(this, animation);
 	animator->SetOnFinish(OnAnimationFinish, this);
 	AnimatorHolder::Register(animator);
 	AnimatorHolder::MarkAsRunning(animator);

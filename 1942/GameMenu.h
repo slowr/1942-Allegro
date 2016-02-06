@@ -18,6 +18,6 @@ public:
 	void MoveUp();
 	void MoveDown();
 	int GetSelected();
-	void Draw(ALLEGRO_BITMAP *target);
+	void Draw();
 	~GameMenu();
 };

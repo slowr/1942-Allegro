@@ -81,8 +81,17 @@ void GameController::Reset(void){
 }
 
 void GameController::DrawUI(void) {
+	int temp_highscore = 999999;
+	
+	al_draw_text(font, al_map_rgb(255, 255, 255), SCREEN_W / 5, 0, ALLEGRO_ALIGN_CENTRE, "1UP");
+	al_draw_text(font, al_map_rgb(200, 200, 255), SCREEN_W / 5, 25, ALLEGRO_ALIGN_CENTRE, std::to_string((int)Score).c_str());
+
 	al_draw_text(font, al_map_rgb(255, 255, 0), SCREEN_W / 2, 0, ALLEGRO_ALIGN_CENTRE, "HIGH SCORE");
-	al_draw_text(font, al_map_rgb(255, 255, 0), SCREEN_W / 2, 25, ALLEGRO_ALIGN_CENTRE, std::to_string((int) Score).c_str());
+	al_draw_text(font, al_map_rgb(200, 200, 255), SCREEN_W / 2, 25, ALLEGRO_ALIGN_CENTRE, std::to_string((int)temp_highscore).c_str());
+
+	al_draw_text(font, al_map_rgb(255, 255, 255), 4*(SCREEN_W / 5), 0, ALLEGRO_ALIGN_CENTRE, "2UP");
+	al_draw_text(font, al_map_rgb(200, 200, 255), 4 * (SCREEN_W / 5), 25, ALLEGRO_ALIGN_CENTRE, std::to_string((int)0).c_str());
+	
 
 	std::string tumbleString(tumbles, 'R');
 
@@ -104,8 +113,8 @@ void GameController::DrawUI(void) {
 	
 	delete uStr;
 
-	al_draw_ustr(fontAwesome, al_map_rgb(255, 0, 0), SCREEN_W - al_get_ustr_width(fontAwesome, tumbles_string) - 5, 0, 0, tumbles_string);
-	al_draw_ustr(fontAwesome, al_map_rgb(255, 0, 0), 5, 2, 0, lives_string);
+	al_draw_ustr(fontAwesome, al_map_rgb(255, 0, 0), SCREEN_W - al_get_ustr_width(fontAwesome, tumbles_string) - 5, SCREEN_H - 25, 0, tumbles_string);
+	al_draw_ustr(fontAwesome, al_map_rgb(255, 0, 0), 5, SCREEN_H - 25, 0, lives_string);
 	
 	al_ustr_free(lives_string);
 	al_ustr_free(tumbles_string);

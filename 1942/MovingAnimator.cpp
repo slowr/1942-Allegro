@@ -1,9 +1,9 @@
 #include "MovingAnimator.h"
 
-void MovingAnimator::Start(Sprite* s, Animation* a, timestamp_t t) {
+void MovingAnimator::Start(Sprite* s, Animation* a) {
 	sprite = s;
 	anim = (MovingAnimation *) a;
-	lastTime = t;
+	lastTime = TIMESTAMP(tickCount);
 	state = ANIMATOR_RUNNING;
 }
 
@@ -12,7 +12,8 @@ sprite((Sprite*)0), anim((MovingAnimation*)0) {}
 
 MovingAnimator::~MovingAnimator() {}
 
-void MovingAnimator::Progress(timestamp_t currTime) {
+void MovingAnimator::Progress() {
+	timestamp_t currTime = TIMESTAMP(tickCount);
 	while (currTime > lastTime && currTime - lastTime >= anim->GetDelay()) {
 		sprite->Move(anim->GetDx(), anim->GetDy());
 		if (!anim->GetContinuous()) {
