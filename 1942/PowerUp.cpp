@@ -60,6 +60,7 @@ void PowerUp::handlePowerUp() {
 		break;
 	case NO_ENEMY_BULLETS:
 		std::cout << "No enemy bullets pow!" << std::endl;
+		GameController::Get().SetNoEnemyBulletsPow(true);
 		break;
 	case EXTRA_LOOP:
 		std::cout << "Extra loop pow!" << std::endl;

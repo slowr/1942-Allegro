@@ -79,79 +79,16 @@ Sprite(_x, _y, AnimationFilmHolder::Get().GetFilm(sprite), spritetype_t::ENEMY),
 	AnimationInit();
 }
 
-/*
-int getFrameAntiClockWise(float degrees) {
-	if (degrees >= 348.75)
-		return 9;
-	if (degrees >= 326.25)
-		return 10;
-	if (degrees >= 303.75)
-		return 11;
-	if (degrees >= 281.25)
-		return 12;
-	if (degrees >= 258.75)
-		return 13;
-	if (degrees >= 236.25)
-		return 14;
-	if (degrees >= 213.75)
-		return 15;
-	if (degrees >= 191.25)
-		return 0;
-	if (degrees >= 168.75)
-		return 1;
-	if (degrees >= 143.25)
-		return 2;
-	if (degrees >= 123.75)
-		return 3;
-	if (degrees >= 101.25)
-		return 4;
-	if (degrees >= 78.75)
-		return 5;
-	if (degrees >= 56.25)
-		return 6;
-	if (degrees >= 33.75)
-		return 7;
-	if (degrees >= 11.25)
-		return 8;
-	return 8;
+/* Red plane constructor */
+Enemy::Enemy(float _x, float _y, std::list<PathEntry *> p) :
+	Sprite(_x, _y, AnimationFilmHolder::Get().GetFilm("red.plane"), spritetype_t::ENEMY), subtype(RED), health(HEALTH_PER_TYPE[subtype]) {
+	animation = new MovingPathAnimation(p, 1);
+	animator = new MovingPathAnimator();
+	animator->Start(this, animation);
+	animator->SetOnFinish(OnAnimationFinish, this);
+	AnimatorHolder::Register(animator);
+	AnimatorHolder::MarkAsRunning(animator);
 }
-
-int getFrameClockWise(float degrees) {
-	if (degrees >= 348.75)
-		return 0;
-	if (degrees >= 326.25)
-		return 1;
-	if (degrees >= 303.75)
-		return 2;
-	if (degrees >= 281.25)
-		return 3;
-	if (degrees >= 258.75)
-		return 4;
-	if (degrees >= 236.25)
-		return 5;
-	if (degrees >= 213.75)
-		return 6;
-	if (degrees >= 191.25)
-		return 7;
-	if (degrees >= 168.75)
-		return 8;
-	if (degrees >= 143.25)
-		return 9;
-	if (degrees >= 123.75)
-		return 10;
-	if (degrees >= 101.25)
-		return 11;
-	if (degrees >= 78.75)
-		return 12;
-	if (degrees >= 56.25)
-		return 13;
-	if (degrees >= 33.75)
-		return 14;
-	if (degrees >= 11.25)
-		return 15;
-	return 0;
-}
-*/
 
 int getFrameAntiClockWise(float degrees) {
 	return (int)((360 - degrees) / (360 / 16) + 8) % 16;
@@ -190,7 +127,7 @@ static int directionDegrees[2][4] = {
 	}
 };
 
-void Enemy::doCircle(Enemy::enemylook_t direction, std::list<PathEntry *> &p, float radius, circledirection_t cdir, int resolution = 1) {
+void Enemy::doCircle(enemylook_t direction, std::list<PathEntry *> &p, float radius, circledirection_t cdir, int resolution = 1) {
 	int dir = directionDegrees[cdir][direction];
 	int (*getFrameFn)(float d);
 	
@@ -249,40 +186,73 @@ void Enemy::doCircle(Enemy::enemylook_t direction, std::list<PathEntry *> &p, fl
 	}
 }
 
+void Enemy::SpawnPowPlanes(int n) {
+	float y = (rand() % ((int)SCREEN_H / 2)) + 50;
+	int loop_start = (rand() % 20) + 20;
+	int straightRepetitions = (rand() % 40) + 50;
+	float r1 = (rand() % 60) + 80;
+	float r2 = (rand() % 60) + 80;
+	int c1 = (rand() % 2);
+	int c2 = (rand() % 2);
+
+	for (int i = 0; i < n; i++) {
+		std::list<PathEntry *> p = RedAnimationInit(i, loop_start, straightRepetitions, (circledirection_t) c1, r1, (circledirection_t) c2, r2);
+		new Enemy((i + 1) * -50.f, y, p);
+	}
+}
+
+std::list<PathEntry *> Enemy::RedAnimationInit(int planeN, int loop_start, int straight_repetitions, circledirection_t c1, float radius1, circledirection_t c2, float radius2) {
+	float x = (planeN + 1) * -50.f;
+	std::list<PathEntry *> p;
+	PathEntry * pE;
+
+	pE = new PathEntry();
+	pE->dx = speed;
+	pE->dy = 0;
+	pE->delay = delay;
+	pE->frame = getFrameClockWise(directionDegrees[CLOCKWISE][RIGHT]);
+	pE->repetitions = loop_start;
+	p.push_back(pE);
+
+	for (int i = 0; i < planeN; i++) {
+		pE = new PathEntry();
+		pE->dx = speed;
+		pE->dy = 0;
+		pE->delay = delay;
+		pE->frame = getFrameClockWise(directionDegrees[CLOCKWISE][RIGHT]);
+		pE->repetitions = (50 / speed);
+		p.push_back(pE);
+	}
+
+	doCircle(RIGHT, p, radius1, c1, 6);
+
+	pE = new PathEntry();
+	pE->dx = speed;
+	pE->dy = 0;
+	pE->delay = delay;
+	pE->frame = getFrameClockWise(directionDegrees[CLOCKWISE][RIGHT]);
+	pE->repetitions = straight_repetitions;
+	p.push_back(pE);
+
+	doCircle(RIGHT, p, radius2, c2, 6);
+
+	pE = new PathEntry();
+	pE->dx = speed;
+	pE->dy = 0;
+	pE->delay = delay;
+	pE->frame = getFrameClockWise(directionDegrees[CLOCKWISE][RIGHT]);
+	pE->repetitions = ((SCREEN_W - x) / speed) - (loop_start + straight_repetitions) + 1;
+	p.push_back(pE);
+
+	return p;
+}
+
 void Enemy::AnimationInit(){
 	std::list<PathEntry *> p;
 	PathEntry * pE;
 	float distance;
-	float loop_start;
 
 	switch (subtype){
-	case enemysubtype_t::RED:
-		loop_start = ((100*2) / speed) + (rand() % (int) (( (SCREEN_W / 2) - x) / speed));
-		pE = new PathEntry();
-		pE->dx = speed;
-		pE->dy = 0;
-		pE->delay = delay;
-		pE->frame = getFrameClockWise(directionDegrees[CLOCKWISE][RIGHT]);
-		pE->repetitions = loop_start;
-		p.push_back(pE);
-
-		doCircle(RIGHT, p, 130, ANTICLOCKWISE, 6);
-		
-		pE = new PathEntry();
-		pE->dx = speed;
-		pE->dy = 0;
-		pE->delay = delay;
-		pE->frame = getFrameClockWise(directionDegrees[CLOCKWISE][RIGHT]);
-		pE->repetitions = ((SCREEN_W - x) / speed) - loop_start + 1;
-		p.push_back(pE);
-
-		animation = new MovingPathAnimation(p, 1);
-		animator = new MovingPathAnimator();
-		animator->Start(this,animation);
-		animator->SetOnFinish(OnAnimationFinish, this);
-		AnimatorHolder::Register(animator);
-		AnimatorHolder::MarkAsRunning(animator);
-		break;
 	case enemysubtype_t::GRAY_MONO:
 		float dx, dy;
 		int repetitions;
@@ -402,6 +372,7 @@ void Enemy::AnimationFinish(void){
 }
 
 void Enemy::shoot(){
+	if (GameController::Get().GetNoEnemyBulletsPow()) return; // TODO: also check subtype?
 	new EnemyBullet(GetX() + frameBox.w / 2, GetY() + frameBox.h / 2);
 }
 

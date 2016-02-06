@@ -6,6 +6,7 @@
 #include <allegro5/allegro_primitives.h>
 
 class GameController {
+	static int NO_ENEMY_BULLETS_POWERUP_DURATION;
 	static int FONT_SIZE;
 	Player * player;
 	float Score;
@@ -13,6 +14,8 @@ class GameController {
 	int tumbles;
 	int takedowns;
 	int totalEnemies;
+	bool noEnemyBullets;
+	timestamp_t noEnemyBulletsStart;
 	static GameController controller;
 	GameController();
 	~GameController();
@@ -38,5 +41,8 @@ public:
 	void Reset(void);
 	void DrawUI(void);
 	void DrawPaused(void);
+
+	void SetNoEnemyBulletsPow(bool val);
+	bool GetNoEnemyBulletsPow();
 };
 

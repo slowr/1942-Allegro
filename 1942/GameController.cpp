@@ -2,6 +2,7 @@
 
 GameController GameController::controller;
 int GameController::FONT_SIZE = 22;
+int GameController::NO_ENEMY_BULLETS_POWERUP_DURATION = 5000;
 
 GameController::GameController(){
 	Reset();
@@ -124,4 +125,20 @@ void GameController::DrawPaused(void) {
 	char *pausedStr = "GAME PAUSED";
 	al_draw_text(font, al_map_rgb(255, 0, 0), SCREEN_W / 2 - (al_get_text_width(font, pausedStr) / 2), SCREEN_H / 2, 0, pausedStr);
 	al_flip_display();
+}
+
+void GameController::SetNoEnemyBulletsPow(bool val) {
+	noEnemyBullets = val;
+	if (val) {
+		noEnemyBulletsStart = TIMESTAMP(tickCount);
+	}
+	else {
+		noEnemyBulletsStart = 0;
+	}
+}
+
+bool GameController::GetNoEnemyBulletsPow() {
+	if (noEnemyBullets && TIMESTAMP(tickCount) - noEnemyBulletsStart < NO_ENEMY_BULLETS_POWERUP_DURATION)
+		return true;
+	return (noEnemyBullets = false);
 }
