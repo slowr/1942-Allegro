@@ -79,43 +79,43 @@ Sprite(_x, _y, AnimationFilmHolder::Get().GetFilm(sprite), spritetype_t::ENEMY),
 	AnimationInit();
 }
 
-void Enemy::doCircle(Enemy::enemylook_t direction, std::list<PathEntry *> &p, float radius, int resolution = 1) {
-	//std::ostringstream oss;
-	float px, py;
-	float oldDx = 0;
-	float oldDy = 0;
-	// oss << radius << std::endl;
-	oldDx = radius*cos(direction*(M_PI / 180)) - radius;
-	oldDy = radius*sin(direction*(M_PI / 180));
-	bool doBreakWhenDone = false;
-	delay_t delay = (speed * 360) / (360 / resolution);
-	PathEntry *pE;
-	for (float degrees = direction;; degrees += resolution) {
-		if (doBreakWhenDone && degrees >= direction - 1){
-			break;
-		}
-		float radians = degrees*(M_PI / 180);
-		px = radius*cos(radians) - radius;
-		py = radius*sin(radians);
-		pE = new PathEntry();
-		float dx_move = px - oldDx;
-		float dy_move = py - oldDy;
-		pE->dx = dx_move;
-		pE->dy = dy_move;
-		pE->repetitions = 1;
-		pE->delay = delay;
-		pE->frame = getFrame(degrees);
-		p.push_back(pE);
-		oldDx = px;
-		oldDy = py;
-		if (degrees >= 360) {
-			degrees = 0;
-			doBreakWhenDone = true;
-		}
-	}
+int getFrameAntiClockWise(float degrees) {
+	if (degrees >= 348.75)
+		return 9;
+	if (degrees >= 326.25)
+		return 10;
+	if (degrees >= 303.75)
+		return 11;
+	if (degrees >= 281.25)
+		return 12;
+	if (degrees >= 258.75)
+		return 13;
+	if (degrees >= 236.25)
+		return 14;
+	if (degrees >= 213.75)
+		return 15;
+	if (degrees >= 191.25)
+		return 0;
+	if (degrees >= 168.75)
+		return 1;
+	if (degrees >= 143.25)
+		return 2;
+	if (degrees >= 123.75)
+		return 3;
+	if (degrees >= 101.25)
+		return 4;
+	if (degrees >= 78.75)
+		return 5;
+	if (degrees >= 56.25)
+		return 6;
+	if (degrees >= 33.75)
+		return 7;
+	if (degrees >= 11.25)
+		return 8;
+	return 8;
 }
 
-int Enemy::getFrame(float degrees) {
+int getFrameClockWise(float degrees) {
 	if (degrees >= 348.75)
 		return 0;
 	if (degrees >= 326.25)
@@ -151,6 +151,94 @@ int Enemy::getFrame(float degrees) {
 	return 0;
 }
 
+/*
+
+=========
+CLOCKWISE
+=========
+RIGHT = 270,
+BOTTOM = 360,
+LEFT = 90,
+TOP = 180
+
+==============
+ANTI-CLOCKWISE
+==============
+RIGHT = 90,
+BOTTOM = 180,
+LEFT = 270,
+TOP = 360
+
+*/
+
+static int directionDegrees[2][4] = {
+	{
+		270, 360, 90, 180
+	},
+	{
+		90, 180, 270, 360
+	}
+};
+
+void Enemy::doCircle(Enemy::enemylook_t direction, std::list<PathEntry *> &p, float radius, circledirection_t cdir, int resolution = 1) {
+	int dir = directionDegrees[cdir][direction];
+	int (*getFrameFn)(float d);
+	
+	float px, py;
+	float oldDx = 0;
+	float oldDy = 0;
+	
+	bool doBreakWhenDone = false;
+	
+	delay_t delay = (speed * 360) / (360 / resolution);
+
+	PathEntry *pE;
+
+	if (cdir == CLOCKWISE) {
+		getFrameFn = getFrameClockWise;
+	}
+	else {
+		getFrameFn = getFrameAntiClockWise;
+		resolution *= -1;
+	}
+
+	oldDx = radius*cos(dir*(M_PI / 180)) - radius;
+	oldDy = radius*sin(dir*(M_PI / 180));	
+	
+	for (float degrees = dir;;) {
+		if (doBreakWhenDone){
+			if (cdir == CLOCKWISE && degrees >= dir - 1) {
+				break;
+			}
+			else if (cdir == ANTICLOCKWISE && degrees <= dir - 1) {
+				break;
+			}
+		}
+		float radians = degrees*(M_PI / 180);
+		px = radius*cos(radians) - radius;
+		py = radius*sin(radians);
+		pE = new PathEntry();
+		float dx_move = px - oldDx;
+		float dy_move = py - oldDy;
+		pE->dx = dx_move;
+		pE->dy = dy_move;
+		pE->repetitions = 1;
+		pE->delay = delay;
+		pE->frame = getFrameFn(degrees);
+		p.push_back(pE);
+		oldDx = px;
+		oldDy = py;
+		if (cdir == CLOCKWISE && degrees >= 360) {
+			degrees = 0;
+			doBreakWhenDone = true;
+		} if (cdir == ANTICLOCKWISE && degrees <= 0) {
+			degrees = 360;
+			doBreakWhenDone = true;
+		}
+		degrees += resolution;
+	}
+}
+
 void Enemy::AnimationInit(){
 	std::list<PathEntry *> p;
 	PathEntry * pE;
@@ -164,17 +252,18 @@ void Enemy::AnimationInit(){
 		pE->dx = speed;
 		pE->dy = 0;
 		pE->delay = delay;
-		pE->frame = getFrame(RIGHT);
+		pE->frame = getFrameClockWise(directionDegrees[CLOCKWISE][RIGHT]);
 		pE->repetitions = loop_start;
 		p.push_back(pE);
 
-		doCircle(RIGHT, p, 80, 6);
+		doCircle(RIGHT, p, 80, ANTICLOCKWISE, 6);
+		doCircle(RIGHT, p, 80, CLOCKWISE, 6);
 		
 		pE = new PathEntry();
 		pE->dx = speed;
 		pE->dy = 0;
 		pE->delay = delay;
-		pE->frame = getFrame(RIGHT);
+		pE->frame = getFrameClockWise(directionDegrees[CLOCKWISE][RIGHT]);
 		pE->repetitions = ((SCREEN_W - x) / speed) - loop_start + 1;
 		p.push_back(pE);
 
@@ -246,7 +335,7 @@ void Enemy::AnimationInit(){
 		AnimatorHolder::MarkAsRunning(animator);
 		break;
 	default:
-		doCircle(BOTTOM, p, 100);
+		doCircle(BOTTOM, p, 100, CLOCKWISE);
 
 		//{
 		//	std::ofstream outFile;

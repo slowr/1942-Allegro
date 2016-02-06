@@ -22,19 +22,25 @@ class Enemy : public Sprite {
 	Animation * animation;
 	timestamp_t last_timestamp;
 	int health;
-	int getFrame(float degrees);
 
 	enum enemylook_t {
-		RIGHT = 270,
-		BOTTOM = 360,
-		LEFT = 90,
-		TOP = 180
+		RIGHT,
+		BOTTOM,
+		LEFT,
+		TOP
 	};
+
+	enum circledirection_t {
+		CLOCKWISE,
+		ANTICLOCKWISE
+	};
+
+	
 public:
 	enemysubtype_t GetSubType();
 	void AnimationInit();
 	Enemy(float _x, float _y, std::string sprite, enemysubtype_t t);
-	void doCircle(Enemy::enemylook_t direction, std::list<PathEntry*>& p, float radius, int resolution);
+	void doCircle(Enemy::enemylook_t direction, std::list<PathEntry*>& p, float radius, circledirection_t cdir, int resolution);
 	virtual void CollisionResult(Sprite *s);
 	virtual void AnimationFinish(void);
 	void shoot();
