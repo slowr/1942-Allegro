@@ -1,5 +1,5 @@
 resources\1942_sprite_sheet.png 10 255 255 255
-player.sprite 22
+player.sprite 23
 5 6 25 16
 38 6 24 16
 101 6 23 16
@@ -22,6 +22,7 @@ player.sprite 22
 228 29 25 8
 5 47 25 11
 5 62 25 13
+29 84 16 10
 player.explosion 6
 6 105 25 21
 36 103 30 27

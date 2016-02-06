@@ -59,12 +59,15 @@ int main(int argc, char **argv)
 	bool pause = false;
 	bool doexit = false;
 
-	gamestates_t state = gamestates_t::MENU;
+	//gamestates_t state = gamestates_t::MENU;
+	GameController::Get().setGameState(gamestates_t::MENU);
 
 	int gameFps = 0;
 	unsigned long oldTick = 0;
 	float gameTime = 0;
-	float y = 0;
+	
+	//float y = 0;
+	GameController::Get().setBackgroundY(0);
 
 	if (!al_init()) {
 		fprintf(stderr, "failed to initialize allegro!\n");
@@ -104,6 +107,8 @@ int main(int argc, char **argv)
 	float bgScaledHeight = bgScaleFactor * bgHeight;
 
 	ScaleFactor = bgScaleFactor * 0.8;
+
+	GameController::Get().bgPositionArgs(bgHeight, bgScaleFactor);
 
 	ALLEGRO_BITMAP *backBuffer = al_get_backbuffer(display);
 	//Waves::Get().CreateWaves("resources/waves_init.data");
@@ -152,7 +157,7 @@ int main(int argc, char **argv)
 			if (pause) continue;
 			tickCount++;
 
-			if (state == gamestates_t::PLAYING){
+			if (GameController::Get().getGameState() == gamestates_t::PLAYING){
 				if (key[KEY_LEFT] && !key[KEY_RIGHT]){
 					player->MoveLeft();
 				}
@@ -166,26 +171,26 @@ int main(int argc, char **argv)
 					player->StopMoving();
 				}
 
-				if (key[KEY_SPACE]){
-					if (state == gamestates_t::PLAYING && player->GetMovement() != TUMBLE) PlayerBullet::FireBullets(player->getPos());
+				if (key[KEY_SPACE]) {
+					if (GameController::Get().getGameState() == gamestates_t::PLAYING && player->GetMovement() != TUMBLE)  PlayerBullet::FireBullets(player->getPos());
 				}
 			}
 
-			if (state == gamestates_t::PLAYING){
-				if (((int)y % 100) == 0){
+			if (GameController::Get().getGameState() == gamestates_t::PLAYING) {
+				if (((int)GameController::Get().getBackgroundY() % 200) == 0) {
 					PowWave::Get().SpawnWave();
 				}
 			}
 
-			y += (BG_SCROLL_SPEED / FPS);
-			redraw = true;
+			GameController::Get().setBackgroundY(GameController::Get().getBackgroundY() + (BG_SCROLL_SPEED / FPS));
+			GameController::Get().setRedraw(true);
 
-			if (state == gamestates_t::PLAYING){
+			if (GameController::Get().getGameState() == gamestates_t::PLAYING) {
 				CollisionChecker::Get().Check();
 				player->Move(key[KEY_UP], key[KEY_DOWN], key[KEY_LEFT], key[KEY_RIGHT]);
 			}
 
-			if (bgHeight - (SCREEN_H / bgScaleFactor) - y <= 0) {
+			if (bgHeight - (SCREEN_H / bgScaleFactor) - GameController::Get().getBackgroundY() <= 0) {
 				// TODO: done scrolling!
 				break;
 			}
@@ -193,12 +198,12 @@ int main(int argc, char **argv)
 		else if (ev.type == ALLEGRO_EVENT_KEY_DOWN) {
 			switch (ev.keyboard.keycode) {
 			case ALLEGRO_KEY_UP:
-				if (state == gamestates_t::MENU) menu->MoveUp();
+				if (GameController::Get().getGameState() == gamestates_t::MENU) menu->MoveUp();
 				else key[KEY_UP] = true;
 				break;
 
 			case ALLEGRO_KEY_DOWN:
-				if (state == gamestates_t::MENU) menu->MoveDown();
+				if (GameController::Get().getGameState() == gamestates_t::MENU) menu->MoveDown();
 				else key[KEY_DOWN] = true;
 				break;
 
@@ -211,11 +216,11 @@ int main(int argc, char **argv)
 				break;
 
 			case ALLEGRO_KEY_P:
-				if (state == PLAYING) {
+				if (GameController::Get().getGameState() == PLAYING) {
 					pause = !pause;
 					if (pause) {
 						GameController::Get().DrawPaused();
-						redraw = false;
+						//redraw = false;
 						continue;
 					}
 				}
@@ -223,15 +228,16 @@ int main(int argc, char **argv)
 
 			case ALLEGRO_KEY_ENTER:
 				key[KEY_ENTER] = true;
-				if (menu->GetSelected() == 0 && state == gamestates_t::MENU){
-					state = gamestates_t::PLAYING;
+				if (menu->GetSelected() == 0 && GameController::Get().getGameState() == gamestates_t::MENU) {
+
+					GameController::Get().setGameState(gamestates_t::PLAYING);
 					menu->LeaveMenu();
-					y = 0;
 					tickCount = 0;
 					PlayerBullet::InitBullets();
 					player = new Player();
 					GameController::Get().Reset();
 					GameController::Get().SetPlayer(player);
+
 				}
 				break;
 
@@ -240,7 +246,7 @@ int main(int argc, char **argv)
 				break;
 
 			case ALLEGRO_KEY_D:
-				if (state == gamestates_t::PLAYING) player->Tumble();
+				if (GameController::Get().getGameState() == PLAYING) player->Tumble();
 				break;
 			}
 		}
@@ -280,19 +286,29 @@ int main(int argc, char **argv)
 			break;
 		}
 
-		if (redraw && al_is_event_queue_empty(event_queue)) {
-			redraw = false;
+		if (GameController::Get().getRedraw() && al_is_event_queue_empty(event_queue)) {
+
+			//redraw = false;
+			GameController::Get().setRedraw(false);
+
 			al_clear_to_color(al_map_rgb(0, 0, 0));
 			al_draw_scaled_bitmap(scrollingBackgroundBitmap,
-				0, bgHeight - (SCREEN_H / bgScaleFactor) - y, bgWidth, bgHeight,
+				0, bgHeight - (SCREEN_H / bgScaleFactor) - GameController::Get().getBackgroundY(), bgWidth, bgHeight,
 				0, 0, bgScaledWidth, bgScaledHeight,
 				0);
 
 			LatelyDestroyable::Destroy();
-			if (state == gamestates_t::PLAYING) AnimatorHolder::Progress();
+
+			if (GameController::Get().isPlayerDead() == true) {
+				GameController::Get().DrawUI();
+				SpriteHolder::Get().DrawSprites();
+				GameController::Get().DeathScreen();
+			}
+
+			if (GameController::Get().getGameState() == gamestates_t::PLAYING) AnimatorHolder::Progress();
 			SpriteHolder::Get().DrawSprites();
 
-			if (state == gamestates_t::PLAYING){
+			if (GameController::Get().getGameState() == gamestates_t::PLAYING){
 				GameController::Get().DrawUI();
 			}
 

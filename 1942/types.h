@@ -59,7 +59,7 @@ enum spritestate_t {
 };
 
 enum gamestates_t {
-	PAUSED, PLAYING, MENU, EXIT
+	PAUSED, PLAYING, MENU, EXIT, GAME_OVER
 };
 
 // enemy's specific type

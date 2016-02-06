@@ -15,7 +15,14 @@ void Player::tumbleAnimatorCallback(Animator *a, void *c){
 	((Player *)c)->movement = NONE;
 }
 
-Player::Player(void) : Sprite(SCREEN_W / 2 - AnimationFilmHolder::Get().GetFilm("player.sprite")->GetFrameBox(0).w / 2 * ScaleFactor, SCREEN_H - AnimationFilmHolder::Get().GetFilm("player.sprite")->GetFrameBox(0).h * ScaleFactor * 2, AnimationFilmHolder::Get().GetFilm("player.sprite"), spritetype_t::PLAYER), movement(NONE){
+void Player::checkpointAnimatorCallback(Animator *a, void *c) {
+	((Player *)c)->movement = NONE;
+}
+
+Player::Player(void) : Sprite(SCREEN_W / 2 - AnimationFilmHolder::Get().GetFilm("player.sprite")->GetFrameBox(0).w*ScaleFactor / 2, SCREEN_H / 2, AnimationFilmHolder::Get().GetFilm("player.sprite"), spritetype_t::PLAYER), movement(NONE) {
+
+	this->SetFrame(22);
+	checkPoint = false;
 
 	leftAnimation = new FrameRangeAnimation(4, 6, 0, 0, delay, false, 1);
 	leftAnimator = new FrameRangeAnimator();
@@ -79,11 +86,67 @@ Player::Player(void) : Sprite(SCREEN_W / 2 - AnimationFilmHolder::Get().GetFilm(
 	tumbleAnimator = new MovingPathAnimator();
 	tumbleAnimator->SetOnFinish(tumbleAnimatorCallback, this);
 
+	PathEntry *onBoard = new PathEntry();
+
+	onBoard->dx = 0;
+	onBoard->dy = -10;
+	onBoard->delay = 120;
+	onBoard->repetitions = 10;
+	onBoard->frame = 22;
+
+	onboardList.push_back(onBoard);
+
+	for (int i = 0; i < 15; i++) {
+		onBoard = new PathEntry();
+		onBoard->dx = 0;
+		switch (i) {
+		case 0:
+		case 1:
+		case 2:
+		case 12:
+		case 13:
+		case 14:
+			onBoard->dy = -10;
+			break;
+		case 3:
+		case 11:
+			onBoard->dy = 0;
+			break;
+		case 4:
+		case 5:
+		case 6:
+		case 7:
+		case 8:
+		case 9:
+		case 10:
+			onBoard->dy = 10;
+			break;
+		}
+		onBoard->delay = 120;
+		onBoard->frame = i + 7;
+		onBoard->repetitions = 1;
+		onboardList.push_back(onBoard);
+	}
+
+	onBoard = new PathEntry();
+	onBoard->dx = 0;
+	onBoard->dy = +10;
+	onBoard->delay = 120;
+	onBoard->repetitions = 10;
+	onBoard->frame = 0;
+
+	onboardList.push_back(onBoard);
+
+	checkPointAnimation = new MovingPathAnimation(std::list<PathEntry *>(onboardList), 15);
+	checkPointAnimator = new MovingPathAnimator();
+	checkPointAnimator->SetOnFinish(checkpointAnimatorCallback, this);
+
 	AnimatorHolder::Register(leftAnimator);
 	AnimatorHolder::Register(rightAnimator);
 	AnimatorHolder::Register(revleftAnimator);
 	AnimatorHolder::Register(revrightAnimator);
 	AnimatorHolder::Register(tumbleAnimator);
+	AnimatorHolder::Register(checkPointAnimator);
 
 	last_timestamp = 0;
 
@@ -124,6 +187,26 @@ void Player::MoveRight(){
 	rightAnimator->Start(this, rightAnimation);
 	AnimatorHolder::MarkAsRunning(rightAnimator);
 	movement = RIGHT;
+}
+
+void Player::SetCheckPoint(bool check) {
+	checkPoint = check;
+}
+
+void Player::CheckPointTumble() {
+	if (!checkPoint) return;
+
+	checkPoint = false;
+	checkPointAnimation->SetPath(std::list<PathEntry *>(onboardList));
+	checkPointAnimator->Start(this, checkPointAnimation);
+	AnimatorHolder::MarkAsSuspended(rightAnimator);
+	AnimatorHolder::MarkAsSuspended(revrightAnimator);
+	AnimatorHolder::MarkAsSuspended(leftAnimator);
+	AnimatorHolder::MarkAsSuspended(revleftAnimator);
+	AnimatorHolder::MarkAsSuspended(tumbleAnimator);
+	AnimatorHolder::MarkAsRunning(checkPointAnimator);
+	movement = TUMBLE;
+
 }
 
 void Player::Tumble(){

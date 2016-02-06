@@ -4,6 +4,9 @@ GameController GameController::controller;
 int GameController::FONT_SIZE = 22;
 int GameController::NO_ENEMY_BULLETS_POWERUP_DURATION = 5000;
 
+int CheckPointStarts[3] = { 9100, 5450, 1860 };
+int currCheckPoint = 0;
+
 GameController::GameController(){
 	Reset();
 }
@@ -15,6 +18,61 @@ GameController::~GameController(){
 
 GameController& GameController::Get(void){
 	return controller;
+}
+
+void GameController::bgPositionArgs(float height, float factor) {
+	bgHeight = height;
+	bgScale = factor;
+}
+
+float GameController::getBackgroundY() {
+	return backgroundY;
+}
+
+void GameController::setBackgroundY(float newY) {
+
+	if (isPlayerDead() == true) {
+		backgroundY = backgroundY - 200;
+		return;
+	}
+	backgroundY = newY;
+}
+
+bool GameController::getRedraw(void) {
+	return redraw;
+}
+
+void GameController::setRedraw(bool b) {
+	redraw = b;
+}
+
+gamestates_t GameController::getGameState(void) {
+	return gameState;
+}
+
+void GameController::setGameState(gamestates_t state) {
+	gameState = state;
+}
+
+bool GameController::Respawn(void) {
+	if (lives > 0) {
+		player->Explode();
+		player->SetState(WAIT);
+		decLives();
+
+		player->SetX(SCREEN_W / 2);
+		player->SetY(SCREEN_H - 100);
+		player->SetState(ALIVE);
+
+		return true;
+	}
+	else if (lives == 0) {
+		player->Explode();
+		player->SetState(DEAD);
+		return false;
+	}
+
+	return false;
 }
 
 void GameController::SetPlayer(Player * p){
@@ -69,16 +127,56 @@ int GameController::getTakedowns(void){
 	return takedowns;
 }
 
+bool GameController::isCheckPointStart(void) {
+	int backbufferY = bgHeight - (SCREEN_H / bgScale) - getBackgroundY();
+
+	if (backbufferY == CheckPointStarts[currCheckPoint]) {
+		currCheckPoint++;
+		return true;
+	}
+	return false;
+}
+
+bool GameController::isCheckPoint(void) {
+
+	float backbufferY = bgHeight - (SCREEN_H / bgScale) - backgroundY;
+
+	if (backbufferY <= 9100 && backbufferY >= 8900) {
+		return true;
+	}
+
+	if (backbufferY <= 5450 && backbufferY >= 5314) {
+		return true;
+	}
+
+	if (backbufferY <= 1860 && backbufferY >= 1730) {
+		return true;
+	}
+	return false;
+}
+
+bool GameController::isPlayerDead(void) {
+	return playerDeath;
+}
+
+void GameController::setPlayerCondition(bool condition) {
+	playerDeath = condition;
+}
+
 void GameController::Reset(void){
 	if (font == NULL)
 		font = al_load_font("resources/BAUHS93.TTF", FONT_SIZE, 0);
 	if (fontAwesome == NULL)
 		fontAwesome = al_load_font("resources/fontawesome-webfont.ttf", FONT_SIZE, 0);
+	gameState = gamestates_t::PLAYING;
+	playerDeath = false;
+	redraw = true;
 	Score = 0;
 	lives = 3;
 	tumbles = 3;
 	takedowns = 0;
 	totalEnemies = 0;
+	backgroundY = 0;
 }
 
 void GameController::DrawUI(void) {
@@ -141,4 +239,14 @@ bool GameController::GetNoEnemyBulletsPow() {
 	if (noEnemyBullets && TIMESTAMP(tickCount) - noEnemyBulletsStart < NO_ENEMY_BULLETS_POWERUP_DURATION)
 		return true;
 	return (noEnemyBullets = false);
+}
+
+void GameController::DeathScreen(void) {
+	redraw = false;
+	SpriteHolder::Get().DestroyEnemies();
+	char *pausedStr = "READY";
+	al_draw_text(font, al_map_rgb(255, 0, 0), SCREEN_W / 2 - (al_get_text_width(font, pausedStr) / 2), SCREEN_H / 2, 0, pausedStr);
+	al_flip_display();
+	al_rest(0.5);
+	setPlayerCondition(false);
 }
