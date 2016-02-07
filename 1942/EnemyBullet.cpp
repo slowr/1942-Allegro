@@ -131,7 +131,8 @@ EnemyBullet::~EnemyBullet()
 void EnemyBullet::CollisionResult(Sprite *s){
 	switch (s->GetType()){
 	case spritetype_t::PLAYER:
-		if (((Player *)s)->GetMovement() == TUMBLE) return;
+		Player *player = ((Player *)s);
+		if (player->GetMovement() == LOOP || player->GetMovement() == TAKEOFF || player->GetMovement() == LANDING) return;
 		state = spritestate_t::DEAD;
 		break;
 	}

@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "GameController.h"
 #include "PlayerExplosion.h"
+#include "PlayerBullet.h"
 
 void Player::movementAnimatorCallback(Animator *a, void *c){
 	LatelyDestroyable::Add(a);
@@ -11,18 +12,17 @@ void Player::reverseAnimatorCallback(Animator *a, void *c){
 	((Player *)c)->SetFrame(0);
 }
 
-void Player::tumbleAnimatorCallback(Animator *a, void *c){
+void Player::loopAnimatorCallback(Animator *a, void *c){
 	((Player *)c)->movement = NONE;
 }
 
-void Player::checkpointAnimatorCallback(Animator *a, void *c) {
+void Player::takeoffAnimatorCallback(Animator *a, void *c) {
 	((Player *)c)->movement = NONE;
 }
 
-Player::Player(void) : Sprite(SCREEN_W / 2 - AnimationFilmHolder::Get().GetFilm("player.sprite")->GetFrameBox(0).w*ScaleFactor / 2, SCREEN_H / 2, AnimationFilmHolder::Get().GetFilm("player.sprite"), spritetype_t::PLAYER), movement(NONE) {
+Player::Player(void) : Sprite(SCREEN_W / 2 - AnimationFilmHolder::Get().GetFilm("player.sprite")->GetFrameBox(0).w*ScaleFactor / 2, SCREEN_H / 2, AnimationFilmHolder::Get().GetFilm("player.sprite"), spritetype_t::PLAYER), movement(NONE), dead(false) {
 
 	this->SetFrame(22);
-	checkPoint = false;
 
 	leftAnimation = new FrameRangeAnimation(4, 6, 0, 0, delay, false, 1);
 	leftAnimator = new FrameRangeAnimator();
@@ -70,7 +70,7 @@ Player::Player(void) : Sprite(SCREEN_W / 2 - AnimationFilmHolder::Get().GetFilm(
 		pE->delay = 120;
 		pE->frame = i + 7;
 		pE->repetitions = 1;
-		tumbleList.push_back(pE);
+		loopList.push_back(pE);
 	}
 
 	pE = new PathEntry();
@@ -80,25 +80,25 @@ Player::Player(void) : Sprite(SCREEN_W / 2 - AnimationFilmHolder::Get().GetFilm(
 	pE->repetitions = 1;
 	pE->frame = 0;
 
-	tumbleList.push_back(pE);
+	loopList.push_back(pE);
 
-	tumbleAnimation = new MovingPathAnimation(std::list<PathEntry *>(tumbleList), 1337);
-	tumbleAnimator = new MovingPathAnimator();
-	tumbleAnimator->SetOnFinish(tumbleAnimatorCallback, this);
+	loopAnimation = new MovingPathAnimation(std::list<PathEntry *>(loopList), 1337);
+	loopAnimator = new MovingPathAnimator();
+	loopAnimator->SetOnFinish(loopAnimatorCallback, this);
 
-	PathEntry *onBoard = new PathEntry();
+	PathEntry *takeoff = new PathEntry();
 
-	onBoard->dx = 0;
-	onBoard->dy = -10;
-	onBoard->delay = 120;
-	onBoard->repetitions = 10;
-	onBoard->frame = 22;
+	takeoff->dx = 0;
+	takeoff->dy = -10;
+	takeoff->delay = 120;
+	takeoff->repetitions = 10;
+	takeoff->frame = 22;
 
-	onboardList.push_back(onBoard);
+	takeoffList.push_back(takeoff);
 
 	for (int i = 0; i < 15; i++) {
-		onBoard = new PathEntry();
-		onBoard->dx = 0;
+		takeoff = new PathEntry();
+		takeoff->dx = 0;
 		switch (i) {
 		case 0:
 		case 1:
@@ -106,11 +106,11 @@ Player::Player(void) : Sprite(SCREEN_W / 2 - AnimationFilmHolder::Get().GetFilm(
 		case 12:
 		case 13:
 		case 14:
-			onBoard->dy = -10;
+			takeoff->dy = -10;
 			break;
 		case 3:
 		case 11:
-			onBoard->dy = 0;
+			takeoff->dy = 0;
 			break;
 		case 4:
 		case 5:
@@ -119,42 +119,40 @@ Player::Player(void) : Sprite(SCREEN_W / 2 - AnimationFilmHolder::Get().GetFilm(
 		case 8:
 		case 9:
 		case 10:
-			onBoard->dy = 10;
+			takeoff->dy = 10;
 			break;
 		}
-		onBoard->delay = 120;
-		onBoard->frame = i + 7;
-		onBoard->repetitions = 1;
-		onboardList.push_back(onBoard);
+		takeoff->delay = 120;
+		takeoff->frame = i + 7;
+		takeoff->repetitions = 1;
+		takeoffList.push_back(takeoff);
 	}
 
-	onBoard = new PathEntry();
-	onBoard->dx = 0;
-	onBoard->dy = +10;
-	onBoard->delay = 120;
-	onBoard->repetitions = 10;
-	onBoard->frame = 0;
+	takeoff = new PathEntry();
+	takeoff->dx = 0;
+	takeoff->dy = +10;
+	takeoff->delay = 120;
+	takeoff->repetitions = 10;
+	takeoff->frame = 0;
 
-	onboardList.push_back(onBoard);
+	takeoffList.push_back(takeoff);
 
-	checkPointAnimation = new MovingPathAnimation(std::list<PathEntry *>(onboardList), 15);
-	checkPointAnimator = new MovingPathAnimator();
-	checkPointAnimator->SetOnFinish(checkpointAnimatorCallback, this);
+	takeoffAnimation = new MovingPathAnimation(std::list<PathEntry *>(takeoffList), 15);
+	takeoffAnimator = new MovingPathAnimator();
+	takeoffAnimator->SetOnFinish(takeoffAnimatorCallback, this);
 
 	AnimatorHolder::Register(leftAnimator);
 	AnimatorHolder::Register(rightAnimator);
 	AnimatorHolder::Register(revleftAnimator);
 	AnimatorHolder::Register(revrightAnimator);
-	AnimatorHolder::Register(tumbleAnimator);
-	AnimatorHolder::Register(checkPointAnimator);
+	AnimatorHolder::Register(loopAnimator);
+	AnimatorHolder::Register(takeoffAnimator);
 
 	last_timestamp = 0;
-
-	//Tumble();
 }
 
 void Player::StopMoving(){
-	if (movement == NONE || movement == TUMBLE) return;
+	if (movement == NONE || movement == LOOP || movement == TAKEOFF || movement == LANDING) return;
 	if (movement == LEFT){
 		AnimatorHolder::MarkAsRunning(revleftAnimator);
 		revleftAnimator->Start(this, revleftAnimation);
@@ -170,7 +168,7 @@ void Player::StopMoving(){
 }
 
 void Player::MoveLeft(){
-	if (movement == LEFT || movement == TUMBLE) return;
+	if (movement == LEFT || movement == LOOP || movement == TAKEOFF || movement == LANDING) return;
 	AnimatorHolder::MarkAsSuspended(rightAnimator);
 	AnimatorHolder::MarkAsSuspended(revrightAnimator);
 	AnimatorHolder::MarkAsSuspended(revleftAnimator);
@@ -180,7 +178,7 @@ void Player::MoveLeft(){
 }
 
 void Player::MoveRight(){
-	if (movement == RIGHT || movement == TUMBLE) return;
+	if (movement == RIGHT || movement == LOOP || movement == TAKEOFF || movement == LANDING) return;
 	AnimatorHolder::MarkAsSuspended(leftAnimator);
 	AnimatorHolder::MarkAsSuspended(revleftAnimator);
 	AnimatorHolder::MarkAsSuspended(revrightAnimator);
@@ -189,43 +187,48 @@ void Player::MoveRight(){
 	movement = RIGHT;
 }
 
-void Player::SetCheckPoint(bool check) {
-	checkPoint = check;
-}
+void Player::TakeOff() {
+	if (movement == TAKEOFF || movement == LANDING) return;
 
-void Player::CheckPointTumble() {
-	//if (!checkPoint) return;
-
-	//checkPoint = false;
-	/*for (PathEntry *e : onboardList) {
-		e->repetitions = 1;
-	}*/
-	checkPointAnimation->SetPath(std::list<PathEntry *>(onboardList));
-	checkPointAnimator->Start(this, checkPointAnimation);
-	AnimatorHolder::MarkAsSuspended(rightAnimator);
-	AnimatorHolder::MarkAsSuspended(revrightAnimator);
-	AnimatorHolder::MarkAsSuspended(leftAnimator);
-	AnimatorHolder::MarkAsSuspended(revleftAnimator);
-	AnimatorHolder::MarkAsSuspended(tumbleAnimator);
-	AnimatorHolder::MarkAsRunning(checkPointAnimator);
-	movement = TUMBLE;
-
-}
-
-void Player::Tumble(){
-	if (movement == TUMBLE || GameController::Get().getTumbles() == 0) return;
-	for (PathEntry *e : tumbleList){
+	for (PathEntry *e : takeoffList) {
 		e->repetitions = 1;
 	}
-	tumbleAnimation->SetPath(std::list<PathEntry *>(tumbleList));
-	tumbleAnimator->Start(this, tumbleAnimation);
+	takeoffList.front()->repetitions = 10;
+
+	int diffToBottom = SCREEN_H - (y + 10) - frameBox.h * ScaleFactor;
+	takeoffList.back()->repetitions = (diffToBottom / 10);
+
+	takeoffAnimation->SetPath(std::list<PathEntry *>(takeoffList));
+	takeoffAnimator->Start(this, takeoffAnimation);
 	AnimatorHolder::MarkAsSuspended(rightAnimator);
 	AnimatorHolder::MarkAsSuspended(revrightAnimator);
 	AnimatorHolder::MarkAsSuspended(leftAnimator);
 	AnimatorHolder::MarkAsSuspended(revleftAnimator);
-	AnimatorHolder::MarkAsRunning(tumbleAnimator);
-	movement = TUMBLE;
-	GameController::Get().decTumbles();
+	AnimatorHolder::MarkAsSuspended(loopAnimator);
+	AnimatorHolder::MarkAsRunning(takeoffAnimator);
+	movement = TAKEOFF;
+}
+
+void Player::shoot() {
+	if (!dead && movement != LOOP && movement != TAKEOFF && movement != LANDING) {
+		PlayerBullet::FireBullets(getPos());
+	}
+}
+
+void Player::Loop(){
+	if (movement == TAKEOFF || movement == LOOP || movement == LANDING || GameController::Get().getLoops() == 0) return;
+	for (PathEntry *e : loopList){
+		e->repetitions = 1;
+	}
+	loopAnimation->SetPath(std::list<PathEntry *>(loopList));
+	loopAnimator->Start(this, loopAnimation);
+	AnimatorHolder::MarkAsSuspended(rightAnimator);
+	AnimatorHolder::MarkAsSuspended(revrightAnimator);
+	AnimatorHolder::MarkAsSuspended(leftAnimator);
+	AnimatorHolder::MarkAsSuspended(revleftAnimator);
+	AnimatorHolder::MarkAsRunning(loopAnimator);
+	movement = LOOP;
+	GameController::Get().decLoops();
 }
 
 playermovement_t Player::GetMovement(){
@@ -236,6 +239,7 @@ void Player::Move(bool up, bool down, bool left, bool right){
 	timestamp_t curr_timestamp = TIMESTAMP(tickCount);
 	float _x = 0, _y = 0;
 
+	if (movement == TAKEOFF || movement == LANDING) return;
 	if (!(up || down || left || right)) return;
 
 	float moveSpeed = ((up || down) && (right || left) ? (float) sqrt((pow(speed, 2)/2.0f)) : speed);
@@ -248,7 +252,7 @@ void Player::Move(bool up, bool down, bool left, bool right){
 	if (x + _x < 0 || x + _x + frameBox.w*ScaleFactor > SCREEN_W){
 		_x = 0;
 	}
-	if (y + _y + (movement == TUMBLE ? -60 : 0) < 0 || y + _y + frameBox.h*ScaleFactor + (movement == TUMBLE ? 60 : 0) > SCREEN_H){
+	if (y + _y + (movement == LOOP ? -60 : 0) < 0 || y + _y + frameBox.h*ScaleFactor + (movement == LOOP ? 60 : 0) > SCREEN_H){
 		_y = 0;
 	}
 
@@ -267,17 +271,25 @@ void Player::Explode() {
 	new PlayerExplosion(x, y);
 }
 
+bool Player::isDead() {
+	return dead;
+}
+
+void Player::setDead(bool val) {
+	if (val) PlayerBullet::SetQuadBullets(false);
+	dead = val;
+	isVisible = !val;
+	state = (dead ? DEAD : ALIVE);
+}
+
 void Player::CollisionResult(Sprite *s){
 	switch (s->GetType()){
 	case spritetype_t::ENEMY:
 	case spritetype_t::ENEMY_BULLET:
-		if (movement == TUMBLE) return;
-		GameController::Get().setPlayerCondition(true);
-		isVisible = GameController::Get().Respawn();
-		/*state = spritestate_t::DEAD;
-		isVisible = false;
+		if (movement == LOOP || movement == TAKEOFF || movement == LANDING) return;
+		setDead(true);
 		GameController::Get().decLives();
-		Explode();*/
+		Explode();
 		break;
 	}
 }

@@ -1,11 +1,11 @@
 #include "GameController.h"
+#include "GameMenu.h"
 
 GameController GameController::controller;
 int GameController::FONT_SIZE = 22;
 int GameController::NO_ENEMY_BULLETS_POWERUP_DURATION = 5000;
 
-int CheckPointStarts[3] = { 9100, 5450, 1860 };
-int currCheckPoint = 0;
+int GameController::CHECKPOINTS[3] = { 9100, 5450, 1860 };
 
 GameController::GameController(){
 	Reset();
@@ -14,6 +14,7 @@ GameController::GameController(){
 GameController::~GameController(){
 	if (font) al_destroy_font(font);
 	if (fontAwesome) al_destroy_font(fontAwesome);
+	if (fontHuge) al_destroy_font(fontHuge);
 }
 
 GameController& GameController::Get(void){
@@ -49,26 +50,6 @@ void GameController::setGameState(gamestates_t state) {
 	gameState = state;
 }
 
-bool GameController::Respawn(void) {
-	if (lives > 0) {
-		player->Explode();
-		player->SetState(WAIT);
-		decLives();
-
-		player->SetX(SCREEN_W / 2);
-		player->SetY(SCREEN_H - 100);
-		player->SetState(ALIVE);
-		return true;
-	}
-	else if (lives == 0) {
-		player->Explode();
-		player->SetState(DEAD);
-		return false;
-	}
-
-	return false;
-}
-
 void GameController::SetPlayer(Player * p){
 	player = p;
 }
@@ -85,12 +66,12 @@ void GameController::incLives(){
 	lives++;
 }
 
-void GameController::decTumbles(){
-	tumbles--;
+void GameController::decLoops(){
+	loops--;
 }
 
-void GameController::incTumbles(){
-	tumbles++;
+void GameController::incLoops(){
+	loops++;
 }
 
 void GameController::incTakedowns(){
@@ -113,51 +94,26 @@ int GameController::getLives(void){
 	return lives;
 }
 
-int GameController::getTumbles(void){
-	return tumbles;
+int GameController::getLoops(void){
+	return loops;
 }
 
 int GameController::getTakedowns(void){
 	return takedowns;
 }
 
-bool GameController::isCheckPointStart(void) {
-	float backbufferY = bgHeight - (SCREEN_H / bgScale) - getBackgroundY();
-
-	/*if (backbufferY == CheckPointStarts[currCheckPoint]) {
-		currCheckPoint++;
-		return true;
-	}*/
-	if (backbufferY == 9100) {
-		return true;
-	}
-	return false;
-}
-
 bool GameController::isCheckPoint(void) {
 
 	float backbufferY = bgHeight - (SCREEN_H / bgScale) - backgroundY;
+	int error = 40;
 
-	if (backbufferY <= 9100 && backbufferY >= 8900) {
+	if (backbufferY >= CHECKPOINTS[currentCheckPoint] - error
+		&& backbufferY <= CHECKPOINTS[currentCheckPoint] + error){
+		currentCheckPoint++;
 		return true;
 	}
 
-	if (backbufferY <= 5450 && backbufferY >= 5314) {
-		return true;
-	}
-
-	if (backbufferY <= 1860 && backbufferY >= 1730) {
-		return true;
-	}
 	return false;
-}
-
-bool GameController::isPlayerDead(void) {
-	return playerDeath;
-}
-
-void GameController::setPlayerCondition(bool condition) {
-	playerDeath = condition;
 }
 
 void GameController::Reset(void){
@@ -165,15 +121,18 @@ void GameController::Reset(void){
 		font = al_load_font("resources/BAUHS93.TTF", FONT_SIZE, 0);
 	if (fontAwesome == NULL)
 		fontAwesome = al_load_font("resources/fontawesome-webfont.ttf", FONT_SIZE, 0);
+	if (fontHuge == NULL)
+		fontHuge = al_load_font("resources/BAUHS93.TTF", FONT_SIZE * 3, 0);
 	gameState = gamestates_t::PLAYING;
 	playerDeath = false;
 	redraw = true;
 	Score = 0;
 	lives = 3;
-	tumbles = 3;
+	loops = 3;
 	takedowns = 0;
 	totalEnemies = 0;
 	backgroundY = 0;
+	currentCheckPoint = 0;
 }
 
 void GameController::DrawUI(void) {
@@ -189,9 +148,9 @@ void GameController::DrawUI(void) {
 	al_draw_text(font, al_map_rgb(200, 200, 255), 4 * (SCREEN_W / 5), 25, ALLEGRO_ALIGN_CENTRE, std::to_string((int)0).c_str());
 	
 
-	std::string tumbleString(tumbles, 'R');
+	std::string tumbleString(loops, 'R');
 
-	uint16_t *uStr = new uint16_t[max(lives, tumbles) + 1];
+	uint16_t *uStr = new uint16_t[max(lives, loops) + 1];
 
 	for (int i = 0; i < lives; i++) {
 		uStr[i] = u'\uF004';
@@ -200,10 +159,10 @@ void GameController::DrawUI(void) {
 
 	ALLEGRO_USTR* lives_string = al_ustr_new_from_utf16(uStr);
 
-	for (int i = 0; i < tumbles; i++) {
+	for (int i = 0; i < loops; i++) {
 		uStr[i] = u'\uF0E2';
 	}
-	uStr[tumbles] = 0;
+	uStr[loops] = 0;
 
 	ALLEGRO_USTR* tumbles_string = al_ustr_new_from_utf16(uStr);
 	
@@ -238,12 +197,51 @@ bool GameController::GetNoEnemyBulletsPow() {
 	return (noEnemyBullets = false);
 }
 
+void GameController::Respawn(void) {
+	player->SetX(SCREEN_W / 2 - (player->GetFrameBox(0).w * ScaleFactor) / 2);
+	player->SetY(SCREEN_H - 100);
+	player->setDead(false);
+}
+
 void GameController::DeathScreen(void) {
-	redraw = false;
-	SpriteHolder::Get().DestroyEnemies();
-	char *pausedStr = "READY";
-	al_draw_text(font, al_map_rgb(255, 0, 0), SCREEN_W / 2 - (al_get_text_width(font, pausedStr) / 2), SCREEN_H / 2, 0, pausedStr);
+	char *pausedStr;
+	if (lives > 0) pausedStr = "GET READY!";
+	else pausedStr = "GAME OVER!";
+
+	int timestamp = TIMESTAMP(tickCount);
+
+	if (deathTimestamp == 0) {
+		SpriteHolder::Get().DestroyEnemies(false);
+		deathTimestamp = timestamp;
+	}
+
+	if (lives == 0 || (timestamp - deathTimestamp) % 600 <= 400){
+		al_draw_text(font, al_map_rgb(255, 0, 0), SCREEN_W / 2 - (al_get_text_width(font, pausedStr) / 2), SCREEN_H / 2 - 80, 0, pausedStr);
+	}
+
+	if (lives > 0){
+		int diffInSec = 5 - (timestamp - deathTimestamp) / 1000;
+		std::string countdownString(1, (char) ('0' + diffInSec));
+		al_draw_text(fontHuge, al_map_rgb(255, 255, 255), SCREEN_W / 2 - (al_get_text_width(fontHuge, countdownString.c_str()) / 2), SCREEN_H / 2 - 40, 0, countdownString.c_str());
+	}
+
 	al_flip_display();
-	al_rest(0.5);
-	setPlayerCondition(false);
+
+	if (timestamp - deathTimestamp >= 5000) {
+		deathTimestamp = 0;
+		if (lives > 0) {
+			Respawn();
+		} else {
+			setGameState(MENU);
+			menu->ShowMenu();
+		}
+	}
+}
+
+void GameController::SetMenu(GameMenu *m) {
+	menu = m;
+}
+
+GameMenu *GameController::GetMenu(void) {
+	return menu;
 }

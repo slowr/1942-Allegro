@@ -77,12 +77,14 @@ const int POINTS_PER_DESTRUCTION[12] = {
 
 Enemy::Enemy(float _x, float _y, std::string sprite, enemysubtype_t t) : 
 Sprite(_x, _y, AnimationFilmHolder::Get().GetFilm(sprite), spritetype_t::ENEMY), subtype(t), health(HEALTH_PER_TYPE[subtype]){
+	GameController::Get().incTotalEnemies();
 	AnimationInit();
 }
 
 /* Red plane constructor */
 Enemy::Enemy(float _x, float _y, std::list<PathEntry *> p) :
 	Sprite(_x, _y, AnimationFilmHolder::Get().GetFilm("red.plane"), spritetype_t::ENEMY), subtype(RED), health(HEALTH_PER_TYPE[subtype]) {
+	GameController::Get().incTotalEnemies();
 	animation = new MovingPathAnimation(p, 1);
 	animator = new MovingPathAnimator();
 	animator->Start(this, animation);
@@ -424,6 +426,7 @@ void Enemy::Explode(void) {
 
 void Enemy::OnPlaneShot(void) {
 	if (--health == 0) {
+		GameController::Get().incTakedowns();
 		if (subtype == enemysubtype_t::RED) {
 			PowWave::Get().OnRedPlaneShotDown(this);
 		}
@@ -440,7 +443,10 @@ void Enemy::CollisionResult(Sprite *s){
 	switch (s->GetType()){
 	case spritetype_t::PLAYER_BULLET:
 	case spritetype_t::PLAYER:
-		if (s->GetType() == spritetype_t::PLAYER && ((Player *)s)->GetMovement() == TUMBLE) return;
+		if (s->GetType() == spritetype_t::PLAYER) {
+			Player *player = (Player *)s;
+			if (player->GetMovement() == LOOP || player->GetMovement() == TAKEOFF || player->GetMovement() == LANDING) return;
+		}
 		OnPlaneShot();
 		break;
 	}

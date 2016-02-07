@@ -41,6 +41,11 @@ void GameMenu::LeaveMenu(){
 		Menu->at(i)->SetState(spritestate_t::WAIT);
 }
 
+void GameMenu::ShowMenu() {
+	for (unsigned int i = 0; i < Menu->size(); i++)
+		Menu->at(i)->SetState(spritestate_t::ALIVE);
+}
+
 void GameMenu::MoveUp(){
 	AnimationFilm * film = AnimationFilmHolder::Get().GetFilm("game.menu_pointer");
 	if (currentPos == 0){

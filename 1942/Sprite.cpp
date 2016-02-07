@@ -31,8 +31,8 @@ void Sprite::CollisionCheck(Sprite* s){
 	float x1, y1, x2, y2, x3, y3, x4, y4;
 	x1 = x;
 	y1 = y;
-	x2 = x + frameBox.w * 2;
-	y2 = y + frameBox.h * 2;
+	x2 = x + frameBox.w * ScaleFactor;
+	y2 = y + frameBox.h * ScaleFactor;
 	x3 = s->x;
 	y3 = s->y;
 	x4 = s->x + s->frameBox.w * ScaleFactor;

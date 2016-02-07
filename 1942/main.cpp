@@ -118,6 +118,8 @@ int main(int argc, char **argv)
 	/**********************/
 	GameMenu *menu = new GameMenu();
 
+	GameController::Get().SetMenu(menu);
+
 	fprintf(stderr, "Loaded scrolling background [%f, %f]\n",
 		bgWidth, bgHeight);
 	fprintf(stderr, "Should be scaled to [%f, %f]\n",
@@ -172,24 +174,24 @@ int main(int argc, char **argv)
 				}
 
 				if (key[KEY_SPACE]) {
-					if (GameController::Get().getGameState() == gamestates_t::PLAYING && player->GetMovement() != TUMBLE)  PlayerBullet::FireBullets(player->getPos());
+					if (GameController::Get().getGameState() == gamestates_t::PLAYING) {
+						player->shoot();
+					}
 				}
 			}
 
-			if (GameController::Get().getGameState() == gamestates_t::PLAYING && GameController::Get().isCheckPointStart()) {
-
-				std::cout << "IN CHECKPOINT" << std::endl;
-				GameController::Get().getPlayer()->SetCheckPoint(GameController::Get().isCheckPointStart());
-				GameController::Get().getPlayer()->CheckPointTumble();
-			}
-
 			if (GameController::Get().getGameState() == gamestates_t::PLAYING) {
-				if (((int)GameController::Get().getBackgroundY() % 200) == 0) {
+				if (GameController::Get().isCheckPoint()) {
+					std::cout << "IN CHECKPOINT" << std::endl;
+					GameController::Get().getPlayer()->TakeOff();
+				} else if (((int)GameController::Get().getBackgroundY() % 200) == 0 && !player->isDead()) {
 					PowWave::Get().SpawnWave();
 				}
 			}
 
-			GameController::Get().setBackgroundY(GameController::Get().getBackgroundY() + (BG_SCROLL_SPEED / FPS));
+			if (GameController::Get().getGameState() == MENU || (GameController::Get().getGameState() == PLAYING && !player->isDead())){
+				GameController::Get().setBackgroundY(GameController::Get().getBackgroundY() + (BG_SCROLL_SPEED / FPS));
+			}
 			GameController::Get().setRedraw(true);
 
 			if (GameController::Get().getGameState() == gamestates_t::PLAYING) {
@@ -227,7 +229,7 @@ int main(int argc, char **argv)
 					pause = !pause;
 					if (pause) {
 						GameController::Get().DrawPaused();
-						//redraw = false;
+						GameController::Get().setRedraw(false);
 						continue;
 					}
 				}
@@ -236,7 +238,6 @@ int main(int argc, char **argv)
 			case ALLEGRO_KEY_ENTER:
 				key[KEY_ENTER] = true;
 				if (menu->GetSelected() == 0 && GameController::Get().getGameState() == gamestates_t::MENU) {
-
 					GameController::Get().setGameState(gamestates_t::PLAYING);
 					menu->LeaveMenu();
 					tickCount = 0;
@@ -244,7 +245,6 @@ int main(int argc, char **argv)
 					player = new Player();
 					GameController::Get().Reset();
 					GameController::Get().SetPlayer(player);
-
 				}
 				break;
 
@@ -253,7 +253,7 @@ int main(int argc, char **argv)
 				break;
 
 			case ALLEGRO_KEY_D:
-				if (GameController::Get().getGameState() == PLAYING) player->Tumble();
+				if (GameController::Get().getGameState() == PLAYING) player->Loop();
 				break;
 			}
 		}
@@ -294,8 +294,6 @@ int main(int argc, char **argv)
 		}
 
 		if (GameController::Get().getRedraw() && al_is_event_queue_empty(event_queue)) {
-
-			//redraw = false;
 			GameController::Get().setRedraw(false);
 
 			al_clear_to_color(al_map_rgb(0, 0, 0));
@@ -306,18 +304,18 @@ int main(int argc, char **argv)
 
 			LatelyDestroyable::Destroy();
 
-			if (GameController::Get().isPlayerDead() == true) {
-				std::cout << "PLAYER DEATH";
-				GameController::Get().DrawUI();
-				SpriteHolder::Get().DrawSprites();
-				GameController::Get().DeathScreen();
+			if (GameController::Get().getGameState() == gamestates_t::PLAYING) {
+				AnimatorHolder::Progress();
 			}
-
-			if (GameController::Get().getGameState() == gamestates_t::PLAYING) AnimatorHolder::Progress();
+			
 			SpriteHolder::Get().DrawSprites();
 
 			if (GameController::Get().getGameState() == gamestates_t::PLAYING){
 				GameController::Get().DrawUI();
+
+				if (player->isDead()) {
+					GameController::Get().DeathScreen();
+				}
 			}
 
 			al_flip_display();

@@ -10,10 +10,10 @@ private:
 	float pos_x;
 	float pos_y;
 	int currentPos = 0;
-
 public:
 	GameMenu();
-	void LeaveMenu();
+	void LeaveMenu(); 
+	void ShowMenu();
 	void Update();
 	void MoveUp();
 	void MoveDown();

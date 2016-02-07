@@ -52,7 +52,7 @@ void PowerUp::handlePowerUp() {
 		break;
 	case ENEMY_CRASH:
 		std::cout << "Enemy crash pow!" << std::endl;
-		SpriteHolder::Get().DestroyEnemies();
+		SpriteHolder::Get().DestroyEnemies(true);
 		break;
 	case SIDE_FIGHTERS:
 		std::cout << "Side fighters pow!" << std::endl;
@@ -67,7 +67,7 @@ void PowerUp::handlePowerUp() {
 		break;
 	case EXTRA_LOOP:
 		std::cout << "Extra loop pow!" << std::endl;
-		GameController::Get().incTumbles();
+		GameController::Get().incLoops();
 		break;
 	case THOUSAND_POINTS:
 		std::cout << "+1000 score pow!" << std::endl;

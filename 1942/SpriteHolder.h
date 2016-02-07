@@ -20,6 +20,6 @@ public:
 	void Remove(Sprite* s);
 	void GetSprites(spritetype_t type, SpriteList* result);
 	void DrawSprites();
-	void DestroyEnemies(void);
+	void DestroyEnemies(bool explode);
 	static SpriteHolder& Get(void);
 };
