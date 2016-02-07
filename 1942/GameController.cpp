@@ -30,11 +30,6 @@ float GameController::getBackgroundY() {
 }
 
 void GameController::setBackgroundY(float newY) {
-
-	if (isPlayerDead() == true) {
-		backgroundY = backgroundY - 200;
-		return;
-	}
 	backgroundY = newY;
 }
 
@@ -63,7 +58,6 @@ bool GameController::Respawn(void) {
 		player->SetX(SCREEN_W / 2);
 		player->SetY(SCREEN_H - 100);
 		player->SetState(ALIVE);
-
 		return true;
 	}
 	else if (lives == 0) {
@@ -128,10 +122,13 @@ int GameController::getTakedowns(void){
 }
 
 bool GameController::isCheckPointStart(void) {
-	int backbufferY = bgHeight - (SCREEN_H / bgScale) - getBackgroundY();
+	float backbufferY = bgHeight - (SCREEN_H / bgScale) - getBackgroundY();
 
-	if (backbufferY == CheckPointStarts[currCheckPoint]) {
+	/*if (backbufferY == CheckPointStarts[currCheckPoint]) {
 		currCheckPoint++;
+		return true;
+	}*/
+	if (backbufferY == 9100) {
 		return true;
 	}
 	return false;

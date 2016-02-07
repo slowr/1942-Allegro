@@ -176,6 +176,13 @@ int main(int argc, char **argv)
 				}
 			}
 
+			if (GameController::Get().getGameState() == gamestates_t::PLAYING && GameController::Get().isCheckPointStart()) {
+
+				std::cout << "IN CHECKPOINT" << std::endl;
+				GameController::Get().getPlayer()->SetCheckPoint(GameController::Get().isCheckPointStart());
+				GameController::Get().getPlayer()->CheckPointTumble();
+			}
+
 			if (GameController::Get().getGameState() == gamestates_t::PLAYING) {
 				if (((int)GameController::Get().getBackgroundY() % 200) == 0) {
 					PowWave::Get().SpawnWave();
@@ -300,6 +307,7 @@ int main(int argc, char **argv)
 			LatelyDestroyable::Destroy();
 
 			if (GameController::Get().isPlayerDead() == true) {
+				std::cout << "PLAYER DEATH";
 				GameController::Get().DrawUI();
 				SpriteHolder::Get().DrawSprites();
 				GameController::Get().DeathScreen();

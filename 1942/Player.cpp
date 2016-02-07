@@ -150,7 +150,7 @@ Player::Player(void) : Sprite(SCREEN_W / 2 - AnimationFilmHolder::Get().GetFilm(
 
 	last_timestamp = 0;
 
-	Tumble();
+	//Tumble();
 }
 
 void Player::StopMoving(){
@@ -194,9 +194,12 @@ void Player::SetCheckPoint(bool check) {
 }
 
 void Player::CheckPointTumble() {
-	if (!checkPoint) return;
+	//if (!checkPoint) return;
 
-	checkPoint = false;
+	//checkPoint = false;
+	/*for (PathEntry *e : onboardList) {
+		e->repetitions = 1;
+	}*/
 	checkPointAnimation->SetPath(std::list<PathEntry *>(onboardList));
 	checkPointAnimator->Start(this, checkPointAnimation);
 	AnimatorHolder::MarkAsSuspended(rightAnimator);
@@ -269,10 +272,12 @@ void Player::CollisionResult(Sprite *s){
 	case spritetype_t::ENEMY:
 	case spritetype_t::ENEMY_BULLET:
 		if (movement == TUMBLE) return;
-		state = spritestate_t::DEAD;
+		GameController::Get().setPlayerCondition(true);
+		isVisible = GameController::Get().Respawn();
+		/*state = spritestate_t::DEAD;
 		isVisible = false;
 		GameController::Get().decLives();
-		Explode();
+		Explode();*/
 		break;
 	}
 }
