@@ -2,6 +2,7 @@
 #include "PowWave.h"
 #include "EnemyBullet.h"
 #include "SmallEnemyExplosion.h"
+#include "LargeEnemyExplosion.h"
 
 /*
 GREEN_MONO,
@@ -313,6 +314,78 @@ void Enemy::AnimationInit(){
 		AnimatorHolder::Register(animator);
 		AnimatorHolder::MarkAsRunning(animator);
 		break;
+	case enemysubtype_t::GREEN_LARGE:
+		pE = new PathEntry();
+		pE->dx = 0;
+		pE->dy = -5;
+		pE->delay = delay;
+		pE->frame = 0;
+		pE->repetitions = (SCREEN_H / 2) / 5;
+		p.push_back(pE);
+
+		pE = new PathEntry();
+		pE->dx = 3;
+		pE->dy = -2.5;
+		pE->delay = delay;
+		pE->frame = 0;
+		pE->repetitions = (SCREEN_W / 2) / 5;
+		pE->action = SHOOT;
+		p.push_back(pE);
+
+		pE = new PathEntry();
+		pE->dx = -5;
+		pE->dy = 0;
+		pE->delay = delay;
+		pE->frame = 0;
+		pE->repetitions = (SCREEN_W / 4) / 4;
+		pE->action = SHOOT;
+		p.push_back(pE);
+
+		for (int i = 0; i < 3; i++) {
+
+			pE = new PathEntry();
+			pE->dx = 5;
+			pE->dy = 0;
+			pE->delay = delay;
+			pE->frame = 0;
+			pE->repetitions = (SCREEN_W / 2) / 4;
+			pE->action = SHOOT;
+			p.push_back(pE);
+
+			pE = new PathEntry();
+			pE->dx = -5;
+			pE->dy = 0;
+			pE->delay = delay;
+			pE->frame = 0;
+			pE->repetitions = (SCREEN_W / 2) / 4;
+			pE->action = SHOOT;
+			p.push_back(pE);
+
+		}
+		pE = new PathEntry();
+		pE->dx = 0;
+		pE->dy = 0;
+		pE->delay = delay;
+		pE->frame = 0;
+		pE->repetitions = 10;
+		pE->action = SHOOT;
+		p.push_back(pE);
+
+		pE = new PathEntry();
+		pE->dx = 0;
+		pE->dy = -5;
+		pE->delay = delay;
+		pE->frame = 0;
+		pE->repetitions = (SCREEN_H - GetY()) / 5;
+		p.push_back(pE);
+
+		animation = new MovingPathAnimation(p, 2);
+		animator = new MovingPathAnimator();
+		animator->Start(this, animation);
+		animator->SetOnFinish(OnAnimationFinish, this);
+		AnimatorHolder::Register(animator);
+		AnimatorHolder::MarkAsRunning(animator);
+		break;
 	default:
 		doCircle(BOTTOM, p, 100, CLOCKWISE);
 
@@ -340,7 +413,13 @@ enemysubtype_t Enemy::GetSubType(){
 }
 
 void Enemy::Explode(void) {
-	new SmallEnemyExplosion(x, y);
+	switch (subtype) {
+	case enemysubtype_t::GREEN_LARGE:
+		new LargeEnemyExplosion(x, y);
+	default:
+		new SmallEnemyExplosion(x, y);
+	}
+	
 }
 
 void Enemy::OnPlaneShot(void) {
@@ -373,7 +452,11 @@ void Enemy::AnimationFinish(void){
 
 void Enemy::shoot(){
 	if (GameController::Get().GetNoEnemyBulletsPow() && subtype <= enemysubtype_t::GRAY_MID) return;
-	new EnemyBullet(GetX() + frameBox.w / 2, GetY() + frameBox.h / 2);
+	if (subtype == GREEN_LARGE) {
+		new EnemyBullet(GetX() + frameBox.w / 2, GetY() + frameBox.h * 2);		
+	}
+	else
+		new EnemyBullet(GetX() + frameBox.w / 2, GetY() + frameBox.h / 2);
 }
 
 Enemy::~Enemy(){

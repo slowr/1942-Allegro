@@ -26,7 +26,28 @@ void MovingPathAnimator::Progress() {
 
 		sprite->Move(p->dx + dx, p->dy + dy);
 
-		if (--p->repetitions == 0) {
+		--p->repetitions;
+		// too hacky?
+		if ((sprite->GetType() == ENEMY) && ((Enemy *)sprite)->GetSubType() == GREEN_LARGE) {
+			if (p->action == SHOOT) {
+				switch (p->repetitions) {
+				case 5:
+					((Enemy *)sprite)->shoot();
+					break;
+				case 10:
+					((Enemy *)sprite)->shoot();
+					break;
+				case 15:
+					((Enemy *)sprite)->shoot();
+					break;
+				case 20:
+					((Enemy *)sprite)->shoot();
+					break;
+				}
+			}
+		}
+
+		if (p->repetitions == 0) {
 			if (p->action == SHOOT){
 				if (sprite->GetType() == ENEMY){
 					((Enemy *)sprite)->shoot();
