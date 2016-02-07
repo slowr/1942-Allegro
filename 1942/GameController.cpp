@@ -225,8 +225,6 @@ void GameController::DeathScreen(void) {
 		al_draw_text(fontHuge, al_map_rgb(255, 255, 255), SCREEN_W / 2 - (al_get_text_width(fontHuge, countdownString.c_str()) / 2), SCREEN_H / 2 - 40, 0, countdownString.c_str());
 	}
 
-	al_flip_display();
-
 	if (timestamp - deathTimestamp >= 5000) {
 		deathTimestamp = 0;
 		if (lives > 0) {
