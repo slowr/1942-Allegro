@@ -3,6 +3,20 @@
 #include "EnemyBullet.h"
 #include "SmallEnemyExplosion.h"
 #include "LargeEnemyExplosion.h"
+#include "MediumExplosion.h"
+
+const std::string FILMS_BY_TYPE[10] = {
+	"green.mono",
+	"green.double",
+	"green.jet",
+	"gray.mono",
+	"gray.double",
+	"gray.jet",
+	"green.mid",
+	"gray.mid",
+	"green.large",
+	"gray.large"
+};
 
 /*
 GREEN_MONO,
@@ -18,6 +32,21 @@ GRAY_LARGE,
 BOSS,
 RED
 */
+
+const int SPEED_PER_TYPE[12] = {
+	5,
+	5,
+	5,
+	6,
+	6,
+	6,
+	3,
+	4,
+	3,
+	4,
+	5,
+	5
+};
 
 const int HEALTH_PER_TYPE[12] = {
 	1,
@@ -75,10 +104,15 @@ const int POINTS_PER_DESTRUCTION[12] = {
 
 
 
-Enemy::Enemy(float _x, float _y, std::string sprite, enemysubtype_t t) : 
+Enemy::Enemy(float _x, float _y, std::string sprite, enemysubtype_t t, std::list<PathEntry*> p) :
 Sprite(_x, _y, AnimationFilmHolder::Get().GetFilm(sprite), spritetype_t::ENEMY), subtype(t), health(HEALTH_PER_TYPE[subtype]){
 	GameController::Get().incTotalEnemies();
-	AnimationInit();
+	animation = new MovingPathAnimation(p, 1);
+	animator = new MovingPathAnimator();
+	animator->Start(this, animation);
+	animator->SetOnFinish(OnAnimationFinish, this);
+	AnimatorHolder::Register(animator);
+	AnimatorHolder::MarkAsRunning(animator);
 }
 
 /* Red plane constructor */
@@ -250,49 +284,129 @@ std::list<PathEntry *> Enemy::RedAnimationInit(int planeN, int loop_start, int s
 	return p;
 }
 
-void Enemy::AnimationInit(){
+std::list<PathEntry *> Enemy::MediumAnimationInit(int posX, int posY, enemysubtype_t type, int speed, int num) {
+
+	if (posY <= 0) {
+
+		std::list<PathEntry *> p;
+		PathEntry * pE;
+
+		if (posX >= SCREEN_W / 2) {
+
+			pE = new PathEntry();
+			pE->dx = 0;
+			pE->dy = speed;
+			pE->delay = delay;
+			pE->frame = getFrameClockWise(directionDegrees[CLOCKWISE][BOTTOM]);
+			pE->repetitions = (SCREEN_H / 2) / speed;
+			pE->action = SHOOT;
+			p.push_back(pE);
+
+			doCircle(BOTTOM, p, 100, CLOCKWISE, 6);
+
+			pE = new PathEntry();
+			pE->dx = 0;
+			pE->dy = speed;
+			pE->delay = delay;
+			pE->frame = getFrameClockWise(directionDegrees[CLOCKWISE][BOTTOM]);
+			pE->repetitions = (SCREEN_H / 2) / speed;
+			pE->action = SHOOT;
+			p.push_back(pE);
+
+			return p;
+		}
+		else if (posX < SCREEN_W / 2) {
+
+			pE = new PathEntry();
+			pE->dx = 0;
+			pE->dy = speed;
+			pE->delay = delay;
+			pE->frame = getFrameClockWise(directionDegrees[CLOCKWISE][BOTTOM]);
+			pE->repetitions = (SCREEN_H / 2) / speed;
+			pE->action = SHOOT;
+			p.push_back(pE);
+
+			doCircle(BOTTOM, p, 100, ANTICLOCKWISE, 6);
+
+			pE = new PathEntry();
+			pE->dx = 0;
+			pE->dy = speed;
+			pE->delay = delay;
+			pE->frame = getFrameClockWise(directionDegrees[CLOCKWISE][BOTTOM]);
+			pE->repetitions = (SCREEN_H / 2) / speed;
+			pE->action = SHOOT;
+			p.push_back(pE);
+
+			return p;
+		}
+
+	}
+	else if (posY >= SCREEN_H) {
+
+		std::list<PathEntry *> p;
+		PathEntry * pE;
+
+		pE = new PathEntry();
+		pE->dx = 0;
+		pE->dy = -speed;
+		pE->delay = delay;
+		pE->frame = getFrameClockWise(directionDegrees[CLOCKWISE][TOP]);
+		pE->repetitions = (SCREEN_H) / speed;
+		p.push_back(pE);
+
+		return p;
+	}
+}
+
+std::list<PathEntry *> Enemy::JetAnimationInit(enemysubtype_t type, float _x, float _y) {
+	int speed = SPEED_PER_TYPE[type];
+
 	std::list<PathEntry *> p;
 	PathEntry * pE;
-	float distance;
 
-	switch (subtype){
-	case enemysubtype_t::GRAY_MONO:
-		float dx, dy;
+	if (type == GRAY_JET) {
+
+		int startX = 0;
+		int startY = 0;
+
+		int distance;
+
+		int targetX = GameController::Get().getPlayer()->GetX();
+		int targetY = GameController::Get().getPlayer()->GetY();
+
 		int repetitions;
 		pE = new PathEntry();
 
-		dx = GameController::Get().getPlayer()->GetX() - x;
-		dy = GameController::Get().getPlayer()->GetY() - y;
-		distance = sqrt(pow(dx, 2) + pow(dy, 2));
+		distance = sqrt(pow(targetX, 2) + pow(targetY, 2));
 		pE->delay = 25;
 		pE->frame = 0;
 
 		repetitions = distance / speed;
-		pE->dx = dx / repetitions;
-		pE->dy = dy / repetitions;
+		pE->dx = targetX / repetitions;
+		pE->dy = targetY / repetitions;
 		pE->repetitions = repetitions - 10;
 
 		p.push_back(pE);
 
-		for (int i = 0; i < 4; i++){
+		for (int i = 0; i < 4; i++) {
 			pE = new PathEntry();
 
-			if (i == 0){
+			if (i == 0) {
 				pE->action = SHOOT;
 			}
 
 			pE->delay = 25;
 			pE->frame = i + 1;
 			pE->repetitions = 5;
-			pE->dx = dx / repetitions;
+			pE->dx = targetX / repetitions;
 			switch (i) {
 			case 0:
 			case 1:
-				pE->dy = dy / repetitions;
+				pE->dy = targetY / repetitions;
 				break;
 			case 2:
 			case 3:
-				pE->dy = -(dy / repetitions);
+				pE->dy = -(targetY / repetitions);
 				break;
 			}
 			p.push_back(pE);
@@ -302,35 +416,630 @@ void Enemy::AnimationInit(){
 
 		pE->delay = 25;
 		pE->frame = 5;
-		
-		pE->dx = dx / repetitions;
-		pE->dy = - (dy / repetitions);
+
+		pE->dx = targetX / repetitions;
+		pE->dy = -(targetY / repetitions);
+		pE->repetitions = repetitions - 10;
+
+		p.push_back(pE);
+		return p;
+	}
+	else if (type == GREEN_JET) {
+
+		int startX = 0;
+		int startY = 0;
+
+		int distance;
+
+		int targetX = GameController::Get().getPlayer()->GetX();
+		int targetY = GameController::Get().getPlayer()->GetY();
+
+		int repetitions;
+		pE = new PathEntry();
+
+		distance = sqrt(pow(targetX, 2) + pow(targetY, 2));
+		pE->delay = 25;
+		pE->frame = 0;
+
+		repetitions = distance / speed;
+		pE->dx = targetX / repetitions;
+		pE->dy = targetY / repetitions;
 		pE->repetitions = repetitions - 10;
 
 		p.push_back(pE);
 
-		animation = new MovingPathAnimation(p, 1);
-		animator = new MovingPathAnimator();
-		animator->Start(this, animation);
-		animator->SetOnFinish(OnAnimationFinish, this);
-		AnimatorHolder::Register(animator);
-		AnimatorHolder::MarkAsRunning(animator);
-		break;
-	case enemysubtype_t::GREEN_LARGE:
-		pE = new PathEntry();
-		pE->dx = 0;
-		pE->dy = -5;
-		pE->delay = delay;
-		pE->frame = 0;
-		pE->repetitions = (SCREEN_H / 2) / 5;
-		p.push_back(pE);
+		for (int i = 0; i < 4; i++) {
+			pE = new PathEntry();
+
+			if (i == 0) {
+				pE->action = SHOOT;
+			}
+
+			pE->delay = 25;
+			pE->frame = i + 1;
+			pE->repetitions = 5;
+			pE->dx = targetX / repetitions;
+			switch (i) {
+			case 0:
+			case 1:
+				pE->dy = targetY / repetitions;
+				break;
+			case 2:
+			case 3:
+				pE->dy = -(targetY / repetitions);
+				break;
+			}
+			p.push_back(pE);
+		}
 
 		pE = new PathEntry();
-		pE->dx = 3;
-		pE->dy = -2.5;
+
+		pE->delay = 25;
+		pE->frame = 5;
+
+		pE->dx = targetX / repetitions;
+		pE->dy = -(targetY / repetitions);
+		pE->repetitions = repetitions - 10;
+
+		p.push_back(pE);
+		return p;
+	}
+
+	return p;
+}
+
+std::list<PathEntry *> Enemy::MonoAnimationInit(enemysubtype_t type, int pX, int speed) {
+	int t = rand() % 2;
+
+	if (type == enemysubtype_t::GRAY_MONO && t == 0) {
+		std::list<PathEntry *> p;
+		PathEntry * pE;
+
+		int startX = 0;
+		int startY = 0;
+
+		int distance;
+
+		int targetX = GameController::Get().getPlayer()->GetX();
+		int targetY = GameController::Get().getPlayer()->GetY();
+
+		int repetitions;
+		pE = new PathEntry();
+
+		distance = sqrt(pow(targetX, 2) + pow(targetY, 2));
+		pE->delay = 25;
+		pE->frame = 0;
+
+		repetitions = distance / speed;
+		pE->dx = targetX / repetitions;
+		pE->dy = targetY / repetitions;
+		pE->repetitions = repetitions - 10;
+
+		p.push_back(pE);
+
+		for (int i = 0; i < 4; i++) {
+			pE = new PathEntry();
+
+			if (i == 0) {
+				pE->action = SHOOT;
+			}
+
+			pE->delay = 25;
+			pE->frame = i + 1;
+			pE->repetitions = 5;
+			pE->dx = targetX / repetitions;
+			switch (i) {
+			case 0:
+			case 1:
+				pE->dy = targetY / repetitions;
+				break;
+			case 2:
+			case 3:
+				pE->dy = -(targetY / repetitions);
+				break;
+			}
+			p.push_back(pE);
+		}
+
+		pE = new PathEntry();
+
+		pE->delay = 25;
+		pE->frame = 5;
+
+		pE->dx = targetX / repetitions;
+		pE->dy = -(targetY / repetitions);
+		pE->repetitions = repetitions - 10;
+
+		p.push_back(pE);
+		return p;
+	}
+	else if (type == enemysubtype_t::GRAY_MONO && t == 1) {
+		std::list<PathEntry *> p;
+		PathEntry * pE;
+
+		int startX = 0;
+		int startY = 0;
+
+		int distance;
+
+		int targetX = GameController::Get().getPlayer()->GetX();
+		int targetY = GameController::Get().getPlayer()->GetY();
+
+		int repetitions;
+		pE = new PathEntry();
+
+		distance = sqrt(pow(targetX, 2) + pow(targetY, 2));
+		pE->delay = 25;
+		pE->frame = 0;
+
+		repetitions = distance / speed;
+		pE->dx = targetX / repetitions;
+		pE->dy = targetY / repetitions;
+		pE->repetitions = repetitions - 10;
+
+		p.push_back(pE);
+
+		for (int i = 0; i < 4; i++) {
+			pE = new PathEntry();
+
+			if (i == 0) {
+				pE->action = SHOOT;
+			}
+
+			pE->delay = 25;
+			pE->frame = i + 6;
+			pE->repetitions = 5;
+			pE->dx = targetX / repetitions;
+			switch (i) {
+			case 0:
+			case 1:
+				pE->dy = targetY / repetitions;
+				break;
+			case 2:
+			case 3:
+				pE->dy = -(targetY / repetitions);
+				break;
+			}
+			p.push_back(pE);
+		}
+
+		pE = new PathEntry();
+
+		pE->delay = 25;
+		pE->frame = 5;
+
+		pE->dx = targetX / repetitions;
+		pE->dy = -(targetY / repetitions);
+		pE->repetitions = repetitions - 10;
+
+		p.push_back(pE);
+		return p;
+	}
+
+	if (type == enemysubtype_t::GREEN_MONO && pX <= 0) {				// clockwise
+		std::list<PathEntry *> p;
+		PathEntry * pE;
+
+		int circles = rand() % 5;
+		float radius = float(rand() % 120 + 60);
+		int loop_start = 10;
+		int straight_reps = rand() % 10;
+
+		pE = new PathEntry();
+		pE->dx = speed;
+		pE->dy = 0;
+		pE->delay = delay;
+		pE->frame = getFrameClockWise(directionDegrees[CLOCKWISE][RIGHT]);
+		pE->repetitions = loop_start;
+		pE->action = SHOOT;
+		p.push_back(pE);
+
+		for (int i = 0; i < circles; i++) {
+			doCircle(RIGHT, p, radius, CLOCKWISE, 6);
+
+			pE = new PathEntry();
+			pE->dx = speed;
+			pE->dy = 0;
+			pE->delay = delay;
+			pE->frame = getFrameClockWise(directionDegrees[CLOCKWISE][RIGHT]);
+			pE->repetitions = loop_start;
+			p.push_back(pE);
+		}
+
+		doCircle(RIGHT, p, radius, CLOCKWISE, 6);
+
+		pE = new PathEntry();
+		pE->dx = speed;
+		pE->dy = 0;
+		pE->delay = delay;
+		pE->frame = getFrameClockWise(directionDegrees[CLOCKWISE][RIGHT]);
+		pE->repetitions = ((SCREEN_W / 2) / speed) - (loop_start + straight_reps) + 1;
+		pE->action = SHOOT;
+		p.push_back(pE);
+
+		for (int i = 0; i < circles; i++) {
+			doCircle(RIGHT, p, radius, CLOCKWISE, 6);
+
+			pE = new PathEntry();
+			pE->dx = speed;
+			pE->dy = 0;
+			pE->delay = delay;
+			pE->frame = getFrameClockWise(directionDegrees[CLOCKWISE][RIGHT]);
+			pE->repetitions = loop_start;
+			p.push_back(pE);
+		}
+
+		pE = new PathEntry();
+		pE->dx = speed;
+		pE->dy = 0;
+		pE->delay = delay;
+		pE->frame = getFrameClockWise(directionDegrees[CLOCKWISE][RIGHT]);
+		pE->repetitions = ((SCREEN_W) / speed) - (loop_start + straight_reps) + 1;
+		pE->action = SHOOT;
+		p.push_back(pE);
+
+		return p;
+	}
+	else if (type == enemysubtype_t::GREEN_MONO && pX >= SCREEN_W) {	// counter clockwise
+		std::list<PathEntry *> p;
+		PathEntry * pE;
+
+		int circles = rand() % 5;
+		float radius = float(rand() % 120 + 60);
+		int loop_start = 10;
+		int straight_reps = rand() % 10;
+
+		pE = new PathEntry();
+		pE->dx = -speed;
+		pE->dy = 0;
+		pE->delay = delay;
+		pE->frame = getFrameClockWise(directionDegrees[CLOCKWISE][LEFT]);
+		pE->repetitions = loop_start;
+		pE->action = SHOOT;
+		p.push_back(pE);
+
+		for (int i = 0; i < circles; i++) {
+			doCircle(LEFT, p, radius, ANTICLOCKWISE, 6);
+
+			pE = new PathEntry();
+			pE->dx = -speed;
+			pE->dy = 0;
+			pE->delay = delay;
+			pE->frame = getFrameClockWise(directionDegrees[CLOCKWISE][LEFT]);
+			pE->repetitions = loop_start;
+			p.push_back(pE);
+		}
+
+		doCircle(LEFT, p, radius, ANTICLOCKWISE, 6);
+
+		pE = new PathEntry();
+		pE->dx = -speed;
+		pE->dy = 0;
+		pE->delay = delay;
+		pE->frame = getFrameClockWise(directionDegrees[CLOCKWISE][LEFT]);
+		pE->repetitions = ((SCREEN_W / 2) / speed) - (loop_start + straight_reps) + 1;
+		pE->action = SHOOT;
+		p.push_back(pE);
+
+		for (int i = 0; i < circles; i++) {
+			doCircle(LEFT, p, radius, ANTICLOCKWISE, 6);
+
+			pE = new PathEntry();
+			pE->dx = -speed;
+			pE->dy = 0;
+			pE->delay = delay;
+			pE->frame = getFrameClockWise(directionDegrees[CLOCKWISE][LEFT]);
+			pE->repetitions = loop_start;
+			p.push_back(pE);
+		}
+
+		pE = new PathEntry();
+		pE->dx = -speed;
+		pE->dy = 0;
+		pE->delay = delay;
+		pE->frame = getFrameClockWise(directionDegrees[CLOCKWISE][LEFT]);
+		pE->repetitions = ((SCREEN_W) / speed) - (loop_start + straight_reps) + 1;
+		pE->action = SHOOT;
+		p.push_back(pE);
+
+		return p;
+	}
+}
+
+std::list<PathEntry *> Enemy::DoubleAnimationInit(enemysubtype_t type, int pX) {
+	int speed = SPEED_PER_TYPE[type];
+
+	std::list<PathEntry *> p;
+	PathEntry* pE;
+
+	if (type == GRAY_DOUBLE && pX >= SCREEN_W / 2) {
+
+		int circles = rand() % 8;
+		float radius = float(rand() % 120 + 60);
+		int loop_start = 10;
+		int straight_reps = rand() % 10;
+
+		pE = new PathEntry();
+		pE->dx = 0;
+		pE->dy = speed;
+		pE->delay = delay;
+		pE->frame = getFrameClockWise(directionDegrees[CLOCKWISE][BOTTOM]);
+		pE->repetitions = loop_start;
+		pE->action = SHOOT;
+		p.push_back(pE);
+
+		for (int i = 0; i < circles; i++) {
+			doCircle(BOTTOM, p, radius, ANTICLOCKWISE, 6);
+
+			pE = new PathEntry();
+			pE->dx = 0;
+			pE->dy = speed;
+			pE->delay = delay;
+			pE->frame = getFrameClockWise(directionDegrees[CLOCKWISE][BOTTOM]);
+			pE->repetitions = loop_start;
+			p.push_back(pE);
+		}
+
+		doCircle(BOTTOM, p, radius, ANTICLOCKWISE, 6);
+
+		pE = new PathEntry();
+		pE->dx = 0;
+		pE->dy = speed;
+		pE->delay = delay;
+		pE->frame = getFrameClockWise(directionDegrees[CLOCKWISE][BOTTOM]);
+		pE->repetitions = loop_start;
+		p.push_back(pE);
+
+		for (int i = 0; i < circles; i++) {
+			doCircle(BOTTOM, p, radius, ANTICLOCKWISE, 6);
+
+			pE = new PathEntry();
+			pE->dx = 0;
+			pE->dy = speed;
+			pE->delay = delay;
+			pE->frame = getFrameClockWise(directionDegrees[CLOCKWISE][BOTTOM]);
+			pE->repetitions = loop_start;
+			p.push_back(pE);
+		}
+
+		pE = new PathEntry();
+		pE->dx = 0;
+		pE->dy = speed;
+		pE->delay = delay;
+		pE->frame = getFrameClockWise(directionDegrees[CLOCKWISE][BOTTOM]);
+		pE->repetitions = ((SCREEN_W) / speed) - (loop_start + straight_reps) + 1;
+		pE->action = SHOOT;
+		p.push_back(pE);
+
+		return p;
+	}
+	else if (type == GRAY_DOUBLE && pX <= SCREEN_W / 2) {
+
+		int circles = rand() % 8;
+		float radius = float(rand() % 120 + 60);
+		int loop_start = 10;
+		int straight_reps = rand() % 10;
+
+		pE = new PathEntry();
+		pE->dx = 0;
+		pE->dy = speed;
+		pE->delay = delay;
+		pE->frame = getFrameClockWise(directionDegrees[CLOCKWISE][TOP]);
+		pE->repetitions = loop_start;
+		pE->action = SHOOT;
+		p.push_back(pE);
+
+		for (int i = 0; i < circles; i++) {
+			doCircle(TOP, p, radius, CLOCKWISE, 6);
+
+			pE = new PathEntry();
+			pE->dx = 0;
+			pE->dy = speed;
+			pE->delay = delay;
+			pE->frame = getFrameClockWise(directionDegrees[CLOCKWISE][TOP]);
+			pE->repetitions = loop_start;
+			p.push_back(pE);
+		}
+
+		doCircle(TOP, p, radius, CLOCKWISE, 6);
+
+		pE = new PathEntry();
+		pE->dx = 0;
+		pE->dy = speed;
+		pE->delay = delay;
+		pE->frame = getFrameClockWise(directionDegrees[CLOCKWISE][TOP]);
+		pE->repetitions = loop_start;
+		p.push_back(pE);
+
+		for (int i = 0; i < circles; i++) {
+			doCircle(TOP, p, radius, CLOCKWISE, 6);
+
+			pE = new PathEntry();
+			pE->dx = 0;
+			pE->dy = speed;
+			pE->delay = delay;
+			pE->frame = getFrameClockWise(directionDegrees[CLOCKWISE][TOP]);
+			pE->repetitions = loop_start;
+			p.push_back(pE);
+		}
+
+		pE = new PathEntry();
+		pE->dx = 0;
+		pE->dy = speed;
+		pE->delay = delay;
+		pE->frame = getFrameClockWise(directionDegrees[CLOCKWISE][TOP]);
+		pE->repetitions = ((SCREEN_W) / speed) - (loop_start + straight_reps) + 1;
+		pE->action = SHOOT;
+		p.push_back(pE);
+
+		return p;
+	}
+	else if (type == GREEN_DOUBLE && pX <= 0) {
+
+
+		int circles = rand() % 8;
+		float radius = float(rand() % 120 + 60);
+		int loop_start = 10;
+		int straight_reps = rand() % 10;
+
+		pE = new PathEntry();
+		pE->dx = speed;
+		pE->dy = 0;
+		pE->delay = delay;
+		pE->frame = getFrameClockWise(directionDegrees[CLOCKWISE][RIGHT]);
+		pE->repetitions = loop_start;
+		pE->action = SHOOT;
+		p.push_back(pE);
+
+		for (int i = 0; i < circles; i++) {
+			doCircle(RIGHT, p, radius, CLOCKWISE, 6);
+
+			pE = new PathEntry();
+			pE->dx = speed;
+			pE->dy = 0;
+			pE->delay = delay;
+			pE->frame = getFrameClockWise(directionDegrees[CLOCKWISE][RIGHT]);
+			pE->repetitions = loop_start;
+			p.push_back(pE);
+		}
+
+		doCircle(RIGHT, p, radius, CLOCKWISE, 6);
+
+		pE = new PathEntry();
+		pE->dx = speed;
+		pE->dy = 0;
+		pE->delay = delay;
+		pE->frame = getFrameClockWise(directionDegrees[CLOCKWISE][RIGHT]);
+		pE->repetitions = ((SCREEN_W / 2) / speed) - (loop_start + straight_reps) + 1;
+		pE->action = SHOOT;
+		p.push_back(pE);
+
+		for (int i = 0; i < circles; i++) {
+			doCircle(RIGHT, p, radius, CLOCKWISE, 6);
+
+			pE = new PathEntry();
+			pE->dx = speed;
+			pE->dy = 0;
+			pE->delay = delay;
+			pE->frame = getFrameClockWise(directionDegrees[CLOCKWISE][RIGHT]);
+			pE->repetitions = loop_start;
+			p.push_back(pE);
+		}
+
+		pE = new PathEntry();
+		pE->dx = speed;
+		pE->dy = 0;
+		pE->delay = delay;
+		pE->frame = getFrameClockWise(directionDegrees[CLOCKWISE][RIGHT]);
+		pE->repetitions = ((SCREEN_W) / speed) - (loop_start + straight_reps) + 1;
+		pE->action = SHOOT;
+		p.push_back(pE);
+
+		return p;
+	}
+	else if (type == GREEN_DOUBLE && pX >= SCREEN_W) {
+		int circles = rand() % 8;
+		float radius = float(rand() % 120 + 60);
+		int loop_start = 10;
+		int straight_reps = rand() % 10;
+
+		pE = new PathEntry();
+		pE->dx = -speed;
+		pE->dy = 0;
+		pE->delay = delay;
+		pE->frame = getFrameClockWise(directionDegrees[CLOCKWISE][LEFT]);
+		pE->repetitions = loop_start;
+		pE->action = SHOOT;
+		p.push_back(pE);
+
+		for (int i = 0; i < circles; i++) {
+			doCircle(LEFT, p, radius, ANTICLOCKWISE, 6);
+
+			pE = new PathEntry();
+			pE->dx = -speed;
+			pE->dy = 0;
+			pE->delay = delay;
+			pE->frame = getFrameClockWise(directionDegrees[CLOCKWISE][LEFT]);
+			pE->repetitions = loop_start;
+			p.push_back(pE);
+		}
+
+		doCircle(LEFT, p, radius, ANTICLOCKWISE, 6);
+
+		pE = new PathEntry();
+		pE->dx = -speed;
+		pE->dy = 0;
+		pE->delay = delay;
+		pE->frame = getFrameClockWise(directionDegrees[CLOCKWISE][LEFT]);
+		pE->repetitions = ((SCREEN_W / 2) / speed) - (loop_start + straight_reps) + 1;
+		pE->action = SHOOT;
+		p.push_back(pE);
+
+		for (int i = 0; i < circles; i++) {
+			doCircle(LEFT, p, radius, ANTICLOCKWISE, 6);
+
+			pE = new PathEntry();
+			pE->dx = -speed;
+			pE->dy = 0;
+			pE->delay = delay;
+			pE->frame = getFrameClockWise(directionDegrees[CLOCKWISE][LEFT]);
+			pE->repetitions = loop_start;
+			p.push_back(pE);
+		}
+
+		pE = new PathEntry();
+		pE->dx = -speed;
+		pE->dy = 0;
+		pE->delay = delay;
+		pE->frame = getFrameClockWise(directionDegrees[CLOCKWISE][LEFT]);
+		pE->repetitions = ((SCREEN_W) / speed) - (loop_start + straight_reps) + 1;
+		pE->action = SHOOT;
+		p.push_back(pE);
+
+		return p;
+	}
+
+	return p;
+}
+
+std::list<PathEntry *> Enemy::LargeAnimationInit() {
+	std::list<PathEntry *> p;
+	PathEntry * pE;
+
+	pE = new PathEntry();
+	pE->dx = 0;
+	pE->dy = -5;
+	pE->delay = delay;
+	pE->frame = 0;
+	pE->repetitions = (SCREEN_H / 2) / 5;
+	p.push_back(pE);
+
+	pE = new PathEntry();
+	pE->dx = 3;
+	pE->dy = -2.5;
+	pE->delay = delay;
+	pE->frame = 0;
+	pE->repetitions = (SCREEN_W / 2) / 5;
+	pE->action = SHOOT;
+	p.push_back(pE);
+
+	pE = new PathEntry();
+	pE->dx = -5;
+	pE->dy = 0;
+	pE->delay = delay;
+	pE->frame = 0;
+	pE->repetitions = (SCREEN_W / 4) / 4;
+	pE->action = SHOOT;
+	p.push_back(pE);
+
+	for (int i = 0; i < 3; i++) {
+
+		pE = new PathEntry();
+		pE->dx = 5;
+		pE->dy = 0;
 		pE->delay = delay;
 		pE->frame = 0;
-		pE->repetitions = (SCREEN_W / 2) / 5;
+		pE->repetitions = (SCREEN_W / 2) / 4;
 		pE->action = SHOOT;
 		p.push_back(pE);
 
@@ -339,74 +1048,174 @@ void Enemy::AnimationInit(){
 		pE->dy = 0;
 		pE->delay = delay;
 		pE->frame = 0;
-		pE->repetitions = (SCREEN_W / 4) / 4;
+		pE->repetitions = (SCREEN_W / 2) / 4;
 		pE->action = SHOOT;
 		p.push_back(pE);
 
-		for (int i = 0; i < 3; i++) {
+	}
+	pE = new PathEntry();
+	pE->dx = 0;
+	pE->dy = 0;
+	pE->delay = delay;
+	pE->frame = 0;
+	pE->repetitions = 10;
+	pE->action = SHOOT;
+	p.push_back(pE);
 
-			pE = new PathEntry();
-			pE->dx = 5;
-			pE->dy = 0;
-			pE->delay = delay;
-			pE->frame = 0;
-			pE->repetitions = (SCREEN_W / 2) / 4;
-			pE->action = SHOOT;
-			p.push_back(pE);
+	pE = new PathEntry();
+	pE->dx = 0;
+	pE->dy = -5;
+	pE->delay = delay;
+	pE->frame = 0;
+	pE->repetitions = (SCREEN_H) / 5;
+	p.push_back(pE);
 
-			pE = new PathEntry();
-			pE->dx = -5;
-			pE->dy = 0;
-			pE->delay = delay;
-			pE->frame = 0;
-			pE->repetitions = (SCREEN_W / 2) / 4;
-			pE->action = SHOOT;
-			p.push_back(pE);
+	return p;
+}
 
+void Enemy::SpawnLarge(enemysubtype_t type) {
+
+	if (type == GREEN_LARGE || type == GRAY_LARGE) {
+		std::cout << "LARGE SPAWN";
+		std::list<PathEntry*> p = LargeAnimationInit();
+		new Enemy(100, SCREEN_H, FILMS_BY_TYPE[type], type, p);
+	}
+}
+
+void Enemy::SpawnSmall(enemysubtype_t type) {
+
+	int spawnX = rand() % (int)SCREEN_W;
+	int spawnY = rand() % (int)SCREEN_H;
+
+	switch (type) {
+	case GREEN_MONO: // done
+	{
+		if (spawnX >= SCREEN_W / 2) {
+			if (spawnY >= SCREEN_H / 2 || spawnY <= SCREEN_H) {
+				spawnY = SCREEN_H / 2;
+			}
+			std::list<PathEntry*> p = MonoAnimationInit(GREEN_MONO, SCREEN_W, SPEED_PER_TYPE[GREEN_MONO]);
+			new Enemy(SCREEN_W, spawnY, FILMS_BY_TYPE[GREEN_MONO], GREEN_MONO, p);
 		}
-		pE = new PathEntry();
-		pE->dx = 0;
-		pE->dy = 0;
-		pE->delay = delay;
-		pE->frame = 0;
-		pE->repetitions = 10;
-		pE->action = SHOOT;
-		p.push_back(pE);
+		else {
+			if (spawnY >= SCREEN_H / 2 || spawnY <= SCREEN_H) {
+				spawnY = SCREEN_H / 2;
+			}
+			std::list<PathEntry*> p = MonoAnimationInit(GREEN_MONO, 0, SPEED_PER_TYPE[GREEN_MONO]);
+			new Enemy(0, spawnY, FILMS_BY_TYPE[GREEN_MONO], GREEN_MONO, p);
+		}
+	}
+	break;
+	case GRAY_MONO: // done
+	{
+		if (spawnX >= SCREEN_W || spawnX <= SCREEN_W) {
+			spawnX = SCREEN_W / 2;
+		}
+		std::list<PathEntry*> p = MonoAnimationInit(GRAY_MONO, 0, SPEED_PER_TYPE[GRAY_MONO]);
+		new Enemy(spawnX, 0, FILMS_BY_TYPE[GRAY_MONO], GRAY_MONO, p);
+	}
+	break;
+	case GREEN_DOUBLE:
+	{
+		if (spawnX >= SCREEN_W / 2) {
+			if (spawnY >= SCREEN_H / 2 || spawnY <= SCREEN_H) {
+				spawnY = SCREEN_H / 2;
+			}
+			std::list<PathEntry*> p = DoubleAnimationInit(GREEN_DOUBLE, SCREEN_W);
+			new Enemy(SCREEN_W, spawnY, FILMS_BY_TYPE[GREEN_DOUBLE], GREEN_DOUBLE, p);
+		}
+		else {
+			if (spawnY >= SCREEN_H / 2 || spawnY <= SCREEN_H) {
+				spawnY = SCREEN_H / 2;
+			}
+			std::list<PathEntry*> p = DoubleAnimationInit(GREEN_DOUBLE, 0);
+			new Enemy(0, spawnY, FILMS_BY_TYPE[GREEN_DOUBLE], GREEN_DOUBLE, p);
+		}
 
-		pE = new PathEntry();
-		pE->dx = 0;
-		pE->dy = -5;
-		pE->delay = delay;
-		pE->frame = 0;
-		pE->repetitions = (SCREEN_H - GetY()) / 5;
-		p.push_back(pE);
+	}
+	break;
+	case GRAY_DOUBLE:
+	{
+		if (spawnX >= SCREEN_W || spawnX <= SCREEN_W) {
+			spawnX = SCREEN_W / 2;
+		}
+		std::list<PathEntry*> p = DoubleAnimationInit(GRAY_DOUBLE, spawnX);
+		new Enemy(spawnX, 0, FILMS_BY_TYPE[GRAY_DOUBLE], GRAY_DOUBLE, p);
+	}
+	break;
+	case GREEN_JET:
+	{
+		if (spawnX >= SCREEN_W / 2) {
+			if (spawnY >= SCREEN_H / 2 || spawnY <= SCREEN_H) {
+				spawnY = SCREEN_H / 2;
+			}
+			std::list<PathEntry*> p = JetAnimationInit(GREEN_JET, SCREEN_W, spawnY);
+			new Enemy(SCREEN_W, spawnY, FILMS_BY_TYPE[GREEN_JET], GREEN_JET, p);
+		}
+		else {
+			if (spawnY >= SCREEN_H / 2 || spawnY <= SCREEN_H) {
+				spawnY = SCREEN_H / 2;
+			}
+			std::list<PathEntry*> p = JetAnimationInit(GREEN_JET, 0, spawnY);
+			new Enemy(0, spawnY, FILMS_BY_TYPE[GREEN_JET], GREEN_JET, p);
+		}
+	}
+	break;
+	case GRAY_JET:
+	{
+		if (spawnX >= SCREEN_W || spawnX <= SCREEN_W) {
+			spawnX = SCREEN_W / 2;
+		}
+		std::list<PathEntry*> p = JetAnimationInit(GRAY_JET, spawnX, 0);
+		new Enemy(spawnX, 0, FILMS_BY_TYPE[GRAY_JET], GRAY_JET, p);
+	}
+	break;
+	}
+}
 
-		animation = new MovingPathAnimation(p, 2);
-		animator = new MovingPathAnimator();
-		animator->Start(this, animation);
-		animator->SetOnFinish(OnAnimationFinish, this);
-		AnimatorHolder::Register(animator);
-		AnimatorHolder::MarkAsRunning(animator);
-		break;
-	default:
-		doCircle(BOTTOM, p, 100, CLOCKWISE);
+void Enemy::SpawnMedium(enemysubtype_t type) {
 
-		//{
-		//	std::ofstream outFile;
-		//	std::string name = "resources/MovementStepsRadius.data";
-		//	oss << std::endl;
-		//	outFile.open(name.c_str(), std::ios_base::app);
-		//	outFile << oss.str() << std::endl;
-		//	outFile.close();
-		//}
+	int spawnX = rand() % (int)SCREEN_W;
+	int spawnY = rand() % (int)SCREEN_H;
 
-		animation = new MovingPathAnimation(p, 1);
-		animator = new MovingPathAnimator();
-		animator->Start(this, animation);
-		animator->SetOnFinish(OnAnimationFinish, this);
-		AnimatorHolder::Register(animator);
-		AnimatorHolder::MarkAsRunning(animator);
-		break;
+	switch (type) {
+	case GREEN_MID:
+	{
+		if (spawnY < SCREEN_H / 2) {
+			if (spawnX >= SCREEN_W || spawnX <= SCREEN_W) {
+				spawnX = SCREEN_W / 2;
+			}
+			std::list<PathEntry*> pM = MediumAnimationInit(spawnX, 0, GREEN_MID, SPEED_PER_TYPE[GREEN_MID], 0);
+			new Enemy(spawnX, 0, FILMS_BY_TYPE[GREEN_MID], GREEN_MID, pM);
+		}
+		else {
+			if (spawnX >= SCREEN_W || spawnX <= SCREEN_W) {
+				spawnX = SCREEN_W / 2;
+			}
+			std::list<PathEntry*> pM = MediumAnimationInit(spawnX, SCREEN_H, GREEN_MID, SPEED_PER_TYPE[GREEN_MID], 0);
+			new Enemy(spawnX, SCREEN_H, FILMS_BY_TYPE[GREEN_MID], GREEN_MID, pM);
+		}
+
+	}
+	break;
+	case GRAY_MID:
+	{
+		if (spawnY < SCREEN_H / 2) {
+			if (spawnX >= SCREEN_W || spawnX <= SCREEN_W) {
+				spawnX = SCREEN_W / 2;
+			}
+			std::list<PathEntry*> pM = MediumAnimationInit(spawnX, 0, GRAY_MID, SPEED_PER_TYPE[GRAY_MID], 0);
+			new Enemy(spawnX, 0, FILMS_BY_TYPE[GRAY_MID], GRAY_MID, pM);
+		}
+		else {
+			if (spawnX >= SCREEN_W || spawnX <= SCREEN_W) {
+				spawnX = SCREEN_W / 2;
+			}
+			std::list<PathEntry*> pM = MediumAnimationInit(spawnX, SCREEN_H, GRAY_MID, SPEED_PER_TYPE[GRAY_MID], 0);
+			new Enemy(spawnX, SCREEN_H, FILMS_BY_TYPE[GRAY_MID], GRAY_MID, pM);
+		}
+	}
+	break;
 	}
 }
 
@@ -417,11 +1226,17 @@ enemysubtype_t Enemy::GetSubType(){
 void Enemy::Explode(void) {
 	switch (subtype) {
 	case enemysubtype_t::GREEN_LARGE:
-		new LargeEnemyExplosion(x, y);
+		new LargeEnemyExplosion(x, y, "gray.explosion");
+	case enemysubtype_t::GRAY_LARGE:
+		new LargeEnemyExplosion(x, y, "large.explosion");
+	case enemysubtype_t::GREEN_MID:
+		new MediumExplosion(x, y);
+	case enemysubtype_t::GRAY_MID:
+		new MediumExplosion(x, y);
 	default:
 		new SmallEnemyExplosion(x, y);
 	}
-	
+
 }
 
 void Enemy::OnPlaneShot(void) {

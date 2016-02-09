@@ -17,7 +17,6 @@ void LatelyDestroyable::Add(Animator *a){
 void LatelyDestroyable::Destroy(void){
 	for (DeadList::iterator it = dead.begin(); it != dead.end(); ++it){
 		Sprite *s = (*it);
-		std::cout << "Destroying sprite with type " << s->GetType() << std::endl;
 		delete (*it);
 	}
 

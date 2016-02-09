@@ -6,6 +6,8 @@
 #include <string>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
+#include <allegro5\allegro_acodec.h>
+#include <allegro5\allegro_audio.h>
 #include "types.h"
 #include "AnimationFilm.h"
 #include "Sprite.h"
@@ -24,6 +26,7 @@
 #include "GameMenu.h"
 #include "PowWave.h"
 #include "GameController.h"
+#include "RegularWave.h"
 
 unsigned long tickCount = 0;
 float ScaleFactor = 1;
@@ -44,6 +47,7 @@ int main(int argc, char **argv)
 	al_init_image_addon();
 	al_init_font_addon(); // initialize the font addon
 	al_init_ttf_addon(); // initialize the ttf (True Type Font) addon
+	al_init_acodec_addon();
 
 	std::cout << "Initialized allegro addons." << std::endl;
 
@@ -85,6 +89,16 @@ int main(int argc, char **argv)
 		return -1;
 	}
 
+	if (!al_install_audio()) {
+		fprintf(stderr, "failed to initialize audio!\n");
+		return -1;
+	}
+
+	if (!al_reserve_samples(1)) {
+		fprintf(stderr, "failed to reserve samples!\n");
+		return -1;
+	}
+
 	display = al_create_display(SCREEN_W, SCREEN_H);
 	if (!display) {
 		fprintf(stderr, "failed to create display!\n");
@@ -109,6 +123,14 @@ int main(int argc, char **argv)
 	ScaleFactor = bgScaleFactor * 0.8;
 
 	GameController::Get().bgPositionArgs(bgHeight, bgScaleFactor);
+
+	al_reserve_samples(4);
+	ALLEGRO_SAMPLE *themesong = al_load_sample("resources/theme.ogg");
+	ALLEGRO_SAMPLE_INSTANCE* themeInstance = al_create_sample_instance(themesong);
+	al_set_sample_instance_playmode(themeInstance, ALLEGRO_PLAYMODE_LOOP);
+	al_attach_sample_instance_to_mixer(themeInstance, al_get_default_mixer());
+
+	ALLEGRO_SAMPLE* shotSound = al_load_sample("resources/shot.ogg");
 
 	ALLEGRO_BITMAP *backBuffer = al_get_backbuffer(display);
 	//Waves::Get().CreateWaves("resources/waves_init.data");
@@ -160,6 +182,8 @@ int main(int argc, char **argv)
 			tickCount++;
 
 			if (GameController::Get().getGameState() == gamestates_t::PLAYING){
+				al_play_sample_instance(themeInstance);
+
 				if (key[KEY_LEFT] && !key[KEY_RIGHT]){
 					player->MoveLeft();
 				}
@@ -176,15 +200,18 @@ int main(int argc, char **argv)
 				if (key[KEY_SPACE]) {
 					if (GameController::Get().getGameState() == gamestates_t::PLAYING) {
 						player->shoot();
+						al_play_sample(shotSound, 0.5, 0, 1, ALLEGRO_PLAYMODE_ONCE, 0);
 					}
 				}
 			}
 
 			if (GameController::Get().getGameState() == gamestates_t::PLAYING) {
+				RegularWave::Get().SpawnRegular();
+
 				if (GameController::Get().isCheckPoint()) {
 					std::cout << "IN CHECKPOINT" << std::endl;
 					GameController::Get().getPlayer()->Land();
-				} else if (((int)GameController::Get().getBackgroundY() % 200) == 0 && !player->isDead()) {
+				} else if (((int)GameController::Get().getBackgroundY() % 10000) == 0 && !player->isDead()) {
 					PowWave::Get().SpawnWave();
 				}
 			}
