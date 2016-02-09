@@ -1,4 +1,5 @@
 #include "RegularWave.h"
+#include "PowWave.h"
 
 const int SPAWN_FREQUENCY[10] = {
 	100,
@@ -41,6 +42,9 @@ RegularWave::RegularWave()
 	lastSpawn = tickCount;
 }
 
+void RegularWave::Reset() {
+	lastSpawn = 0;
+}
 
 RegularWave::~RegularWave()
 {
@@ -54,22 +58,21 @@ RegularWave &RegularWave::Get() {
 void RegularWave::SpawnRegular() {
 	int spawnChance = rand() % 10;
 
-	if (GameController::Get().isCheckPoint()) {
-		lastSpawn = tickCount + 1;
-		lastSmallSpawn = lastSpawn;
-		lastMediumSpawn = lastSpawn;
-		lastLargeSpawn = lastSpawn;
-		aliveNum = 0;
-		return;
-	}
 
-	if (tickCount == lastSpawn + spawnDelay) {
+	if (lastSpawn == 0 || tickCount >= lastSpawn + spawnDelay) {
 
-		if (tickCount == lastLargeSpawn + largeDelay) {
+		if (tickCount >= lastLargeSpawn + largeDelay) {
 			Enemy::SpawnLarge(GetRandomSubType("large"));
 			aliveNum++;
 			lastSpawn = tickCount;
 			lastLargeSpawn = tickCount;
+		}
+
+		if (tickCount >= lastMediumSpawn + mediumDelay) {
+			PowWave::Get().SpawnWave();
+			aliveNum++;
+			lastSpawn = tickCount;
+			lastMediumSpawn = tickCount;
 		}
 
 		switch (spawnChance) {

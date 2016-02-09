@@ -18,7 +18,7 @@ private:
 	unsigned long lastSpawn;
 
 	const unsigned long smallDelay = 1000;
-	const unsigned long mediumDelay = 10000;
+	const unsigned long mediumDelay = 40000;
 	const unsigned long largeDelay = 50000;
 
 	unsigned long lastSmallSpawn;
@@ -37,6 +37,7 @@ public:
 	int GetKillPercentage();
 	static RegularWave &Get();
 	void SpawnRegular();
+	void Reset();
 	RegularWave();
 	~RegularWave();
 };

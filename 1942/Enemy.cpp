@@ -1101,8 +1101,8 @@ void Enemy::SpawnSmall(enemysubtype_t type) {
 			if (spawnY >= SCREEN_H / 2 || spawnY <= SCREEN_H) {
 				spawnY = SCREEN_H / 2;
 			}
-			std::list<PathEntry*> p = MonoAnimationInit(GREEN_MONO, 0, SPEED_PER_TYPE[GREEN_MONO]);
-			new Enemy(0, spawnY, FILMS_BY_TYPE[GREEN_MONO], GREEN_MONO, p);
+			std::list<PathEntry*> p = MonoAnimationInit(GREEN_MONO, -30, SPEED_PER_TYPE[GREEN_MONO]);
+			new Enemy(-30, spawnY, FILMS_BY_TYPE[GREEN_MONO], GREEN_MONO, p);
 		}
 	}
 	break;
@@ -1111,8 +1111,8 @@ void Enemy::SpawnSmall(enemysubtype_t type) {
 		if (spawnX >= SCREEN_W || spawnX <= SCREEN_W) {
 			spawnX = SCREEN_W / 2;
 		}
-		std::list<PathEntry*> p = MonoAnimationInit(GRAY_MONO, 0, SPEED_PER_TYPE[GRAY_MONO]);
-		new Enemy(spawnX, 0, FILMS_BY_TYPE[GRAY_MONO], GRAY_MONO, p);
+		std::list<PathEntry*> p = MonoAnimationInit(GRAY_MONO, spawnX, SPEED_PER_TYPE[GRAY_MONO]);
+		new Enemy(spawnX, -30, FILMS_BY_TYPE[GRAY_MONO], GRAY_MONO, p);
 	}
 	break;
 	case GREEN_DOUBLE:
@@ -1128,8 +1128,8 @@ void Enemy::SpawnSmall(enemysubtype_t type) {
 			if (spawnY >= SCREEN_H / 2 || spawnY <= SCREEN_H) {
 				spawnY = SCREEN_H / 2;
 			}
-			std::list<PathEntry*> p = DoubleAnimationInit(GREEN_DOUBLE, 0);
-			new Enemy(0, spawnY, FILMS_BY_TYPE[GREEN_DOUBLE], GREEN_DOUBLE, p);
+			std::list<PathEntry*> p = DoubleAnimationInit(GREEN_DOUBLE, -30);
+			new Enemy(-30, spawnY, FILMS_BY_TYPE[GREEN_DOUBLE], GREEN_DOUBLE, p);
 		}
 
 	}
@@ -1140,7 +1140,7 @@ void Enemy::SpawnSmall(enemysubtype_t type) {
 			spawnX = SCREEN_W / 2;
 		}
 		std::list<PathEntry*> p = DoubleAnimationInit(GRAY_DOUBLE, spawnX);
-		new Enemy(spawnX, 0, FILMS_BY_TYPE[GRAY_DOUBLE], GRAY_DOUBLE, p);
+		new Enemy(spawnX, -30, FILMS_BY_TYPE[GRAY_DOUBLE], GRAY_DOUBLE, p);
 	}
 	break;
 	case GREEN_JET:
@@ -1156,8 +1156,8 @@ void Enemy::SpawnSmall(enemysubtype_t type) {
 			if (spawnY >= SCREEN_H / 2 || spawnY <= SCREEN_H) {
 				spawnY = SCREEN_H / 2;
 			}
-			std::list<PathEntry*> p = JetAnimationInit(GREEN_JET, 0, spawnY);
-			new Enemy(0, spawnY, FILMS_BY_TYPE[GREEN_JET], GREEN_JET, p);
+			std::list<PathEntry*> p = JetAnimationInit(GREEN_JET, -30, spawnY);
+			new Enemy(-30, spawnY, FILMS_BY_TYPE[GREEN_JET], GREEN_JET, p);
 		}
 	}
 	break;
@@ -1166,8 +1166,8 @@ void Enemy::SpawnSmall(enemysubtype_t type) {
 		if (spawnX >= SCREEN_W || spawnX <= SCREEN_W) {
 			spawnX = SCREEN_W / 2;
 		}
-		std::list<PathEntry*> p = JetAnimationInit(GRAY_JET, spawnX, 0);
-		new Enemy(spawnX, 0, FILMS_BY_TYPE[GRAY_JET], GRAY_JET, p);
+		std::list<PathEntry*> p = JetAnimationInit(GRAY_JET, spawnX, -30);
+		new Enemy(spawnX, -30, FILMS_BY_TYPE[GRAY_JET], GRAY_JET, p);
 	}
 	break;
 	}
@@ -1185,8 +1185,8 @@ void Enemy::SpawnMedium(enemysubtype_t type) {
 			if (spawnX >= SCREEN_W || spawnX <= SCREEN_W) {
 				spawnX = SCREEN_W / 2;
 			}
-			std::list<PathEntry*> pM = MediumAnimationInit(spawnX, 0, GREEN_MID, SPEED_PER_TYPE[GREEN_MID], 0);
-			new Enemy(spawnX, 0, FILMS_BY_TYPE[GREEN_MID], GREEN_MID, pM);
+			std::list<PathEntry*> pM = MediumAnimationInit(spawnX, -30, GREEN_MID, SPEED_PER_TYPE[GREEN_MID], 0);
+			new Enemy(spawnX, -30, FILMS_BY_TYPE[GREEN_MID], GREEN_MID, pM);
 		}
 		else {
 			if (spawnX >= SCREEN_W || spawnX <= SCREEN_W) {

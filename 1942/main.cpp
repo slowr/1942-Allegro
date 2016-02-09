@@ -130,7 +130,9 @@ int main(int argc, char **argv)
 	al_set_sample_instance_playmode(themeInstance, ALLEGRO_PLAYMODE_LOOP);
 	al_attach_sample_instance_to_mixer(themeInstance, al_get_default_mixer());
 
-	ALLEGRO_SAMPLE* shotSound = al_load_sample("resources/shot.ogg");
+	
+
+
 
 	ALLEGRO_BITMAP *backBuffer = al_get_backbuffer(display);
 	//Waves::Get().CreateWaves("resources/waves_init.data");
@@ -200,20 +202,21 @@ int main(int argc, char **argv)
 				if (key[KEY_SPACE]) {
 					if (GameController::Get().getGameState() == gamestates_t::PLAYING) {
 						player->shoot();
-						al_play_sample(shotSound, 0.5, 0, 1, ALLEGRO_PLAYMODE_ONCE, 0);
 					}
 				}
 			}
 
-			if (GameController::Get().getGameState() == gamestates_t::PLAYING) {
-				RegularWave::Get().SpawnRegular();
+			if (GameController::Get().getGameState() == gamestates_t::PLAYING){
+				if (!player->isDead() && player->GetMovement() != LANDED && player->GetMovement() != LANDING && player->GetMovement() != TAKEOFF) {
+					RegularWave::Get().SpawnRegular();
+				}
 
-				if (GameController::Get().isCheckPoint()) {
+				/*if (GameController::Get().isCheckPoint()) {
 					std::cout << "IN CHECKPOINT" << std::endl;
 					GameController::Get().getPlayer()->Land();
-				} else if (((int)GameController::Get().getBackgroundY() % 10000) == 0 && !player->isDead()) {
-					PowWave::Get().SpawnWave();
-				}
+				} else if (((int)GameController::Get().getBackgroundY() % 6000) == 0 && !player->isDead()) {
+					
+				}*/
 			}
 
 			if (GameController::Get().getGameState() == MENU || (GameController::Get().getGameState() == PLAYING && !player->isDead() && player->GetMovement() != LANDED)){

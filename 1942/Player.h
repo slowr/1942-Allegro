@@ -8,6 +8,8 @@
 #include "SpriteHolder.h"
 #include "LatelyDestroyable.h"
 #include "SideFighter.h"
+#include <allegro5\allegro_acodec.h>
+#include <allegro5\allegro_audio.h>
 
 enum playermovement_t {
 	LEFT, RIGHT, NONE, LOOP, TAKEOFF, LANDING, LANDED
@@ -30,6 +32,7 @@ class Player : public Sprite {
 	MovingPathAnimator *landingAnimator;
 	timestamp_t last_timestamp;
 	playermovement_t movement;
+	ALLEGRO_SAMPLE* shotSound;
 	bool dead;
 	bool hasSideFighters;
 	std::list<PathEntry *> loopList;

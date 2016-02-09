@@ -2,6 +2,7 @@
 #include "GameController.h"
 #include "PlayerExplosion.h"
 #include "PlayerBullet.h"
+#include "RegularWave.h"
 
 void Player::movementAnimatorCallback(Animator *a, void *c){
 	LatelyDestroyable::Add(a);
@@ -27,6 +28,8 @@ void Player::landingAnimatorCallback(Animator *a, void *c) {
 Player::Player(void) : Sprite(SCREEN_W / 2 - AnimationFilmHolder::Get().GetFilm("player.sprite")->GetFrameBox(0).w*ScaleFactor / 2, SCREEN_H / 2, AnimationFilmHolder::Get().GetFilm("player.sprite"), spritetype_t::PLAYER), movement(NONE), dead(false), hasSideFighters(false) {
 
 	this->SetFrame(22);
+
+	shotSound = al_load_sample("resources/shot.ogg");
 
 	leftAnimation = new FrameRangeAnimation(4, 6, 0, 0, delay, false, 1);
 	leftAnimator = new FrameRangeAnimator();
@@ -313,9 +316,12 @@ void Player::Land() {
 
 void Player::shoot() {
 	if (!dead && movement != LOOP && movement != TAKEOFF && movement != LANDING && movement != LANDED) {
-		if (PlayerBullet::FireBullets(getPos()) && hasSideFighters){
-			for (SideFighter *s : sideFightersList) {
-				s->shoot();
+		if (PlayerBullet::FireBullets(getPos())){
+			al_play_sample(shotSound, 0.5, 0, 1, ALLEGRO_PLAYMODE_ONCE, 0);
+			if (hasSideFighters) {
+				for (SideFighter *s : sideFightersList) {
+					s->shoot();
+				}
 			}
 		}
 	}
@@ -385,6 +391,7 @@ const Point Player::getPos() const {
 void Player::Explode() {
 	setDead(true);
 	GameController::Get().decLives();
+	RegularWave::Get().Reset();
 	if (hasSideFighters) {
 		for (SideFighter *s : sideFightersList) {
 			s->Explode();
