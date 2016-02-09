@@ -1226,15 +1226,20 @@ enemysubtype_t Enemy::GetSubType(){
 void Enemy::Explode(void) {
 	switch (subtype) {
 	case enemysubtype_t::GREEN_LARGE:
-		new LargeEnemyExplosion(x, y, "gray.explosion");
-	case enemysubtype_t::GRAY_LARGE:
 		new LargeEnemyExplosion(x, y, "large.explosion");
+		break;
+	case enemysubtype_t::GRAY_LARGE:
+		new LargeEnemyExplosion(x, y, "gray.explosion");
+		break;
 	case enemysubtype_t::GREEN_MID:
 		new MediumExplosion(x, y);
+		break;
 	case enemysubtype_t::GRAY_MID:
 		new MediumExplosion(x, y);
+		break;
 	default:
 		new SmallEnemyExplosion(x, y);
+		break;
 	}
 
 }

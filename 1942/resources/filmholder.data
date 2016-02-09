@@ -1,6 +1,4 @@
-resources\1942_sprite_sheet.png 16 255 255 255
-sidefighter.sprite 1
-5 161 15 14
+resources\1942_sprite_sheet.png 15 255 255 255
 player.sprite 25
 5 6 25 16
 38 6 24 16
@@ -143,7 +141,9 @@ enemy.bullet 1
 123 90 4 4
 game.menu_background 1
 71 706 177 45
-resources\1942_gray_sprite_sheet.png 7 255 255 255
+resources\1942_gray_sprite_sheet.png 8 255 255 255
+sidefighter.sprite 1
+64 241 14 14
 gray.double 16
 7 262 15 15
 26 262 15 14

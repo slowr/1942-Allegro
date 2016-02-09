@@ -11,7 +11,7 @@ void SideFighter::entryAnimatorCallback(Animator *a, void *c) {
 	((SideFighter *)c)->ready = true;
 }
 
-SideFighter::SideFighter(float _x, float _y, float offsetX, float offsetY) : Sprite(_x, _y, AnimationFilmHolder::Get().GetFilm("green.jet"), spritetype_t::PLAYER), ready(false)
+SideFighter::SideFighter(float _x, float _y, float offsetX, float offsetY) : Sprite(_x, _y, AnimationFilmHolder::Get().GetFilm("gray.mono"), spritetype_t::PLAYER), ready(false)
 {
 	std::list<PathEntry *> list;
 	PathEntry *pE = new PathEntry();
@@ -60,8 +60,8 @@ void SideFighter::Move(float dx, float dy){
 	y += dy;
 }
 
-void SideFighter::Explode() {
-	GameController::Get().getPlayer()->LostSideFighter(this);
+void SideFighter::Explode(bool remove) {
+	if (remove) GameController::Get().getPlayer()->LostSideFighter(this);
 	state = spritestate_t::DEAD;
 	new SmallEnemyExplosion(x, y);
 }
@@ -71,7 +71,7 @@ void SideFighter::CollisionResult(Sprite *s) {
 	case spritetype_t::ENEMY:
 	case spritetype_t::ENEMY_BULLET:
 		if (!ready) return;
-		Explode();
+		Explode(true);
 		break;
 	}
 }

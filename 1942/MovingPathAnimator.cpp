@@ -57,7 +57,7 @@ void MovingPathAnimator::Progress() {
 				}
 			}
 			else if (p->action == RANDOM_FRAME) {
-				sprite->SetFrame(0);
+				sprite->SetFrame(8);
 			}
 			anim->GetPath().remove(p);
 		}

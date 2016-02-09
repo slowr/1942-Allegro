@@ -394,14 +394,18 @@ void Player::Explode() {
 	RegularWave::Get().Reset();
 	if (hasSideFighters) {
 		for (SideFighter *s : sideFightersList) {
-			s->Explode();
+			s->Explode(false);
 		}
+		sideFightersList.clear();
+		hasSideFighters = false;
 	}
 	new PlayerExplosion(x, y);
 }
 
 void Player::LostSideFighter(SideFighter *s) {
 	sideFightersList.remove(s);
+	if (sideFightersList.empty())
+		hasSideFighters = false;
 }
 
 bool Player::isDead() {

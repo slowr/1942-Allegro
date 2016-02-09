@@ -12,7 +12,7 @@ public:
 	SideFighter(float _x, float _y, float offsetX, float offsetY);
 	virtual ~SideFighter();
 	void shoot();
-	void Explode();
+	void Explode(bool remove);
 	void Move(float dx, float dy);
 	static void entryAnimatorCallback(Animator *a, void *c);
 	virtual void CollisionResult(Sprite *s);

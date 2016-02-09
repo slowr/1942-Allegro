@@ -43,6 +43,8 @@
     <Allegro_AddonTTF>true</Allegro_AddonTTF>
     <Allegro_AddonFont>true</Allegro_AddonFont>
     <Allegro_AddonPrimitives>true</Allegro_AddonPrimitives>
+    <Allegro_AddonAudio>true</Allegro_AddonAudio>
+    <Allegro_AddonAcodec>true</Allegro_AddonAcodec>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -83,7 +85,9 @@
     <ClInclude Include="EnemyBullet.h" />
     <ClInclude Include="GameController.h" />
     <ClInclude Include="GameMenu.h" />
+    <ClInclude Include="LargeEnemyExplosion.h" />
     <ClInclude Include="LatelyDestroyable.h" />
+    <ClInclude Include="MediumExplosion.h" />
     <ClInclude Include="MovingPathAnimator.h" />
     <ClInclude Include="PlayerBullet.h" />
     <ClInclude Include="CollisionChecker.h" />
@@ -100,6 +104,8 @@
     <ClInclude Include="PowerUp.h" />
     <ClInclude Include="PowWave.h" />
     <ClInclude Include="ScrollAnimation.h" />
+    <ClInclude Include="SideFighter.h" />
+    <ClInclude Include="SideFighterBullet.h" />
     <ClInclude Include="SmallEnemyExplosion.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="SpriteHolder.h" />
@@ -124,7 +130,9 @@
     <ClCompile Include="FrameRangeAnimator.cpp" />
     <ClCompile Include="GameController.cpp" />
     <ClCompile Include="GameMenu.cpp" />
+    <ClCompile Include="LargeEnemyExplosion.cpp" />
     <ClCompile Include="LatelyDestroyable.cpp" />
+    <ClCompile Include="MediumExplosion.cpp" />
     <ClCompile Include="MovingAnimation.cpp" />
     <ClCompile Include="MovingAnimator.cpp" />
     <ClCompile Include="MovingPathAnimation.cpp" />
@@ -136,7 +144,10 @@
     <ClCompile Include="PlayerExplosion.cpp" />
     <ClCompile Include="PowerUp.cpp" />
     <ClCompile Include="PowWave.cpp" />
+    <ClCompile Include="RegularWave.cpp" />
     <ClCompile Include="ScrollAnimation.cpp" />
+    <ClCompile Include="SideFighter.cpp" />
+    <ClCompile Include="SideFighterBullet.cpp" />
     <ClCompile Include="SmallEnemyExplosion.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="SpriteHolder.cpp" />
