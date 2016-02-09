@@ -20,7 +20,11 @@ void Player::takeoffAnimatorCallback(Animator *a, void *c) {
 	((Player *)c)->movement = NONE;
 }
 
-Player::Player(void) : Sprite(SCREEN_W / 2 - AnimationFilmHolder::Get().GetFilm("player.sprite")->GetFrameBox(0).w*ScaleFactor / 2, SCREEN_H / 2, AnimationFilmHolder::Get().GetFilm("player.sprite"), spritetype_t::PLAYER), movement(NONE), dead(false) {
+void Player::landingAnimatorCallback(Animator *a, void *c) {
+	((Player *)c)->movement = LANDED;
+}
+
+Player::Player(void) : Sprite(SCREEN_W / 2 - AnimationFilmHolder::Get().GetFilm("player.sprite")->GetFrameBox(0).w*ScaleFactor / 2, SCREEN_H / 2, AnimationFilmHolder::Get().GetFilm("player.sprite"), spritetype_t::PLAYER), movement(NONE), dead(false), hasSideFighters(false) {
 
 	this->SetFrame(22);
 
@@ -96,6 +100,26 @@ Player::Player(void) : Sprite(SCREEN_W / 2 - AnimationFilmHolder::Get().GetFilm(
 
 	takeoffList.push_back(takeoff);
 
+	takeoff = new PathEntry();
+
+	takeoff->dx = 0;
+	takeoff->dy = -10;
+	takeoff->delay = 120;
+	takeoff->repetitions = 1;
+	takeoff->frame = 23;
+
+	takeoffList.push_back(takeoff);
+
+	takeoff = new PathEntry();
+
+	takeoff->dx = 0;
+	takeoff->dy = -10;
+	takeoff->delay = 120;
+	takeoff->repetitions = 1;
+	takeoff->frame = 24;
+
+	takeoffList.push_back(takeoff);
+
 	for (int i = 0; i < 15; i++) {
 		takeoff = new PathEntry();
 		takeoff->dx = 0;
@@ -141,18 +165,60 @@ Player::Player(void) : Sprite(SCREEN_W / 2 - AnimationFilmHolder::Get().GetFilm(
 	takeoffAnimator = new MovingPathAnimator();
 	takeoffAnimator->SetOnFinish(takeoffAnimatorCallback, this);
 
+	PathEntry *landing = new PathEntry();
+
+	landing->dx = 0;
+	landing->dy = 0;
+	landing->delay = 120;
+	landing->repetitions = 0;
+	landing->frame = 0;
+
+	landingList.push_back(landing);
+
+	landing = new PathEntry();
+	landing->dx = 0;
+	landing->dy = -10;
+	landing->delay = 120;
+	landing->repetitions = 1;
+	landing->frame = 24;
+
+	landingList.push_back(landing);
+
+	landing = new PathEntry();
+	landing->dx = 0;
+	landing->dy = -10;
+	landing->delay = 120;
+	landing->repetitions = 1;
+	landing->frame = 23;
+
+	landingList.push_back(landing);
+
+	landing = new PathEntry();
+	landing->dx = 0;
+	landing->dy = -10;
+	landing->delay = 120;
+	landing->repetitions = 1;
+	landing->frame = 22;
+
+	landingList.push_back(landing);
+
+	landingAnimation = new MovingPathAnimation(std::list<PathEntry *>(landingList), 16);
+	landingAnimator = new MovingPathAnimator();
+	landingAnimator->SetOnFinish(landingAnimatorCallback, this);
+
 	AnimatorHolder::Register(leftAnimator);
 	AnimatorHolder::Register(rightAnimator);
 	AnimatorHolder::Register(revleftAnimator);
 	AnimatorHolder::Register(revrightAnimator);
 	AnimatorHolder::Register(loopAnimator);
 	AnimatorHolder::Register(takeoffAnimator);
+	AnimatorHolder::Register(landingAnimator);
 
 	last_timestamp = 0;
 }
 
 void Player::StopMoving(){
-	if (movement == NONE || movement == LOOP || movement == TAKEOFF || movement == LANDING) return;
+	if (movement == NONE || movement == LOOP || movement == TAKEOFF || movement == LANDING || movement == LANDED) return;
 	if (movement == LEFT){
 		AnimatorHolder::MarkAsRunning(revleftAnimator);
 		revleftAnimator->Start(this, revleftAnimation);
@@ -168,7 +234,7 @@ void Player::StopMoving(){
 }
 
 void Player::MoveLeft(){
-	if (movement == LEFT || movement == LOOP || movement == TAKEOFF || movement == LANDING) return;
+	if (movement == LEFT || movement == LOOP || movement == TAKEOFF || movement == LANDING || movement == LANDED) return;
 	AnimatorHolder::MarkAsSuspended(rightAnimator);
 	AnimatorHolder::MarkAsSuspended(revrightAnimator);
 	AnimatorHolder::MarkAsSuspended(revleftAnimator);
@@ -178,7 +244,7 @@ void Player::MoveLeft(){
 }
 
 void Player::MoveRight(){
-	if (movement == RIGHT || movement == LOOP || movement == TAKEOFF || movement == LANDING) return;
+	if (movement == RIGHT || movement == LOOP || movement == TAKEOFF || movement == LANDING || movement == LANDED) return;
 	AnimatorHolder::MarkAsSuspended(leftAnimator);
 	AnimatorHolder::MarkAsSuspended(revleftAnimator);
 	AnimatorHolder::MarkAsSuspended(revrightAnimator);
@@ -196,7 +262,7 @@ void Player::TakeOff() {
 	takeoffList.front()->repetitions = 10;
 
 	int diffToBottom = SCREEN_H - (y + 10) - frameBox.h * ScaleFactor;
-	takeoffList.back()->repetitions = (diffToBottom / 10);
+	takeoffList.back()->repetitions = (diffToBottom / 10) - 5;
 
 	takeoffAnimation->SetPath(std::list<PathEntry *>(takeoffList));
 	takeoffAnimator->Start(this, takeoffAnimation);
@@ -205,18 +271,58 @@ void Player::TakeOff() {
 	AnimatorHolder::MarkAsSuspended(leftAnimator);
 	AnimatorHolder::MarkAsSuspended(revleftAnimator);
 	AnimatorHolder::MarkAsSuspended(loopAnimator);
+	AnimatorHolder::MarkAsSuspended(landingAnimator);
 	AnimatorHolder::MarkAsRunning(takeoffAnimator);
 	movement = TAKEOFF;
 }
 
+void Player::Land() {
+	if (movement == TAKEOFF || movement == LANDING || movement == LANDED) return;
+
+	for (PathEntry *e : landingList) {
+		e->repetitions = 1;
+	}
+	landingList.back()->repetitions = 15;
+	
+	PathEntry *first = landingList.front();
+	first->dx = SCREEN_W / 2 - (x + frameBox.w / 2);
+	first->dy = (2.5 * SCREEN_H / 4) - (y + frameBox.h / 2);
+
+	int repetitions = max(abs(first->dx), abs(first->dy)) / 12;
+
+	if (repetitions > 0){
+		first->dx /= repetitions;
+		first->dy /= repetitions;
+	}
+	first->repetitions = repetitions;
+
+	landingAnimation->SetPath(std::list<PathEntry *>(landingList));
+	landingAnimator->Start(this, landingAnimation);
+
+	AnimatorHolder::MarkAsSuspended(rightAnimator);
+	AnimatorHolder::MarkAsSuspended(revrightAnimator);
+	AnimatorHolder::MarkAsSuspended(leftAnimator);
+	AnimatorHolder::MarkAsSuspended(revleftAnimator);
+	AnimatorHolder::MarkAsSuspended(loopAnimator);
+	AnimatorHolder::MarkAsSuspended(takeoffAnimator);
+	AnimatorHolder::MarkAsRunning(landingAnimator);
+	movement = LANDING;
+
+	SetSideFighters(false);
+}
+
 void Player::shoot() {
-	if (!dead && movement != LOOP && movement != TAKEOFF && movement != LANDING) {
-		PlayerBullet::FireBullets(getPos());
+	if (!dead && movement != LOOP && movement != TAKEOFF && movement != LANDING && movement != LANDED) {
+		if (PlayerBullet::FireBullets(getPos()) && hasSideFighters){
+			for (SideFighter *s : sideFightersList) {
+				s->shoot();
+			}
+		}
 	}
 }
 
 void Player::Loop(){
-	if (movement == TAKEOFF || movement == LOOP || movement == LANDING || GameController::Get().getLoops() == 0) return;
+	if (movement == TAKEOFF || movement == LOOP || movement == LANDING || movement == LANDED || GameController::Get().getLoops() == 0) return;
 	for (PathEntry *e : loopList){
 		e->repetitions = 1;
 	}
@@ -239,7 +345,7 @@ void Player::Move(bool up, bool down, bool left, bool right){
 	timestamp_t curr_timestamp = TIMESTAMP(tickCount);
 	float _x = 0, _y = 0;
 
-	if (movement == TAKEOFF || movement == LANDING) return;
+	if (movement == TAKEOFF || movement == LANDING || movement == LANDED) return;
 	if (!(up || down || left || right)) return;
 
 	float moveSpeed = ((up || down) && (right || left) ? (float) sqrt((pow(speed, 2)/2.0f)) : speed);
@@ -257,9 +363,18 @@ void Player::Move(bool up, bool down, bool left, bool right){
 	}
 
 	if (curr_timestamp - last_timestamp > move_delay){
-		x += _x;
-		y += _y;
+		Move(_x, _y);
 		last_timestamp = curr_timestamp;
+	}
+}
+
+void Player::Move(offset_t dx, offset_t dy) {
+	x += dx;
+	y += dy;
+	if (hasSideFighters) {
+		for (SideFighter *s : sideFightersList) {
+			s->Move(dx, dy);
+		}
 	}
 }
 
@@ -268,7 +383,18 @@ const Point Player::getPos() const {
 }
 
 void Player::Explode() {
+	setDead(true);
+	GameController::Get().decLives();
+	if (hasSideFighters) {
+		for (SideFighter *s : sideFightersList) {
+			s->Explode();
+		}
+	}
 	new PlayerExplosion(x, y);
+}
+
+void Player::LostSideFighter(SideFighter *s) {
+	sideFightersList.remove(s);
 }
 
 bool Player::isDead() {
@@ -287,8 +413,6 @@ void Player::CollisionResult(Sprite *s){
 	case spritetype_t::ENEMY:
 	case spritetype_t::ENEMY_BULLET:
 		if (movement == LOOP || movement == TAKEOFF || movement == LANDING) return;
-		setDead(true);
-		GameController::Get().decLives();
 		Explode();
 		break;
 	}
@@ -298,14 +422,51 @@ void Player::AnimationFinish(void){
 	LatelyDestroyable::Add(this);
 }
 
+void Player::SetSideFighters(bool val) {
+	hasSideFighters = val;
+	
+	if (val) {
+		AnimationFilm *sideFilm = AnimationFilmHolder::Get().GetFilm("sidefighter.sprite");
+
+		sideFightersList.push_back(new SideFighter(-30, -30, -(10 + sideFilm->GetFrameBox(0).w * ScaleFactor), 3));
+		sideFightersList.push_back(new SideFighter(SCREEN_W + 30, -30, +(12 + GetFrameBox(0).w * ScaleFactor), 3));
+	}
+	else {
+		sideFightersList.clear();
+	}
+}
 
 Player::~Player(){
 	AnimatorHolder::MarkAsSuspended(leftAnimator);
 	AnimatorHolder::Cancel(leftAnimator);
 	delete leftAnimator;
 	delete leftAnimation;
+	AnimatorHolder::MarkAsSuspended(revleftAnimator);
+	AnimatorHolder::Cancel(revleftAnimator);
+	delete revleftAnimator;
+	delete revleftAnimation;
+
 	AnimatorHolder::MarkAsSuspended(rightAnimator);
 	AnimatorHolder::Cancel(rightAnimator);
 	delete rightAnimator;
 	delete rightAnimation;
+	AnimatorHolder::MarkAsSuspended(revrightAnimator);
+	AnimatorHolder::Cancel(revrightAnimator);
+	delete revrightAnimator;
+	delete revrightAnimation;
+
+	AnimatorHolder::MarkAsSuspended(loopAnimator);
+	AnimatorHolder::Cancel(loopAnimator);
+	delete loopAnimator;
+	delete loopAnimation;
+
+	AnimatorHolder::MarkAsSuspended(takeoffAnimator);
+	AnimatorHolder::Cancel(takeoffAnimator);
+	delete takeoffAnimator;
+	delete takeoffAnimation;
+
+	AnimatorHolder::MarkAsSuspended(landingAnimator);
+	AnimatorHolder::Cancel(landingAnimator);
+	delete landingAnimator;
+	delete landingAnimation;
 }

@@ -21,5 +21,6 @@ public:
 	void GetSprites(spritetype_t type, SpriteList* result);
 	void DrawSprites();
 	void DestroyEnemies(bool explode);
+	void DestroyPows();
 	static SpriteHolder& Get(void);
 };

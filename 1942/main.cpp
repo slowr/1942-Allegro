@@ -183,13 +183,13 @@ int main(int argc, char **argv)
 			if (GameController::Get().getGameState() == gamestates_t::PLAYING) {
 				if (GameController::Get().isCheckPoint()) {
 					std::cout << "IN CHECKPOINT" << std::endl;
-					GameController::Get().getPlayer()->TakeOff();
+					GameController::Get().getPlayer()->Land();
 				} else if (((int)GameController::Get().getBackgroundY() % 200) == 0 && !player->isDead()) {
 					PowWave::Get().SpawnWave();
 				}
 			}
 
-			if (GameController::Get().getGameState() == MENU || (GameController::Get().getGameState() == PLAYING && !player->isDead())){
+			if (GameController::Get().getGameState() == MENU || (GameController::Get().getGameState() == PLAYING && !player->isDead() && player->GetMovement() != LANDED)){
 				GameController::Get().setBackgroundY(GameController::Get().getBackgroundY() + (BG_SCROLL_SPEED / FPS));
 			}
 			GameController::Get().setRedraw(true);
@@ -245,6 +245,11 @@ int main(int argc, char **argv)
 					player = new Player();
 					GameController::Get().Reset();
 					GameController::Get().SetPlayer(player);
+					player->TakeOff();
+
+					// checkpoints debug
+					// GameController::Get().setBackgroundY(3300);
+					// GameController::Get().setBackgroundY(7000);
 				}
 				break;
 
@@ -315,6 +320,9 @@ int main(int argc, char **argv)
 
 				if (player->isDead()) {
 					GameController::Get().DeathScreen();
+				}
+				if (player->GetMovement() == LANDED) {
+					GameController::Get().CheckPointScreen();
 				}
 			}
 

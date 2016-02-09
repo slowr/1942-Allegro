@@ -56,6 +56,7 @@ void PowerUp::handlePowerUp() {
 		break;
 	case SIDE_FIGHTERS:
 		std::cout << "Side fighters pow!" << std::endl;
+		GameController::Get().getPlayer()->SetSideFighters(true);
 		break;
 	case EXTRA_LIFE:
 		std::cout << "Extra life pow!" << std::endl;

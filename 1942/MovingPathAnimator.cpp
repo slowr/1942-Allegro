@@ -20,7 +20,10 @@ void MovingPathAnimator::Progress() {
 
 		dx = sprite->GetFrameBox(sprite->GetFrame()).w / 2;
 		dy = sprite->GetFrameBox(sprite->GetFrame()).h / 2;
-		sprite->SetFrame(p->frame);
+		if (p->action == RANDOM_FRAME)
+			sprite->SetFrame(rand() % p->frame);
+		else
+			sprite->SetFrame(p->frame);
 		dx -= sprite->GetFrameBox(sprite->GetFrame()).w / 2;
 		dy -= sprite->GetFrameBox(sprite->GetFrame()).h / 2;
 
@@ -52,6 +55,9 @@ void MovingPathAnimator::Progress() {
 				if (sprite->GetType() == ENEMY){
 					((Enemy *)sprite)->shoot();
 				}
+			}
+			else if (p->action == RANDOM_FRAME) {
+				sprite->SetFrame(0);
 			}
 			anim->GetPath().remove(p);
 		}

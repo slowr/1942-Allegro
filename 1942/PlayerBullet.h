@@ -21,7 +21,7 @@ public:
 	void StopBullet();
 	static void InitBullets();
 	static void SetQuadBullets(bool val);
-	static void FireBullets(Point p);
+	static bool FireBullets(Point p);
 	virtual void PlayerBullet::Draw();
 	virtual void CollisionResult(Sprite *s);
 	virtual void AnimationFinish(void);

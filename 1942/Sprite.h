@@ -29,7 +29,7 @@ public:
 	float GetX(void);
 	float GetY(void);
 	bool IsVisible(void) const;
-	void Move(offset_t dx, offset_t dy);
+	virtual void Move(offset_t dx, offset_t dy);
 	Sprite(float _x, float _y, AnimationFilm* film, spritetype_t _type);
 	virtual void CollisionResult(Sprite *s) {};
 	virtual void Draw();

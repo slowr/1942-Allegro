@@ -41,7 +41,7 @@ void PowWave::SpawnPow(int x, int y) {
 void PowWave::OnRedPlaneShotDown(Enemy *e) {
 	std::cout << "OnRedPlaneShotDown()" << std::endl;
 	if (++shotPlanes == NUMBER_OF_PLANES) {
-		SpawnPow(e->GetX(), e->GetY());
+		SpawnPow(max(0, e->GetX()), max(0, e->GetY()));
 	}
 }
 

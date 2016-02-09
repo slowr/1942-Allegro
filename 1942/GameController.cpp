@@ -4,8 +4,9 @@
 GameController GameController::controller;
 int GameController::FONT_SIZE = 22;
 int GameController::NO_ENEMY_BULLETS_POWERUP_DURATION = 5000;
+int GameController::CHECKPOINTS[2] = { 5480, 1860 };
 
-int GameController::CHECKPOINTS[3] = { 9100, 5450, 1860 };
+int CHECKPOINTS_NUMBER = 2;
 
 GameController::GameController(){
 	Reset();
@@ -103,6 +104,7 @@ int GameController::getTakedowns(void){
 }
 
 bool GameController::isCheckPoint(void) {
+	if (currentCheckPoint >= CHECKPOINTS_NUMBER) return false;
 
 	float backbufferY = bgHeight - (SCREEN_H / bgScale) - backgroundY;
 	int error = 40;
@@ -132,6 +134,7 @@ void GameController::Reset(void){
 	takedowns = 0;
 	totalEnemies = 0;
 	backgroundY = 0;
+	deathTimestamp = checkPointTimestamp = 0;
 	currentCheckPoint = 0;
 }
 
@@ -208,10 +211,11 @@ void GameController::DeathScreen(void) {
 	if (lives > 0) pausedStr = "GET READY!";
 	else pausedStr = "GAME OVER!";
 
-	int timestamp = TIMESTAMP(tickCount);
+	long timestamp = TIMESTAMP(tickCount);
 
 	if (deathTimestamp == 0) {
 		SpriteHolder::Get().DestroyEnemies(false);
+		SpriteHolder::Get().DestroyPows();
 		deathTimestamp = timestamp;
 	}
 
@@ -233,6 +237,46 @@ void GameController::DeathScreen(void) {
 			setGameState(MENU);
 			menu->ShowMenu();
 		}
+	}
+}
+
+void GameController::CheckPointScreen() {
+	long timestamp = TIMESTAMP(tickCount);
+
+	if (checkPointTimestamp == 0) {
+		SpriteHolder::Get().DestroyEnemies(false);
+		SpriteHolder::Get().DestroyPows();
+		checkPointTimestamp = timestamp;
+	}
+
+	std::string checkPointStr("CHECKPOINT " + std::to_string(currentCheckPoint));
+	std::string planesSpawnedStr("TOTAL PLANES");
+	std::string planesDestroyedStr("PLANES DESTROYED");
+	std::string percentageStr("PERCENTAGE");
+	std::string pointsStr("TOTAL POINTS");
+
+	std::string totalPlanes = std::to_string(totalEnemies);
+	std::string destroyedPlanes = std::to_string(takedowns);
+	std::string percentage = std::to_string((int) (((float) takedowns / (float) totalEnemies) * 100.f)) + "%";
+	std::string points = std::to_string((int) Score);
+
+	al_clear_to_color(al_map_rgb(0, 125, 235));
+
+	al_draw_text(fontHuge, al_map_rgb(255, 255, 255), SCREEN_W / 2 - (al_get_text_width(fontHuge, checkPointStr.c_str()) / 2), 150, 0, checkPointStr.c_str());
+
+	al_draw_text(font, al_map_rgb(255, 255, 255), SCREEN_W / 2 - 150, 250, ALLEGRO_ALIGN_LEFT, planesSpawnedStr.c_str());
+	al_draw_text(font, al_map_rgb(255, 255, 255), SCREEN_W / 2 - 150, 280, ALLEGRO_ALIGN_LEFT, planesDestroyedStr.c_str());
+	al_draw_text(font, al_map_rgb(255, 255, 255), SCREEN_W / 2 - 150, 310, ALLEGRO_ALIGN_LEFT, percentageStr.c_str());
+	al_draw_text(font, al_map_rgb(255, 255, 255), SCREEN_W / 2 - 150, 350, ALLEGRO_ALIGN_LEFT, pointsStr.c_str());
+
+	al_draw_text(font, al_map_rgb(235, 110, 0), SCREEN_W / 2 + 150, 250, ALLEGRO_ALIGN_RIGHT, totalPlanes.c_str());
+	al_draw_text(font, al_map_rgb(235, 110, 0), SCREEN_W / 2 + 150, 280, ALLEGRO_ALIGN_RIGHT, destroyedPlanes.c_str());
+	al_draw_text(font, al_map_rgb(235, 110, 0), SCREEN_W / 2 + 150, 310, ALLEGRO_ALIGN_RIGHT, percentage.c_str());
+	al_draw_text(font, al_map_rgb(255, 255, 0), SCREEN_W / 2 + 150, 350, ALLEGRO_ALIGN_RIGHT, points.c_str());
+
+	if (timestamp - checkPointTimestamp >= 8000) {
+		checkPointTimestamp = 0;
+		player->TakeOff();
 	}
 }
 

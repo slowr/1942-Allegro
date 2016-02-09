@@ -54,6 +54,12 @@ void SpriteHolder::Add(Sprite* s){
 	delete list;
 }
 
+void SpriteHolder::DestroyPows() {
+	for (Sprite *e : sprites[spritetype_t::POWER_UP]) {
+		e->SetState(spritestate_t::DEAD);
+	}
+};
+
 void SpriteHolder::DestroyEnemies(bool explode) {
 	for (Sprite *e : sprites[spritetype_t::ENEMY]) {
 		if (explode) ((Enemy *)e)->Explode();

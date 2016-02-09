@@ -1,5 +1,7 @@
-resources\1942_sprite_sheet.png 12 255 255 255
-player.sprite 23
+resources\1942_sprite_sheet.png 14 255 255 255
+sidefighter.sprite 1
+5 161 15 14
+player.sprite 25
 5 6 25 16
 38 6 24 16
 101 6 23 16
@@ -23,6 +25,8 @@ player.sprite 23
 5 47 25 11
 5 62 25 13
 29 84 16 10
+9 84 16 10
+49 83 18 12
 green.large 1
 7 322 63 48
 large.explosion 12
@@ -48,6 +52,8 @@ player.explosion 6
 player.bullet 2
 103 84 11 10
 140 82 17 12
+single.bullet 1
+92 84 2 10
 powerup.sprite 7
 6 140 13 10
 40 140 13 10

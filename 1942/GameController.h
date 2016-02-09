@@ -10,7 +10,7 @@ class GameMenu;
 class GameController {
 	static int NO_ENEMY_BULLETS_POWERUP_DURATION;
 	static int FONT_SIZE;
-	static int CHECKPOINTS[3];
+	static int CHECKPOINTS[2];
 	Player * player;
 	bool playerDeath;
 	float backgroundY;
@@ -24,6 +24,7 @@ class GameController {
 	int totalEnemies;
 	int currentCheckPoint;
 	long deathTimestamp;
+	long checkPointTimestamp;
 	bool noEnemyBullets;
 	GameMenu *menu;
 	gamestates_t gameState;
@@ -67,6 +68,7 @@ public:
 	void DrawUI(void);
 	void DrawPaused(void);
 	void DeathScreen(void);
+	void CheckPointScreen();
 
 	void SetNoEnemyBulletsPow(bool val);
 	bool GetNoEnemyBulletsPow();

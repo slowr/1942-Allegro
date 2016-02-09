@@ -37,7 +37,7 @@ void PlayerBullet::StopBullet(){
 	AnimatorHolder::MarkAsSuspended(animator);
 }
 
-void PlayerBullet::FireBullets(Point p){
+bool PlayerBullet::FireBullets(Point p){
 	timestamp_t currTime = TIMESTAMP(tickCount);
 	if (currTime - last_timestamp > 250){
 		for (int i = 0; i < MAX_BULLETS; i++){
@@ -45,10 +45,11 @@ void PlayerBullet::FireBullets(Point p){
 				bullets[i].SetFrame(quadBullets ? 1 : 0);
 				bullets[i].FireBullet(p);
 				last_timestamp = currTime;
-				break;
+				return true;
 			}
 		}
 	}
+	return false;
 }
 
 void PlayerBullet::Draw(){

@@ -4,7 +4,7 @@
 #include <list>
 
 enum pathentryaction_t {
-	NO_ACTION, SHOOT
+	NO_ACTION, SHOOT, RANDOM_FRAME
 };
 
 struct PathEntry {
